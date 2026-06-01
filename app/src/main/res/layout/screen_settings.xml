@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="112dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card"
+            android:gravity="center"
+            android:text="&#48176;&#53552;&#47532;&#10;86%"
+            android:textColor="#111111"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card"
+            android:gravity="center"
+            android:text="&#50672;&#44208;&#10;&#45130;&#44608;"
+            android:textColor="#111111"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="112dp"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card"
+            android:gravity="center"
+            android:text="&#52649;&#46028;&#10;0&#54924;"
+            android:textColor="#111111"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card"
+            android:gravity="center"
+            android:text="&#50724;&#47448; &#53076;&#46300;&#10;C-00"
+            android:textColor="#111111"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="86dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_card"
+        android:gravity="center_vertical"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp"
+        android:text="&#48520;&#48731; &#49444;&#51221;&#10;&#49353;&#44628;&#51012; &#52628;&#44032;&#54616;&#44144;&#45208; &#49325;&#51228;&#54644;&#50836;.        &gt;"
+        android:textColor="#111111"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="86dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_card"
+        android:gravity="center_vertical"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp"
+        android:text="&#44592;&#48376;&#44050; &#49444;&#51221;&#10;&#54217;&#49548; &#54840;&#52636;&#50640; &#50120; &#44592;&#48376;&#44050;&#51012; &#51221;&#54644;&#50836;.        &gt;"
+        android:textColor="#111111"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="86dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_card"
+        android:gravity="center_vertical"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp"
+        android:text="&#49892;&#54665; &#47196;&#44536;&#10;&#52572;&#44540; &#51060;&#46041;, &#46020;&#52265;, &#49892;&#54056; &#49345;&#53468;&#47484; &#54869;&#51064;&#54644;&#50836;.        &gt;"
+        android:textColor="#111111"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+</LinearLayout>
