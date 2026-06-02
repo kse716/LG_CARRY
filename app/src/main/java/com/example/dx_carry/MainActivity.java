@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+
 public class MainActivity extends AppCompatActivity {
 
     private View authScreen;
@@ -71,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference db;
     private String selectedTrayId = "tray1";
     private String selectedModeId = null;
+
+    private View micButton;
+    private View micPulseRing;
+    private AnimatorSet micPulseAnimator;
 
     private final int activeColor = 0xFF111111;
     private final int inactiveColor = 0xFF8A8D94;
@@ -135,6 +142,9 @@ public class MainActivity extends AppCompatActivity {
         loginPasswordInput = findViewById(R.id.loginPasswordInput);
         modeNameInput = findViewById(R.id.modeNameInput);
         modeRouteInput = findViewById(R.id.modeRouteInput);
+
+        micButton = findViewById(R.id.micButton);
+        micPulseRing = findViewById(R.id.micPulseRing);
     }
 
     private void bindNavigation() {
@@ -143,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
         navItems.setOnClickListener(v -> showScreen("items"));
         navRoutine.setOnClickListener(v -> showScreen("routine"));
         navSettings.setOnClickListener(v -> showScreen("settings"));
+        micButton.setOnClickListener(v -> toggleMicButton());
     }
 
     private void bindAuth() {
@@ -817,5 +828,52 @@ public class MainActivity extends AppCompatActivity {
 
     private String formatTime(long timeMillis) {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.KOREA).format(new Date(timeMillis));
+    }
+
+    private void toggleMicButton() {
+        boolean isCollectingVoice = !micButton.isSelected();
+        micButton.setSelected(isCollectingVoice);
+        micButton.setContentDescription(isCollectingVoice ? "Voice input active" : "Voice input");
+
+        if (isCollectingVoice) {
+            startMicPulse();
+        } else {
+            stopMicPulse();
+        }
+    }
+
+    private void startMicPulse() {
+        micPulseRing.setVisibility(View.VISIBLE);
+        micPulseRing.setAlpha(0.75f);
+        micPulseRing.setScaleX(1f);
+        micPulseRing.setScaleY(1f);
+
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(micPulseRing, View.SCALE_X, 1f, 1.35f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(micPulseRing, View.SCALE_Y, 1f, 1.35f);
+        ObjectAnimator alpha = ObjectAnimator.ofFloat(micPulseRing, View.ALPHA, 0.75f, 0f);
+
+        micPulseAnimator = new AnimatorSet();
+        micPulseAnimator.playTogether(scaleX, scaleY, alpha);
+        micPulseAnimator.setDuration(1200);
+        micPulseAnimator.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                if (micButton.isSelected()) {
+                    startMicPulse();
+                }
+            }
+        });
+        micPulseAnimator.start();
+    }
+
+    private void stopMicPulse() {
+        if (micPulseAnimator != null) {
+            micPulseAnimator.cancel();
+            micPulseAnimator = null;
+        }
+        micPulseRing.setVisibility(View.GONE);
+        micPulseRing.setAlpha(0f);
+        micPulseRing.setScaleX(1f);
+        micPulseRing.setScaleY(1f);
     }
 }

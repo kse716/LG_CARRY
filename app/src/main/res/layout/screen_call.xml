@@ -55,15 +55,41 @@
         android:orientation="vertical"
         android:padding="24dp">
 
-        <TextView
-            android:layout_width="112dp"
-            android:layout_height="112dp"
-            android:background="@drawable/bg_mic"
-            android:gravity="center"
-            android:text="MIC"
-            android:textColor="#FFFFFF"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+        <FrameLayout
+            android:layout_width="190dp"
+            android:layout_height="147dp">
+
+            <View
+                android:id="@+id/micPulseRing"
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                android:layout_gravity="center"
+                android:alpha="0"
+                android:background="@drawable/bg_mic_pulse_ring"
+                android:visibility="gone" />
+
+            <ImageView
+                android:layout_width="178dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:alpha="0.9"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_voice_wave_rose" />
+
+            <ImageButton
+                android:id="@+id/micButton"
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_mic"
+                android:clickable="true"
+                android:contentDescription="Voice input"
+                android:elevation="8dp"
+                android:focusable="true"
+                android:padding="29dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_mic_white" />
+        </FrameLayout>
 
         <TextView
             android:layout_width="wrap_content"
