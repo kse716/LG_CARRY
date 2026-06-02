@@ -5,12 +5,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView homeTrayName2;
     private TextView homeTrayName3;
     private TextView routineModeTitle;
+    private LinearLayout modeListContainer;
     private View modeCreatePanel;
     private View modeMoreMenu;
 
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference db;
     private String selectedTrayId = "tray1";
+    private String selectedModeId = null;
 
     private final int activeColor = 0xFF111111;
     private final int inactiveColor = 0xFF8A8D94;
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         homeTrayName2 = findViewById(R.id.tray_name2);
         homeTrayName3 = findViewById(R.id.tray_name3);
         routineModeTitle = findViewById(R.id.routineModeTitle);
+        modeListContainer = findViewById(R.id.modeListContainer);
         modeCreatePanel = findViewById(R.id.modeCreatePanel);
         modeMoreMenu = findViewById(R.id.modeMoreMenu);
 
@@ -157,6 +160,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.homeTray1Button).setOnClickListener(v -> loadHomeTrayItems("tray1"));
         findViewById(R.id.homeTray2Button).setOnClickListener(v -> loadHomeTrayItems("tray2"));
         findViewById(R.id.homeTray3Button).setOnClickListener(v -> loadHomeTrayItems("tray3"));
+        findViewById(R.id.btn_tray1).setOnClickListener(v -> loadHomeTrayItems("tray1"));
+        findViewById(R.id.btn_tray2).setOnClickListener(v -> loadHomeTrayItems("tray2"));
+        findViewById(R.id.btn_tray3).setOnClickListener(v -> loadHomeTrayItems("tray3"));
 
         itemSearchInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -176,13 +182,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void bindRoutineControls() {
         findViewById(R.id.addRoutineButton).setOnClickListener(v -> showModeCreatePanel(false));
-        findViewById(R.id.modeMoreButton).setOnClickListener(v -> {
-            modeMoreMenu.setVisibility(modeMoreMenu.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-        });
         findViewById(R.id.editModeButton).setOnClickListener(v -> showModeCreatePanel(true));
         findViewById(R.id.deleteModeButton).setOnClickListener(v -> deleteCurrentMode());
         findViewById(R.id.saveModeButton).setOnClickListener(v -> saveCurrentMode());
-        findViewById(R.id.cancelModeButton).setOnClickListener(v -> modeCreatePanel.setVisibility(View.GONE));
+        findViewById(R.id.cancelModeButton).setOnClickListener(v -> {
+            selectedModeId = null;
+            modeCreatePanel.setVisibility(View.GONE);
+        });
     }
 
     private void bindHomeTrayNames() {
@@ -248,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
             case "routine":
                 routineScreen.setVisibility(View.VISIBLE);
                 navRoutine.setTextColor(activeColor);
-                loadCurrentMode();
+                loadModes();
                 break;
             case "settings":
                 settingsScreen.setVisibility(View.VISIBLE);
@@ -441,11 +447,9 @@ public class MainActivity extends AppCompatActivity {
             if (trayName == null || trayName.trim().isEmpty()) {
                 trayName = defaultTrayName(trayId);
             }
-            new AlertDialog.Builder(this)
-                    .setTitle(trayName + " 물품")
-                    .setMessage(itemList)
-                    .setPositiveButton("확인", null)
-                    .show();
+
+            TrayDialogFragment.newInstance(trayName + " 물품", itemList)
+                    .show(getSupportFragmentManager(), "trayItemsPopup");
         });
     }
 
@@ -509,7 +513,7 @@ public class MainActivity extends AppCompatActivity {
         db.child("storageHistory").push().setValue(history);
     }
 
-    private void showModeCreatePanel(boolean editMode) {
+    private void showModeCreatePanelLegacy(boolean editMode) {
         modeMoreMenu.setVisibility(View.GONE);
         modeCreatePanel.setVisibility(View.VISIBLE);
         if (editMode) {
@@ -525,7 +529,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void saveCurrentMode() {
+    private void saveCurrentModeLegacy() {
         String modeName = modeNameInput.getText().toString().trim();
         String route = modeRouteInput.getText().toString().trim();
         if (modeName.isEmpty()) {
@@ -550,7 +554,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void deleteCurrentMode() {
+    private void deleteCurrentModeLegacy() {
         db.child("modes").child("currentMode").removeValue().addOnSuccessListener(unused -> {
             modeMoreMenu.setVisibility(View.GONE);
             routineModeTitle.setText("모드 없음");
@@ -560,7 +564,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void loadCurrentMode() {
+    private void loadCurrentModeLegacy() {
         db.child("modes").child("currentMode").get().addOnSuccessListener(snapshot -> {
             TextView status = findViewById(R.id.routineStatusText);
             String modeName = snapshot.child("modeName").getValue(String.class);
@@ -573,6 +577,200 @@ public class MainActivity extends AppCompatActivity {
             routineModeTitle.setText(modeName);
             status.setText(route == null || route.trim().isEmpty() ? "이동 경로 미설정" : route);
         });
+    }
+
+    private void showModeCreatePanel(boolean editMode) {
+        modeMoreMenu.setVisibility(View.GONE);
+        modeCreatePanel.setVisibility(View.VISIBLE);
+        if (editMode && selectedModeId != null) {
+            db.child("modes").child(selectedModeId).get().addOnSuccessListener(snapshot -> {
+                String modeName = snapshot.child("modeName").getValue(String.class);
+                String route = snapshot.child("route").getValue(String.class);
+                modeNameInput.setText(modeName == null ? "" : modeName);
+                modeRouteInput.setText(route == null ? "" : route);
+            });
+        } else {
+            selectedModeId = null;
+            modeNameInput.setText("");
+            modeRouteInput.setText("");
+        }
+    }
+
+    private void saveCurrentMode() {
+        String modeName = modeNameInput.getText().toString().trim();
+        String route = modeRouteInput.getText().toString().trim();
+        if (modeName.isEmpty()) {
+            Toast.makeText(this, "모드 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (route.isEmpty()) {
+            route = "출근 모듈을 현관 앞으로 이동";
+        }
+
+        DatabaseReference modeRef = selectedModeId == null
+                ? db.child("modes").push()
+                : db.child("modes").child(selectedModeId);
+        String modeId = modeRef.getKey();
+
+        Map<String, Object> mode = new HashMap<>();
+        mode.put("modeId", modeId);
+        mode.put("modeName", modeName);
+        mode.put("route", route);
+        mode.put("active", true);
+        mode.put("updatedAt", System.currentTimeMillis());
+
+        modeRef.setValue(mode).addOnSuccessListener(unused -> {
+            selectedModeId = null;
+            modeCreatePanel.setVisibility(View.GONE);
+            loadModes();
+            Toast.makeText(this, "모드가 저장됐어요.", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void deleteCurrentMode() {
+        if (selectedModeId == null) {
+            modeMoreMenu.setVisibility(View.GONE);
+            return;
+        }
+        db.child("modes").child(selectedModeId).removeValue().addOnSuccessListener(unused -> {
+            selectedModeId = null;
+            modeMoreMenu.setVisibility(View.GONE);
+            loadModes();
+            Toast.makeText(this, "모드가 삭제됐어요.", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void loadCurrentMode() {
+        loadModes();
+    }
+
+    private void loadModes() {
+        db.child("modes").get().addOnSuccessListener(snapshot -> {
+            modeListContainer.removeAllViews();
+            boolean hasMode = false;
+            for (DataSnapshot child : snapshot.getChildren()) {
+                String modeId = child.getKey();
+                String modeName = child.child("modeName").getValue(String.class);
+                String route = child.child("route").getValue(String.class);
+                if (modeName == null || modeName.trim().isEmpty()) {
+                    continue;
+                }
+                hasMode = true;
+                addModeCard(modeId, modeName, route);
+            }
+            if (!hasMode) {
+                TextView empty = new TextView(this);
+                empty.setText("+ 버튼을 눌러 모드를 만들어주세요.");
+                empty.setTextColor(0xFF74787F);
+                empty.setTextSize(14);
+                empty.setGravity(android.view.Gravity.CENTER);
+                empty.setPadding(0, 22, 0, 10);
+                modeListContainer.addView(empty);
+            }
+        });
+    }
+
+    private void addModeCard(String modeId, String modeName, String route) {
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setBackgroundResource(R.drawable.bg_card);
+        card.setPadding(dp(20), dp(18), dp(20), dp(18));
+
+        LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        cardParams.setMargins(0, 0, 0, dp(12));
+        card.setLayoutParams(cardParams);
+
+        LinearLayout cardTop = new LinearLayout(this);
+        cardTop.setOrientation(LinearLayout.HORIZONTAL);
+        cardTop.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        cardTop.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+
+        LinearLayout textBox = new LinearLayout(this);
+        textBox.setOrientation(LinearLayout.VERTICAL);
+        textBox.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+
+        TextView title = new TextView(this);
+        title.setText(modeName);
+        title.setTextColor(0xFF111111);
+        title.setTextSize(18);
+        title.setTypeface(null, android.graphics.Typeface.BOLD);
+
+        TextView subtitle = new TextView(this);
+        subtitle.setText(route == null || route.trim().isEmpty() ? "이동 경로 미설정" : route);
+        subtitle.setTextColor(0xFF74787F);
+        subtitle.setTextSize(13);
+        subtitle.setTypeface(null, android.graphics.Typeface.BOLD);
+        subtitle.setPadding(0, dp(12), 0, 0);
+
+        TextView more = new TextView(this);
+        more.setText("...");
+        more.setTextColor(0xFF111111);
+        more.setTextSize(18);
+        more.setTypeface(null, android.graphics.Typeface.BOLD);
+        more.setGravity(android.view.Gravity.CENTER);
+        more.setLayoutParams(new LinearLayout.LayoutParams(dp(42), dp(42)));
+
+        LinearLayout inlineMenu = new LinearLayout(this);
+        inlineMenu.setOrientation(LinearLayout.HORIZONTAL);
+        inlineMenu.setGravity(android.view.Gravity.RIGHT);
+        inlineMenu.setPadding(0, dp(10), 0, 0);
+        inlineMenu.setVisibility(View.GONE);
+
+        TextView edit = buildInlineModeButton("수정", 0xFF111111);
+        TextView delete = buildInlineModeButton("삭제", 0xFFC30B45);
+        LinearLayout.LayoutParams deleteParams = new LinearLayout.LayoutParams(dp(62), dp(36));
+        deleteParams.setMargins(dp(8), 0, 0, 0);
+        delete.setLayoutParams(deleteParams);
+
+        edit.setOnClickListener(v -> {
+            selectedModeId = modeId;
+            modeMoreMenu.setVisibility(View.GONE);
+            inlineMenu.setVisibility(View.GONE);
+            showModeCreatePanel(true);
+        });
+        delete.setOnClickListener(v -> {
+            selectedModeId = modeId;
+            modeMoreMenu.setVisibility(View.GONE);
+            inlineMenu.setVisibility(View.GONE);
+            deleteCurrentMode();
+        });
+        more.setOnClickListener(v -> {
+            selectedModeId = modeId;
+            modeMoreMenu.setVisibility(View.GONE);
+            inlineMenu.setVisibility(inlineMenu.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        });
+
+        textBox.addView(title);
+        textBox.addView(subtitle);
+        cardTop.addView(textBox);
+        cardTop.addView(more);
+        inlineMenu.addView(edit);
+        inlineMenu.addView(delete);
+        card.addView(cardTop);
+        card.addView(inlineMenu);
+        modeListContainer.addView(card);
+    }
+
+    private TextView buildInlineModeButton(String label, int textColor) {
+        TextView button = new TextView(this);
+        button.setText(label);
+        button.setTextColor(textColor);
+        button.setTextSize(13);
+        button.setTypeface(null, android.graphics.Typeface.BOLD);
+        button.setGravity(android.view.Gravity.CENTER);
+        button.setBackgroundResource(R.drawable.bg_card);
+        button.setLayoutParams(new LinearLayout.LayoutParams(dp(62), dp(36)));
+        return button;
+    }
+
+    private int dp(int value) {
+        return (int) (value * getResources().getDisplayMetrics().density + 0.5f);
     }
 
     private String trayNumber(String trayId) {
