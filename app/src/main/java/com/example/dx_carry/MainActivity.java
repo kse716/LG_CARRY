@@ -52,12 +52,17 @@ public class MainActivity extends AppCompatActivity {
     private TextView itemSearchResultText;
     private TextView homeTrayItemsText;
     private TextView homeFavoriteText;
+    private TextView routineModeTitle;
+    private View modeCreatePanel;
+    private View modeMoreMenu;
 
     private EditText itemNameInput;
     private EditText itemSearchInput;
     private EditText trayNameInput;
     private EditText loginNameInput;
     private EditText loginPasswordInput;
+    private EditText modeNameInput;
+    private EditText modeRouteInput;
 
     private DatabaseReference db;
     private String selectedTrayId = "tray1";
@@ -81,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         bindNavigation();
         bindAuth();
         bindTrayControls();
+        bindRoutineControls();
         seedTestData();
         showAuth();
     }
@@ -109,12 +115,17 @@ public class MainActivity extends AppCompatActivity {
         itemSearchResultText = findViewById(R.id.itemSearchResultText);
         homeTrayItemsText = findViewById(R.id.homeTrayItemsText);
         homeFavoriteText = findViewById(R.id.homeFavoriteText);
+        routineModeTitle = findViewById(R.id.routineModeTitle);
+        modeCreatePanel = findViewById(R.id.modeCreatePanel);
+        modeMoreMenu = findViewById(R.id.modeMoreMenu);
 
         itemNameInput = findViewById(R.id.itemNameInput);
         itemSearchInput = findViewById(R.id.itemSearchInput);
         trayNameInput = findViewById(R.id.trayNameInput);
         loginNameInput = findViewById(R.id.loginNameInput);
         loginPasswordInput = findViewById(R.id.loginPasswordInput);
+        modeNameInput = findViewById(R.id.modeNameInput);
+        modeRouteInput = findViewById(R.id.modeRouteInput);
     }
 
     private void bindNavigation() {
@@ -148,13 +159,24 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                searchItemInSelectedTray(s.toString().trim());
+                searchItemAcrossTrays(s.toString().trim());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
+    }
+
+    private void bindRoutineControls() {
+        findViewById(R.id.addRoutineButton).setOnClickListener(v -> showModeCreatePanel(false));
+        findViewById(R.id.modeMoreButton).setOnClickListener(v -> {
+            modeMoreMenu.setVisibility(modeMoreMenu.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        });
+        findViewById(R.id.editModeButton).setOnClickListener(v -> showModeCreatePanel(true));
+        findViewById(R.id.deleteModeButton).setOnClickListener(v -> deleteCurrentMode());
+        findViewById(R.id.saveModeButton).setOnClickListener(v -> saveCurrentMode());
+        findViewById(R.id.cancelModeButton).setOnClickListener(v -> modeCreatePanel.setVisibility(View.GONE));
     }
 
     private void showAuth() {
@@ -195,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
             case "routine":
                 routineScreen.setVisibility(View.VISIBLE);
                 navRoutine.setTextColor(activeColor);
+                loadCurrentMode();
                 break;
             case "settings":
                 settingsScreen.setVisibility(View.VISIBLE);
@@ -245,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
             trayNameInput.setHint("트레이 이름 설정 (" + name + ")");
         });
         loadSelectedTrayItems();
-        searchItemInSelectedTray(itemSearchInput.getText().toString().trim());
+        searchItemAcrossTrays(itemSearchInput.getText().toString().trim());
     }
 
     private void saveTrayName() {
@@ -279,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
             writeHistory("create", selectedTrayId, name, now);
             loadSelectedTrayItems();
             loadHomeTrayItems(selectedTrayId);
+            itemSearchResultText.setText(name + " → " + trayNumber(selectedTrayId) + "번 tray / 방금 전 등록");
             Toast.makeText(this, "물품이 저장됐어요.", Toast.LENGTH_SHORT).show();
         });
     }
@@ -288,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        itemListText.setText(buildItemList(snapshot));
+                        itemListText.setText("물품 이름을 검색하면 보관 트레이를 확인할 수 있어요.");
                     }
 
                     @Override
@@ -315,25 +339,28 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void searchItemInSelectedTray(String query) {
+    private void searchItemAcrossTrays(String query) {
         if (query.isEmpty()) {
-            itemSearchResultText.setText("검색어를 입력하면 등록 일시를 확인할 수 있어요.");
+            itemSearchResultText.setText("예: 안경 검색 → 1번 tray");
             return;
         }
 
-        db.child("trays").child(selectedTrayId).child("items")
+        db.child("trays")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot child : snapshot.getChildren()) {
-                            String name = child.child("itemName").getValue(String.class);
-                            String createdAtText = child.child("createdAtText").getValue(String.class);
-                            if (name != null && name.contains(query)) {
-                                itemSearchResultText.setText(name + " : " + createdAtText + " 등록");
-                                return;
+                        for (DataSnapshot traySnapshot : snapshot.getChildren()) {
+                            String trayId = traySnapshot.getKey();
+                            for (DataSnapshot child : traySnapshot.child("items").getChildren()) {
+                                String name = child.child("itemName").getValue(String.class);
+                                Long createdAt = child.child("createdAt").getValue(Long.class);
+                                if (name != null && name.contains(query)) {
+                                    itemSearchResultText.setText(name + " → " + trayNumber(trayId) + "번 tray / " + relativeTime(createdAt) + " 등록");
+                                    return;
+                                }
                             }
                         }
-                        itemSearchResultText.setText(query + " 물품은 현재 트레이에 없어요.");
+                        itemSearchResultText.setText(query + " 물품은 아직 등록되지 않았어요.");
                     }
 
                     @Override
@@ -351,12 +378,12 @@ public class MainActivity extends AppCompatActivity {
         StringBuilder builder = new StringBuilder();
         for (DataSnapshot child : snapshot.getChildren()) {
             String name = child.child("itemName").getValue(String.class);
-            String createdAtText = child.child("createdAtText").getValue(String.class);
+            Long createdAt = child.child("createdAt").getValue(Long.class);
             if (name != null) {
                 if (builder.length() > 0) {
                     builder.append("\n");
                 }
-                builder.append(name).append(" : ").append(createdAtText).append(" 등록");
+                builder.append(name).append(" : ").append(relativeTime(createdAt)).append(" 등록");
             }
         }
         return builder.length() == 0 ? "등록된 물품이 없어요." : builder.toString();
@@ -365,9 +392,9 @@ public class MainActivity extends AppCompatActivity {
     private String firstItemSummary(DataSnapshot snapshot, String trayNumber) {
         for (DataSnapshot child : snapshot.getChildren()) {
             String name = child.child("itemName").getValue(String.class);
-            String createdAtText = child.child("createdAtText").getValue(String.class);
+            Long createdAt = child.child("createdAt").getValue(Long.class);
             if (name != null) {
-                return trayNumber + "번 트레이 / " + name + " : " + createdAtText + " 등록";
+                return trayNumber + "번 트레이 / " + name + " : " + relativeTime(createdAt) + " 등록";
             }
         }
         return trayNumber + "번 트레이 / 등록된 물품 없음";
@@ -380,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             seedTray("tray1", "외출", new String[]{"안경", "립밤", "지갑"});
-            seedTray("tray2", "출근", new String[]{"노트북", "사원증", "이어폰"});
+            seedTray("tray2", "출근", new String[]{"지갑", "사원증", "이어폰"});
             seedTray("tray3", "육아", new String[]{"기저귀", "물티슈", "젖병"});
             seedLocations();
             db.child("meta").child("testSeeded").setValue(true);
@@ -420,6 +447,102 @@ public class MainActivity extends AppCompatActivity {
         history.put("createdAt", time);
         history.put("createdAtText", formatTime(time));
         db.child("storageHistory").push().setValue(history);
+    }
+
+    private void showModeCreatePanel(boolean editMode) {
+        modeMoreMenu.setVisibility(View.GONE);
+        modeCreatePanel.setVisibility(View.VISIBLE);
+        if (editMode) {
+            db.child("modes").child("currentMode").get().addOnSuccessListener(snapshot -> {
+                String modeName = snapshot.child("modeName").getValue(String.class);
+                String route = snapshot.child("route").getValue(String.class);
+                modeNameInput.setText(modeName == null ? "" : modeName);
+                modeRouteInput.setText(route == null ? "" : route);
+            });
+        } else {
+            modeNameInput.setText("");
+            modeRouteInput.setText("");
+        }
+    }
+
+    private void saveCurrentMode() {
+        String modeName = modeNameInput.getText().toString().trim();
+        String route = modeRouteInput.getText().toString().trim();
+        if (modeName.isEmpty()) {
+            Toast.makeText(this, "모드 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (route.isEmpty()) {
+            route = "출근 모듈을 현관 앞으로 이동";
+        }
+
+        Map<String, Object> mode = new HashMap<>();
+        mode.put("modeId", "currentMode");
+        mode.put("modeName", modeName);
+        mode.put("route", route);
+        mode.put("active", true);
+        mode.put("updatedAt", System.currentTimeMillis());
+
+        db.child("modes").child("currentMode").setValue(mode).addOnSuccessListener(unused -> {
+            modeCreatePanel.setVisibility(View.GONE);
+            loadCurrentMode();
+            Toast.makeText(this, "모드가 저장됐어요.", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void deleteCurrentMode() {
+        db.child("modes").child("currentMode").removeValue().addOnSuccessListener(unused -> {
+            modeMoreMenu.setVisibility(View.GONE);
+            routineModeTitle.setText("모드 없음");
+            TextView status = findViewById(R.id.routineStatusText);
+            status.setText("+ 버튼을 눌러 모드를 만들어주세요.");
+            Toast.makeText(this, "모드가 삭제됐어요.", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void loadCurrentMode() {
+        db.child("modes").child("currentMode").get().addOnSuccessListener(snapshot -> {
+            TextView status = findViewById(R.id.routineStatusText);
+            String modeName = snapshot.child("modeName").getValue(String.class);
+            String route = snapshot.child("route").getValue(String.class);
+            if (modeName == null || modeName.trim().isEmpty()) {
+                routineModeTitle.setText("출근 루틴");
+                status.setText("출근 모듈을 현관 앞으로 이동");
+                return;
+            }
+            routineModeTitle.setText(modeName);
+            status.setText(route == null || route.trim().isEmpty() ? "이동 경로 미설정" : route);
+        });
+    }
+
+    private String trayNumber(String trayId) {
+        if ("tray2".equals(trayId)) {
+            return "2";
+        }
+        if ("tray3".equals(trayId)) {
+            return "3";
+        }
+        return "1";
+    }
+
+    private String relativeTime(Long timeMillis) {
+        if (timeMillis == null) {
+            return "등록일 미상";
+        }
+        long diffMillis = Math.max(0, System.currentTimeMillis() - timeMillis);
+        long minutes = diffMillis / (60 * 1000);
+        if (minutes < 1) {
+            return "방금 전";
+        }
+        if (minutes < 60) {
+            return minutes + "분 전";
+        }
+        long hours = minutes / 60;
+        if (hours < 24) {
+            return hours + "시간 전";
+        }
+        long days = hours / 24;
+        return days + "일 전";
     }
 
     private String defaultTrayName(String trayId) {

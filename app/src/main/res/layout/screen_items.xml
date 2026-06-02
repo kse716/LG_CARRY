@@ -193,7 +193,7 @@
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:background="@drawable/bg_input"
-            android:hint="검색 현재 칸 물품 검색"
+            android:hint="물품 이름으로 보관 트레이 검색"
             android:inputType="text"
             android:paddingStart="18dp"
             android:paddingEnd="18dp"
@@ -207,7 +207,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:text="검색어를 입력하면 등록 일시를 확인할 수 있어요."
+            android:text="예: 안경 검색 → 1번 tray"
             android:textColor="#74787F"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -217,7 +217,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="물품 목록을 불러오는 중..."
+            android:text="검색하면 물품의 트레이 번호와 등록 시점을 보여줘요."
             android:textColor="#74787F"
             android:textSize="15sp"
             android:textStyle="bold" />
