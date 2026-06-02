@@ -2,65 +2,87 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
+    android:layout_marginTop="18dp"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="290dp"
         android:background="@drawable/bg_card"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="24dp">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="&#54596;&#50836;&#54620; &#47932;&#44148;&#51012; &#52880;&#47532;&#50640;&#10;&#54840;&#52636;&#54644;&#48372;&#49464;&#50836;!"
-            android:textColor="#111111"
-            android:textSize="26sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="116dp"
-            android:layout_height="116dp"
-            android:layout_marginTop="26dp"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
             android:background="@drawable/bg_mic"
             android:gravity="center"
             android:text="MIC"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="&#52572;&#44540; &#47749;&#47161;: &#50504;&#44221;&#51012; 1&#52789; &#53944;&#47112;&#51060;&#50640;&#49436; &#44032;&#51256;&#50752;"
+            android:layout_marginTop="30dp"
+            android:text="버튼을 눌러 캐리를 호출하세요"
+            android:textColor="#74787F"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="상태 · 대기중"
             android:textColor="#74787F"
             android:textSize="15sp"
             android:textStyle="bold" />
     </LinearLayout>
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="58dp"
-        android:layout_marginTop="14dp"
-        android:background="@drawable/bg_primary_button"
-        android:gravity="center"
-        android:text="&#9678; &#54788;&#51116; &#50948;&#52824;&#47196; &#54840;&#52636;"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_height="170dp"
+        android:layout_marginTop="26dp"
         android:background="@drawable/bg_card"
-        android:padding="18dp"
-        android:text="Voice&#10;&#51020;&#49457; &#51064;&#49885; &#44208;&#44284;&#10;&#47749;&#47161;&#45236;&#50857;: &#47932;, &#50557;, &#47532;&#47784;&#52968; &#54840;&#52636;&#10;&#49888;&#47280;&#46020;: 92%&#10;&#47785;&#51201;&#44144;&#51216;: &#44144;&#49892;"
-        android:textColor="#55585F"
-        android:textSize="15sp" />
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Voice                                      ..."
+            android:textColor="#C30B45"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="음성 인식 결과"
+            android:textColor="#111111"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="명령 : 안경을 거실로 가져와"
+            android:textColor="#74787F"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="신뢰도 92% / 목적지 : 거실 / 트레이 : 1번"
+            android:textColor="#74787F"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 </LinearLayout>

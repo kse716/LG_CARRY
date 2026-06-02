@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
+    android:layout_marginTop="12dp"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="76dp"
+        android:layout_height="72dp"
         android:orientation="horizontal">
 
         <TextView
@@ -16,9 +16,9 @@
             android:layout_weight="1"
             android:background="@drawable/bg_card_selected"
             android:gravity="center"
-            android:text="1&#52789;&#10;2&#44060;"
+            android:text="1번&#10;외출"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
@@ -28,9 +28,9 @@
             android:layout_weight="1"
             android:background="@drawable/bg_card"
             android:gravity="center"
-            android:text="2&#52789;&#10;1&#44060;"
-            android:textColor="#202124"
-            android:textSize="16sp"
+            android:text="2번&#10;출근"
+            android:textColor="#111111"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
@@ -40,16 +40,16 @@
             android:layout_weight="1"
             android:background="@drawable/bg_card"
             android:gravity="center"
-            android:text="3&#52789;&#10;0&#44060;"
-            android:textColor="#202124"
-            android:textSize="16sp"
+            android:text="3번&#10;기저귀/물티슈"
+            android:textColor="#111111"
+            android:textSize="14sp"
             android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_height="196dp"
+        android:layout_marginTop="14dp"
         android:background="@drawable/bg_card"
         android:orientation="vertical"
         android:padding="18dp">
@@ -57,52 +57,98 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1&#52789;"
+            android:text="1번"
             android:textColor="#C30B45"
+            android:textSize="12sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="&#51060; &#52856;&#51012; &#51088;&#50976;&#47213;&#44172; &#49444;&#51221;"
+            android:text="외출 모듈"
             android:textColor="#111111"
             android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="16dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="18dp"
             android:background="@drawable/bg_input"
             android:gravity="center_vertical"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:text="Tag  &#52712;&#52840; / &#44060;&#51064; &#47932;&#54408;"
-            android:textColor="#111111"
+            android:paddingStart="18dp"
+            android:text="카테고리 : 외출"
+            android:textColor="#74787F"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input"
+                android:gravity="center_vertical"
+                android:paddingStart="18dp"
+                android:text="물품 추가"
+                android:textColor="#74787F"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="12dp"
+                android:background="@drawable/bg_card_selected"
+                android:gravity="center"
+                android:text="+"
+                android:textColor="#FFFFFF"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="176dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_card"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_input"
+            android:gravity="center_vertical"
+            android:paddingStart="18dp"
+            android:text="검색 현재 칸 물품 검색"
+            android:textColor="#74787F"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_input"
-            android:gravity="center_vertical"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:text="1&#52789;&#50640; &#47932;&#54408; &#52628;&#44032;                         +"
-            android:textColor="#8A8D94"
-            android:textSize="16sp" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="립밤 : 2일 전 등록"
+            android:textColor="#74787F"
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:layout_marginTop="14dp"
-        android:background="@drawable/bg_card"
-        android:gravity="center"
-        android:text="&#44160;&#49353;  &#54788;&#51116; &#52856; &#47932;&#54408; &#44160;&#49353;&#10;&#10;&#46321;&#47197; &#47932;&#54408;: &#50504;&#44221;, &#47532;&#47784;&#52968;"
-        android:textColor="#74787F"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="안경 : 3일 전 등록"
+            android:textColor="#74787F"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 </LinearLayout>

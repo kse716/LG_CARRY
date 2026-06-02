@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView navRoutine;
     private TextView navSettings;
 
-    private final int activeColor = 0xFFC30B45;
+    private final int activeColor = 0xFF111111;
     private final int inactiveColor = 0xFF8A8D94;
 
     @Override
@@ -85,17 +85,17 @@ public class MainActivity extends AppCompatActivity {
                 navCall.setTextColor(activeColor);
                 break;
             case "items":
-                titleText.setText("\uBB3C\uD488");
+                titleText.setText("\uBB3C\uD488 \uAD00\uB9AC");
                 itemsScreen.setVisibility(View.VISIBLE);
                 navItems.setTextColor(activeColor);
                 break;
             case "routine":
-                titleText.setText("\uB8E8\uD2F4");
+                titleText.setText("\uB8E8\uD2F4 \uAD00\uB9AC");
                 routineScreen.setVisibility(View.VISIBLE);
                 navRoutine.setTextColor(activeColor);
                 break;
             case "settings":
-                titleText.setText("\uC124\uC815");
+                titleText.setText("\uAE30\uAE30 \uC124\uC815");
                 settingsScreen.setVisibility(View.VISIBLE);
                 navSettings.setTextColor(activeColor);
                 break;

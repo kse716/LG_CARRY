@@ -2,42 +2,111 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
+    android:layout_marginTop="18dp"
     android:orientation="vertical">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="92dp"
+        android:layout_height="100dp"
         android:background="@drawable/bg_card"
         android:gravity="center_vertical"
-        android:paddingStart="22dp"
-        android:paddingEnd="22dp"
-        android:text="Routine&#10;&#47336;&#54004; &#47564;&#46308;&#44592;&#10;&#50508;&#46988;&#52376;&#47100; &#49884;&#44036;&#44284; &#50836;&#51068;&#51012; &#51221;&#54644;&#50836;.        &gt;"
-        android:textColor="#111111"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="92dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/bg_card"
-        android:gravity="center_vertical"
-        android:paddingStart="22dp"
-        android:paddingEnd="22dp"
-        android:text="Mode&#10;&#47784;&#46300; &#47564;&#46308;&#44592;&#10;&#54840;&#52636; &#49692;&#49436;&#50752; &#47785;&#51201; &#44144;&#51216;&#51012; &#51221;&#54644;&#50836;.        &gt;"
-        android:textColor="#111111"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        <TextView
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_circle_dark" />
 
-    <TextView
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Routine"
+                android:textColor="#C30B45"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="루틴 만들기"
+                android:textColor="#111111"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="시간과 요일로 자동 호출"
+                android:textColor="#74787F"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="148dp"
         android:layout_marginTop="14dp"
         android:background="@drawable/bg_card"
-        android:gravity="center_vertical"
-        android:padding="18dp"
-        android:text="Mode Detail&#10;&#50500;&#52840; &#47784;&#46300;: &#47932; &#8594; &#50557; &#8594; &#50504;&#44221;&#10;&#47932;&#54408;, &#53944;&#47112;&#51060;, &#47785;&#51201; &#44144;&#51216;&#51012; &#54616;&#45208;&#51032; &#47784;&#46300;&#47196; &#51200;&#51109;"
-        android:textColor="#55585F"
-        android:textSize="15sp" />
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Routine                                      ..."
+            android:textColor="#C30B45"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="출근 루틴"
+            android:textColor="#111111"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="출근 모듈을 현관 앞으로 이동"
+            android:textColor="#74787F"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_pill"
+        android:gravity="center"
+        android:text="+"
+        android:textColor="#74787F"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginTop="34dp"
+        android:gravity="center"
+        android:text="Mode Detail : 물품, 목적지, 트레이 순서 연결"
+        android:textColor="#B0B3BA"
+        android:textSize="12sp" />
 </LinearLayout>
