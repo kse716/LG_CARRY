@@ -53,4 +53,25 @@ public class TrayDialogFragment extends DialogFragment {
 
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+            // 1. 디바이스 화면의 가로 크기 가져오기
+            int width = getResources().getDisplayMetrics().widthPixels;
+
+            // 2. 화면 가로 크기의 85%로 팝업 너비 설정 (원하는 비율로 조정 가능)
+            int dialogWidth = (int) (width * 0.85);
+
+            // 3. 세로는 내부 콘텐츠 크기에 맞춤 (원한다면 세로도 고정 가능)
+            int dialogHeight = ViewGroup.LayoutParams.WRAP_CONTENT;
+
+            // 4. 다이얼로그 윈도우에 크기 적용
+            getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
+        }
+    }
 }

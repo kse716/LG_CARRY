@@ -1,0 +1,44 @@
+<!--
+  ~ Copyright (C) 2026 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="800dp"
+    android:height="600dp"
+    android:viewportWidth="800"
+    android:viewportHeight="600">
+  <path
+      android:pathData="M125,40L675,40A85,85 0,0 1,760 125L760,475A85,85 0,0 1,675 560L125,560A85,85 0,0 1,40 475L40,125A85,85 0,0 1,125 40z"
+      android:fillColor="#F7F4EB"/>
+  <path
+      android:pathData="M140,110L660,110A40,40 0,0 1,700 150L700,320A40,40 0,0 1,660 360L140,360A40,40 0,0 1,100 320L100,150A40,40 0,0 1,140 110z"
+      android:fillColor="#3A3630"/>
+  <path
+      android:pathData="M135,110L665,110A35,35 0,0 1,700 145L700,305A35,35 0,0 1,665 340L135,340A35,35 0,0 1,100 305L100,145A35,35 0,0 1,135 110z"
+      android:fillColor="#25221E"/>
+  <path
+      android:pathData="M120,340L680,340L700,360L100,360Z"
+      android:fillColor="#4E4A42"/>
+  <path
+      android:pathData="M150,320L650,320A50,50 0,0 1,700 370L700,470A50,50 0,0 1,650 520L150,520A50,50 0,0 1,100 470L100,370A50,50 0,0 1,150 320z"
+      android:fillColor="#E8E3D5"/>
+  <path
+      android:pathData="M150,310L650,310A50,50 0,0 1,700 360L700,460A50,50 0,0 1,650 510L150,510A50,50 0,0 1,100 460L100,360A50,50 0,0 1,150 310z"
+      android:strokeWidth="5"
+      android:fillColor="#F7F4EB"
+      android:strokeColor="#E1DCD0"/>
+  <path
+      android:pathData="M330,310L470,310A1,1 0,0 1,471 311L471,330A25,25 0,0 1,446 355L354,355A25,25 0,0 1,329 330L329,331A1,1 0,0 1,330 310Z"
+      android:fillColor="#2C3033"/>
+</vector>
