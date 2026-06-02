@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity {
     private View itemsScreen;
     private View routineScreen;
     private View settingsScreen;
-    private TextView titleText;
     private TextView navHome;
     private TextView navCall;
     private TextView navItems;
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
         itemsScreen = findViewById(R.id.itemsScreen);
         routineScreen = findViewById(R.id.routineScreen);
         settingsScreen = findViewById(R.id.settingsScreen);
-        titleText = findViewById(R.id.titleText);
         navHome = findViewById(R.id.navHome);
         navCall = findViewById(R.id.navCall);
         navItems = findViewById(R.id.navItems);
@@ -80,28 +78,23 @@ public class MainActivity extends AppCompatActivity {
 
         switch (screen) {
             case "call":
-                titleText.setText("\uD638\uCD9C");
                 callScreen.setVisibility(View.VISIBLE);
                 navCall.setTextColor(activeColor);
                 break;
             case "items":
-                titleText.setText("\uBB3C\uD488 \uAD00\uB9AC");
                 itemsScreen.setVisibility(View.VISIBLE);
                 navItems.setTextColor(activeColor);
                 break;
             case "routine":
-                titleText.setText("\uB8E8\uD2F4 \uAD00\uB9AC");
                 routineScreen.setVisibility(View.VISIBLE);
                 navRoutine.setTextColor(activeColor);
                 break;
             case "settings":
-                titleText.setText("\uAE30\uAE30 \uC124\uC815");
                 settingsScreen.setVisibility(View.VISIBLE);
                 navSettings.setTextColor(activeColor);
                 break;
             case "home":
             default:
-                titleText.setText("\uD648");
                 homeScreen.setVisibility(View.VISIBLE);
                 navHome.setTextColor(activeColor);
                 break;
