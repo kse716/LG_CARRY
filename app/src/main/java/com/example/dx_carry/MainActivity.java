@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -51,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView itemListText;
     private TextView itemSearchResultText;
     private TextView homeTrayItemsText;
-    private TextView homeFavoriteText;
+    private TextView homeTrayName1;
+    private TextView homeTrayName2;
+    private TextView homeTrayName3;
     private TextView routineModeTitle;
     private View modeCreatePanel;
     private View modeMoreMenu;
@@ -87,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         bindAuth();
         bindTrayControls();
         bindRoutineControls();
+        bindHomeTrayNames();
         seedTestData();
         showAuth();
     }
@@ -114,7 +118,9 @@ public class MainActivity extends AppCompatActivity {
         itemListText = findViewById(R.id.itemListText);
         itemSearchResultText = findViewById(R.id.itemSearchResultText);
         homeTrayItemsText = findViewById(R.id.homeTrayItemsText);
-        homeFavoriteText = findViewById(R.id.homeFavoriteText);
+        homeTrayName1 = findViewById(R.id.tray_name1);
+        homeTrayName2 = findViewById(R.id.tray_name2);
+        homeTrayName3 = findViewById(R.id.tray_name3);
         routineModeTitle = findViewById(R.id.routineModeTitle);
         modeCreatePanel = findViewById(R.id.modeCreatePanel);
         modeMoreMenu = findViewById(R.id.modeMoreMenu);
@@ -179,6 +185,31 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.cancelModeButton).setOnClickListener(v -> modeCreatePanel.setVisibility(View.GONE));
     }
 
+    private void bindHomeTrayNames() {
+        bindHomeTrayName("tray1", homeTrayName1);
+        bindHomeTrayName("tray2", homeTrayName2);
+        bindHomeTrayName("tray3", homeTrayName3);
+    }
+
+    private void bindHomeTrayName(String trayId, TextView target) {
+        db.child("trays").child(trayId).child("name")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String trayName = snapshot.getValue(String.class);
+                        if (trayName == null || trayName.trim().isEmpty()) {
+                            trayName = defaultTrayName(trayId);
+                        }
+                        target.setText(trayName);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        target.setText(defaultTrayName(trayId));
+                    }
+                });
+    }
+
     private void showAuth() {
         authScreen.setVisibility(View.VISIBLE);
         homeScreen.setVisibility(View.GONE);
@@ -227,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
             default:
                 homeScreen.setVisibility(View.VISIBLE);
                 navHome.setTextColor(activeColor);
-                loadHomeTrayItems("tray1");
+                homeTrayItemsText.setText("트레이를 누르면 저장된 물품이 팝업으로 보여요.");
                 break;
         }
     }
@@ -301,7 +332,6 @@ public class MainActivity extends AppCompatActivity {
             itemNameInput.setText("");
             writeHistory("create", selectedTrayId, name, now);
             loadSelectedTrayItems();
-            loadHomeTrayItems(selectedTrayId);
             itemSearchResultText.setText(name + " → " + trayNumber(selectedTrayId) + "번 tray / 방금 전 등록");
             Toast.makeText(this, "물품이 저장됐어요.", Toast.LENGTH_SHORT).show();
         });
@@ -327,14 +357,12 @@ public class MainActivity extends AppCompatActivity {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        String number = trayId.substring(trayId.length() - 1);
-                        homeTrayItemsText.setText(number + "번 트레이\n" + buildItemList(snapshot));
-                        homeFavoriteText.setText(firstItemSummary(snapshot, number));
+                        showTrayItemsPopup(trayId, buildItemNameList(snapshot));
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        homeTrayItemsText.setText("트레이 물품을 불러오지 못했어요.");
+                        Toast.makeText(MainActivity.this, "트레이 물품을 불러오지 못했어요.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -387,6 +415,38 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return builder.length() == 0 ? "등록된 물품이 없어요." : builder.toString();
+    }
+
+    private String buildItemNameList(DataSnapshot snapshot) {
+        if (!snapshot.exists()) {
+            return "등록된 물품이 없어요.";
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (DataSnapshot child : snapshot.getChildren()) {
+            String name = child.child("itemName").getValue(String.class);
+            if (name != null && !name.trim().isEmpty()) {
+                if (builder.length() > 0) {
+                    builder.append("\n");
+                }
+                builder.append("• ").append(name);
+            }
+        }
+        return builder.length() == 0 ? "등록된 물품이 없어요." : builder.toString();
+    }
+
+    private void showTrayItemsPopup(String trayId, String itemList) {
+        db.child("trays").child(trayId).child("name").get().addOnSuccessListener(snapshot -> {
+            String trayName = snapshot.getValue(String.class);
+            if (trayName == null || trayName.trim().isEmpty()) {
+                trayName = defaultTrayName(trayId);
+            }
+            new AlertDialog.Builder(this)
+                    .setTitle(trayName + " 물품")
+                    .setMessage(itemList)
+                    .setPositiveButton("확인", null)
+                    .show();
+        });
     }
 
     private String firstItemSummary(DataSnapshot snapshot, String trayNumber) {
