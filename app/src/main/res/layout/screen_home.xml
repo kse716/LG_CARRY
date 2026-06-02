@@ -64,46 +64,119 @@
             android:textStyle="bold" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="96dp"
+            android:layout_width="411dp"
+            android:layout_height="138dp"
             android:layout_marginTop="54dp"
             android:gravity="center"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/homeTray1Button"
-                android:layout_width="88dp"
-                android:layout_height="78dp"
-                android:background="@drawable/bg_tray_button"
-                android:gravity="center"
-                android:text="1번"
-                android:textColor="#111111"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="0dp">
 
-            <TextView
-                android:id="@+id/homeTray2Button"
-                android:layout_width="88dp"
-                android:layout_height="78dp"
-                android:layout_marginStart="18dp"
-                android:background="@drawable/bg_tray_button"
-                android:gravity="center"
-                android:text="2번"
-                android:textColor="#111111"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                <ImageButton
+                    android:id="@+id/btn_tray1"
+                    android:layout_width="120dp"
+                    android:layout_height="90dp"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:contentDescription="트레이 버튼"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_tray" />
 
-            <TextView
-                android:id="@+id/homeTray3Button"
-                android:layout_width="88dp"
-                android:layout_height="78dp"
-                android:layout_marginStart="18dp"
-                android:background="@drawable/bg_tray_button"
-                android:gravity="center"
-                android:text="3번"
-                android:textColor="#111111"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tray_name1"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="1번 트레이"
+                    android:textColor="#2C3033"
+
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="0dp">
+
+                <ImageButton
+                    android:id="@+id/btn_tray2"
+                    android:layout_width="120dp"
+                    android:layout_height="90dp"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:contentDescription="트레이 버튼"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_tray" />
+
+                <TextView
+                    android:id="@+id/tray_name2"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="2번 트레이"
+                    android:textColor="#2C3033"
+
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="0dp">
+
+                <ImageButton
+                    android:id="@+id/btn_tray3"
+                    android:layout_width="120dp"
+                    android:layout_height="90dp"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:contentDescription="트레이 버튼"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_tray" />
+
+                <TextView
+                    android:id="@+id/tray_name3"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="3번 트레이"
+                    android:textColor="#2C3033"
+
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
         </LinearLayout>
 
         <TextView
