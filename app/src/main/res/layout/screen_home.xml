@@ -191,5 +191,8 @@
             android:textColor="#74787F"
             android:textSize="15sp"
             android:textStyle="bold" />
+        <!--상태 : 이거 오류나거나 하면
+        오류 팝업 뜨게 하면 될듯 함 ..
+        -->
     </LinearLayout>
 </LinearLayout>
