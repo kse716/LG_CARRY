@@ -124,7 +124,7 @@
             android:layout_height="46dp"
             android:layout_marginTop="18dp"
             android:background="@drawable/bg_input"
-            android:hint="트레이 이름 수정"
+            android:hint="모듈 이름 수정"
             android:inputType="text"
             android:paddingStart="18dp"
             android:paddingEnd="18dp"
@@ -140,7 +140,7 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_primary_button"
             android:gravity="center"
-            android:text="트레이 이름 저장"
+            android:text="모듈 이름 저장"
             android:textColor="#FFFFFF"
             android:textSize="13sp"
             android:textStyle="bold" />

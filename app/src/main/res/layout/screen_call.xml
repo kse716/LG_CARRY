@@ -121,7 +121,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Voice                                      ..."
+            android:text="Voice                 "
             android:textColor="#C30B45"
             android:textSize="12sp"
             android:textStyle="bold" />
