@@ -22,6 +22,7 @@
                 android:layout_height="wrap_content"
                 android:text="CARRY"
                 android:textColor="#C30B45"
+                android:letterSpacing="0.06"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -30,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:text="기기 설정"
                 android:textColor="#111111"
-                android:textSize="30sp"
+                android:textSize="28sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -129,7 +130,7 @@
         android:gravity="center_vertical"
         android:paddingStart="28dp"
         android:paddingEnd="22dp"
-        android:text="실행 로그 상세 조회                                     &gt;&#10;이동, 도착, 실패 상태"
+        android:text="실행 로그 상세                                      &gt;&#10;이동, 도착, 실패 상태"
         android:textColor="#111111"
         android:textSize="17sp"
         android:textStyle="bold" />
@@ -143,7 +144,7 @@
         android:gravity="center_vertical"
         android:paddingStart="28dp"
         android:paddingEnd="22dp"
-        android:text="거점 위치 관리                                      &gt;&#10;거실, 현관, 방 좌표값"
+        android:text="지정 위치 관리                                      &gt;&#10;거실, 현관, 방 좌표값"
         android:textColor="#111111"
         android:textSize="17sp"
         android:textStyle="bold" />

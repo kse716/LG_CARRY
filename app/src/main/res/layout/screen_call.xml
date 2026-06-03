@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="18dp"
+        android:layout_marginBottom="16dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -22,6 +22,7 @@
                 android:layout_height="wrap_content"
                 android:text="CARRY"
                 android:textColor="#C30B45"
+                android:letterSpacing="0.06"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -30,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:text="호출"
                 android:textColor="#111111"
-                android:textSize="30sp"
+                android:textSize="28sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -49,15 +50,15 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="290dp"
+        android:layout_height="280dp"
         android:background="@drawable/bg_card"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="22dp">
 
         <FrameLayout
             android:layout_width="190dp"
-            android:layout_height="147dp">
+            android:layout_height="138dp">
 
             <View
                 android:id="@+id/micPulseRing"
@@ -78,8 +79,8 @@
 
             <ImageButton
                 android:id="@+id/micButton"
-                android:layout_width="112dp"
-                android:layout_height="112dp"
+                android:layout_width="108dp"
+                android:layout_height="108dp"
                 android:layout_gravity="center"
                 android:background="@drawable/bg_mic"
                 android:clickable="true"
@@ -94,7 +95,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="24dp"
             android:text="버튼을 눌러 캐리를 호출하세요"
             android:textColor="#74787F"
             android:textSize="15sp"
@@ -112,8 +113,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="170dp"
-        android:layout_marginTop="26dp"
+        android:layout_height="156dp"
+        android:layout_marginTop="14dp"
         android:background="@drawable/bg_card"
         android:orientation="vertical"
         android:padding="20dp">
@@ -121,7 +122,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Voice                 "
+            android:text="Voice                                      ..."
             android:textColor="#C30B45"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -129,7 +130,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:text="음성 인식 결과"
             android:textColor="#111111"
             android:textSize="20sp"
@@ -138,7 +139,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="14dp"
             android:text="명령 : 안경을 거실로 가져와"
             android:textColor="#74787F"
             android:textSize="14sp"

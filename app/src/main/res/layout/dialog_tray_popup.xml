@@ -7,12 +7,12 @@
     android:background="@drawable/popup_round_bg"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="22dp">
 
     <ImageView
-        android:layout_width="48dp"
-        android:layout_height="36dp"
-        android:layout_marginBottom="16dp"
+        android:layout_width="56dp"
+        android:layout_height="42dp"
+        android:layout_marginBottom="14dp"
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/ic_tray_open" />
 
@@ -23,14 +23,14 @@
         android:gravity="center"
         android:text="트레이 물품"
         android:textColor="#2C3033"
-        android:textSize="18sp"
+        android:textSize="19sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/popup_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="등록된 물품이 없어요."
         android:textColor="#555A60"
@@ -41,8 +41,8 @@
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="#2C3033"
+        android:layout_marginTop="22dp"
+        android:backgroundTint="#C30B45"
         android:text="닫기"
         android:textColor="#FFFFFF" />
 </LinearLayout>
