@@ -140,7 +140,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
-            android:text="명령 : 안경을 거실로 가져와"
+            android:text="명령 : DB 또는 음성 인식 결과 대기"
             android:textColor="#74787F"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -149,7 +149,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="신뢰도 92% / 목적지 : 거실 / 트레이 : 1번"
+            android:text="목적지와 트레이 정보를 기다리는 중"
             android:textColor="#74787F"
             android:textSize="14sp"
             android:textStyle="bold" />

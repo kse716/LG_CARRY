@@ -157,6 +157,9 @@
         android:layout_height="68dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/bg_card"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="22dp"
@@ -224,7 +227,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="거실, 현관, 방 좌표값"
+                android:text="DB에 저장된 위치와 좌표값"
                 android:textColor="#74787F"
                 android:textSize="12sp" />
         </LinearLayout>
