@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="14dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -22,6 +22,7 @@
                 android:layout_height="wrap_content"
                 android:text="CARRY"
                 android:textColor="#C30B45"
+                android:letterSpacing="0.06"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -30,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:text="물품 관리"
                 android:textColor="#111111"
-                android:textSize="30sp"
+                android:textSize="28sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -49,7 +50,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="64dp"
         android:orientation="horizontal">
 
         <TextView
@@ -61,7 +62,7 @@
             android:gravity="center"
             android:text="1번&#10;외출"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -74,7 +75,7 @@
             android:gravity="center"
             android:text="2번&#10;출근"
             android:textColor="#111111"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -87,17 +88,17 @@
             android:gravity="center"
             android:text="3번&#10;육아"
             android:textColor="#111111"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="245dp"
+        android:layout_height="263dp"
         android:layout_marginTop="14dp"
         android:background="@drawable/bg_card"
         android:orientation="vertical"
-        android:padding="15dp">
+        android:padding="18dp">
 
         <TextView
             android:id="@+id/selectedTrayLabel"
@@ -112,7 +113,7 @@
             android:id="@+id/selectedTrayTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:text="외출 모듈"
             android:textColor="#111111"
             android:textSize="20sp"
@@ -122,7 +123,7 @@
             android:id="@+id/trayNameInput"
             android:layout_width="match_parent"
             android:layout_height="46dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/bg_input"
             android:hint="트레이 이름 설정"
             android:inputType="text"
@@ -137,7 +138,7 @@
             android:id="@+id/saveTrayNameButton"
             android:layout_width="match_parent"
             android:layout_height="34dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/bg_primary_button"
             android:gravity="center"
             android:text="트레이 이름 저장"
@@ -148,7 +149,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <EditText
@@ -182,11 +183,11 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="176dp"
         android:layout_marginTop="14dp"
         android:background="@drawable/bg_card"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="18dp">
 
         <EditText
             android:id="@+id/itemSearchInput"
@@ -206,7 +207,7 @@
             android:id="@+id/itemSearchResultText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="14dp"
             android:text="예: 안경 검색 → 1번 tray"
             android:textColor="#74787F"
             android:textSize="15sp"
@@ -216,7 +217,7 @@
             android:id="@+id/itemListText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:text="검색하면 물품의 트레이 번호와 등록 시점을 보여줘요."
             android:textColor="#74787F"
             android:textSize="15sp"

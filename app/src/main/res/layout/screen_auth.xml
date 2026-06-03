@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- 상단 제목 영역 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,6 +13,7 @@
             android:layout_height="wrap_content"
             android:text="CARRY"
             android:textColor="#C30B45"
+            android:letterSpacing="0.06"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -22,25 +22,22 @@
             android:layout_height="wrap_content"
             android:text="로그인"
             android:textColor="#111111"
-            android:textSize="30sp"
+            android:textSize="28sp"
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- 화면 정중앙 로그인 카드 -->
     <LinearLayout
-        android:layout_width="368dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="22dp"
-        android:layout_marginEnd="22dp"
         android:background="@drawable/bg_card"
         android:orientation="vertical"
-        android:padding="22dp">
+        android:padding="20dp">
 
         <EditText
             android:id="@+id/loginNameInput"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="50dp"
             android:background="@drawable/bg_input"
             android:hint="이름"
             android:inputType="textPersonName"
@@ -52,7 +49,7 @@
         <EditText
             android:id="@+id/loginPasswordInput"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="50dp"
             android:layout_marginTop="12dp"
             android:background="@drawable/bg_input"
             android:hint="비밀번호"
@@ -65,7 +62,7 @@
         <TextView
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="50dp"
             android:layout_marginTop="18dp"
             android:background="@drawable/bg_card_selected"
             android:gravity="center"
@@ -76,7 +73,7 @@
         <TextView
             android:id="@+id/signupButton"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="50dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_primary_button"
             android:gravity="center"
