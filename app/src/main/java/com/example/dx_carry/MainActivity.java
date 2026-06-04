@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -1430,31 +1431,45 @@ public class MainActivity extends AppCompatActivity {
         TextView title = sheetView.findViewById(R.id.routineSheetTitle);
         EditText routineNameInput = sheetView.findViewById(R.id.routineNameInput);
         Spinner routineBaseSpinner = sheetView.findViewById(R.id.routineBaseSpinner);
-        TextView routineDateButton = sheetView.findViewById(R.id.routineDateButton);
+        TextView routineTimeButton = sheetView.findViewById(R.id.routineTimeButton);
         EditText routineRouteInput = sheetView.findViewById(R.id.routineRouteInput);
         final String[] selectedRunTime = {""};
+        List<String> selectedWeekdays = new ArrayList<>();
+        TextView[] weekdayButtons = {
+                sheetView.findViewById(R.id.routineWeekdaySun),
+                sheetView.findViewById(R.id.routineWeekdayMon),
+                sheetView.findViewById(R.id.routineWeekdayTue),
+                sheetView.findViewById(R.id.routineWeekdayWed),
+                sheetView.findViewById(R.id.routineWeekdayThu),
+                sheetView.findViewById(R.id.routineWeekdayFri),
+                sheetView.findViewById(R.id.routineWeekdaySat)
+        };
         routineBaseSpinner.setTag("");
 
         title.setText(editMode ? "루틴 수정" : "루틴 생성");
+        bindRoutineWeekdayButtons(weekdayButtons, selectedWeekdays);
         if (editMode && selectedModeId != null) {
             db.child("modes").child(selectedModeId).get().addOnSuccessListener(snapshot -> {
                 String modeName = snapshot.child("modeName").getValue(String.class);
                 String basePoint = snapshot.child("basePoint").getValue(String.class);
                 String runTime = snapshot.child("runTime").getValue(String.class);
+                String repeatDays = snapshot.child("repeatDays").getValue(String.class);
                 String route = snapshot.child("route").getValue(String.class);
                 routineNameInput.setText(modeName == null ? "" : modeName);
                 routineBaseSpinner.setTag(basePoint == null ? "" : basePoint);
                 selectRoutineBase(routineBaseSpinner, basePoint);
+                setSelectedWeekdays(selectedWeekdays, repeatDays);
+                updateRoutineWeekdayButtons(weekdayButtons, selectedWeekdays);
                 selectedRunTime[0] = runTime == null ? "" : runTime;
-                routineDateButton.setText(selectedRunTime[0].isEmpty() ? "실행 날짜/시간 선택" : selectedRunTime[0]);
-                routineDateButton.setTextColor(selectedRunTime[0].isEmpty() ? 0xFF8A8D94 : 0xFF111111);
+                routineTimeButton.setText(selectedRunTime[0].isEmpty() ? "실행 시간 선택" : selectedRunTime[0]);
+                routineTimeButton.setTextColor(selectedRunTime[0].isEmpty() ? 0xFF8A8D94 : 0xFF111111);
                 routineRouteInput.setText(route == null ? "" : route);
             });
         } else {
             selectedModeId = null;
         }
         loadRoutineBaseOptions(routineBaseSpinner);
-        routineDateButton.setOnClickListener(v -> showRoutineDateTimePicker(routineDateButton, selectedRunTime));
+        routineTimeButton.setOnClickListener(v -> showRoutineTimePicker(routineTimeButton, selectedRunTime));
         sheetView.findViewById(R.id.cancelRoutineSheetButton).setOnClickListener(v -> {
             selectedModeId = null;
             sheet.dismiss();
@@ -1462,6 +1477,8 @@ public class MainActivity extends AppCompatActivity {
         sheetView.findViewById(R.id.saveRoutineSheetButton).setOnClickListener(v -> saveCurrentModeFromSheet(
                 routineNameInput.getText().toString().trim(),
                 routineBaseSpinner.getSelectedItem() == null ? "" : routineBaseSpinner.getSelectedItem().toString().trim(),
+                selectedWeekdaysCsv(selectedWeekdays),
+                selectedWeekdaysText(selectedWeekdays),
                 selectedRunTime[0],
                 routineRouteInput.getText().toString().trim(),
                 sheet
@@ -1470,11 +1487,130 @@ public class MainActivity extends AppCompatActivity {
         sheet.show();
     }
 
-    private void loadRoutineBaseOptions(Spinner spinner) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new ArrayList<>());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        adapter.add("거점을 불러오는 중");
-        spinner.setAdapter(adapter);
+    private void bindRoutineWeekdayButtons(TextView[] buttons, List<String> selectedWeekdays) {
+        for (int i = 0; i < buttons.length; i++) {
+            final int index = i;
+            buttons[i].setOnClickListener(v -> {
+                String code = weekdayCode(index);
+                if (selectedWeekdays.contains(code)) {
+                    selectedWeekdays.remove(code);
+                } else {
+                    selectedWeekdays.add(code);
+                }
+                updateRoutineWeekdayButtons(buttons, selectedWeekdays);
+            });
+        }
+        updateRoutineWeekdayButtons(buttons, selectedWeekdays);
+    }
+
+    private void updateRoutineWeekdayButtons(TextView[] buttons, List<String> selectedWeekdays) {
+        for (int i = 0; i < buttons.length; i++) {
+            boolean selected = selectedWeekdays.contains(weekdayCode(i));
+            buttons[i].setBackgroundResource(selected ? R.drawable.bg_weekday_circle_selected : R.drawable.bg_weekday_circle);
+            buttons[i].setTextColor(selected ? 0xFFFFFFFF : weekdayColor(i));
+        }
+    }
+
+    private void setSelectedWeekdays(List<String> selectedWeekdays, String repeatDays) {
+        selectedWeekdays.clear();
+        if (repeatDays == null || repeatDays.trim().isEmpty()) {
+            return;
+        }
+        String[] days = repeatDays.split(",");
+        for (String day : days) {
+            String code = day.trim();
+            if (!code.isEmpty() && !selectedWeekdays.contains(code)) {
+                selectedWeekdays.add(code);
+            }
+        }
+    }
+
+    private String selectedWeekdaysCsv(List<String> selectedWeekdays) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 7; i++) {
+            String code = weekdayCode(i);
+            if (selectedWeekdays.contains(code)) {
+                if (builder.length() > 0) {
+                    builder.append(",");
+                }
+                builder.append(code);
+            }
+        }
+        return builder.toString();
+    }
+
+    private String selectedWeekdaysText(List<String> selectedWeekdays) {
+        if (selectedWeekdays.size() == 7) {
+            return "매일";
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 7; i++) {
+            String code = weekdayCode(i);
+            if (selectedWeekdays.contains(code)) {
+                if (builder.length() > 0) {
+                    builder.append(", ");
+                }
+                builder.append(weekdayLabel(i));
+            }
+        }
+        return builder.toString();
+    }
+
+    private String weekdayCode(int index) {
+        switch (index) {
+            case 0:
+                return "sun";
+            case 1:
+                return "mon";
+            case 2:
+                return "tue";
+            case 3:
+                return "wed";
+            case 4:
+                return "thu";
+            case 5:
+                return "fri";
+            case 6:
+            default:
+                return "sat";
+        }
+    }
+
+    private String weekdayLabel(int index) {
+        switch (index) {
+            case 0:
+                return "일";
+            case 1:
+                return "월";
+            case 2:
+                return "화";
+            case 3:
+                return "수";
+            case 4:
+                return "목";
+            case 5:
+                return "금";
+            case 6:
+            default:
+                return "토";
+        }
+    }
+
+    private int weekdayColor(int index) {
+        if (index == 0) {
+            return 0xFFC30B45;
+    }
+        if (index == 6) {
+        return 0xFF2F73B8;
+    }
+        return 0xFF111111;
+}
+
+private void loadRoutineBaseOptions(Spinner spinner) {
+    ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new ArrayList<>());
+    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    adapter.add("거점을 불러오는 중");
+    spinner.setAdapter(adapter);
 
         db.child("locations").get().addOnSuccessListener(snapshot -> {
             adapter.clear();
@@ -1518,6 +1654,100 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+    private void showRoutineTimePicker(TextView timeButton, String[] selectedRunTime) {
+        BottomSheetDialog sheet = new BottomSheetDialog(this);
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setBackgroundResource(R.drawable.popup_round_bg);
+        container.setPadding(dp(22), dp(18), dp(22), dp(24));
+
+        TextView title = new TextView(this);
+        title.setText("실행 시간 선택");
+        title.setTextColor(0xFF111111);
+        title.setTextSize(20);
+        title.setTypeface(null, android.graphics.Typeface.BOLD);
+        container.addView(title);
+
+        TextView subtitle = new TextView(this);
+        subtitle.setText("위아래로 움직여 시간을 설정하세요.");
+        subtitle.setTextColor(0xFF74787F);
+        subtitle.setTextSize(13);
+        subtitle.setPadding(0, dp(6), 0, dp(14));
+        container.addView(subtitle);
+
+        LinearLayout pickerRow = new LinearLayout(this);
+        pickerRow.setOrientation(LinearLayout.HORIZONTAL);
+        pickerRow.setGravity(android.view.Gravity.CENTER);
+
+        NumberPicker hourPicker = new NumberPicker(this);
+        hourPicker.setMinValue(0);
+        hourPicker.setMaxValue(23);
+        hourPicker.setFormatter(value -> String.format(Locale.KOREA, "%02d", value));
+
+        NumberPicker minutePicker = new NumberPicker(this);
+        minutePicker.setMinValue(0);
+        minutePicker.setMaxValue(59);
+        minutePicker.setFormatter(value -> String.format(Locale.KOREA, "%02d", value));
+
+        String currentTime = selectedRunTime[0];
+        if (currentTime != null && currentTime.matches("\\d{2}:\\d{2}")) {
+            hourPicker.setValue(Integer.parseInt(currentTime.substring(0, 2)));
+            minutePicker.setValue(Integer.parseInt(currentTime.substring(3, 5)));
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            hourPicker.setValue(calendar.get(Calendar.HOUR_OF_DAY));
+            minutePicker.setValue(calendar.get(Calendar.MINUTE));
+        }
+
+        TextView separator = new TextView(this);
+        separator.setText(":");
+        separator.setTextColor(0xFF111111);
+        separator.setTextSize(26);
+        separator.setTypeface(null, android.graphics.Typeface.BOLD);
+        separator.setGravity(android.view.Gravity.CENTER);
+
+        pickerRow.addView(hourPicker, new LinearLayout.LayoutParams(0, dp(150), 1));
+        pickerRow.addView(separator, new LinearLayout.LayoutParams(dp(24), dp(150)));
+        pickerRow.addView(minutePicker, new LinearLayout.LayoutParams(0, dp(150), 1));
+        container.addView(pickerRow);
+
+        LinearLayout buttonRow = new LinearLayout(this);
+        buttonRow.setOrientation(LinearLayout.HORIZONTAL);
+        buttonRow.setPadding(0, dp(16), 0, 0);
+
+        TextView cancel = new TextView(this);
+        cancel.setText("취소");
+        cancel.setTextColor(0xFFFFFFFF);
+        cancel.setTypeface(null, android.graphics.Typeface.BOLD);
+        cancel.setGravity(android.view.Gravity.CENTER);
+        cancel.setBackgroundResource(R.drawable.bg_primary_button);
+
+        TextView save = new TextView(this);
+        save.setText("선택");
+        save.setTextColor(0xFFFFFFFF);
+        save.setTypeface(null, android.graphics.Typeface.BOLD);
+        save.setGravity(android.view.Gravity.CENTER);
+        save.setBackgroundResource(R.drawable.bg_card_selected);
+
+        LinearLayout.LayoutParams cancelParams = new LinearLayout.LayoutParams(0, dp(44), 1);
+        LinearLayout.LayoutParams saveParams = new LinearLayout.LayoutParams(0, dp(44), 1);
+        saveParams.setMargins(dp(12), 0, 0, 0);
+        buttonRow.addView(cancel, cancelParams);
+        buttonRow.addView(save, saveParams);
+        container.addView(buttonRow);
+
+        cancel.setOnClickListener(v -> sheet.dismiss());
+        save.setOnClickListener(v -> {
+            selectedRunTime[0] = String.format(Locale.KOREA, "%02d:%02d", hourPicker.getValue(), minutePicker.getValue());
+            timeButton.setText(selectedRunTime[0]);
+            timeButton.setTextColor(0xFF111111);
+            sheet.dismiss();
+        });
+
+        sheet.setContentView(container);
+        sheet.show();
     }
 
     private void showRoutineDateTimePicker(TextView dateButton, String[] selectedRunTime) {
@@ -1569,7 +1799,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void saveCurrentModeFromSheet(String modeName, String basePoint, String runTime, String route, BottomSheetDialog sheet) {
+    private void saveCurrentModeFromSheet(String modeName, String basePoint, String repeatDays, String repeatDaysText, String runTime, String route, BottomSheetDialog sheet) {
         if (modeName.isEmpty()) {
             Toast.makeText(this, "루틴 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
             return;
@@ -1580,6 +1810,10 @@ public class MainActivity extends AppCompatActivity {
         }
         if (basePoint.contains("등록된 거점 없음") || basePoint.contains("불러오는 중") || basePoint.contains("불러오기 실패")) {
             Toast.makeText(this, "등록된 거점을 선택하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (repeatDays.isEmpty()) {
+            Toast.makeText(this, "실행할 요일을 선택하세요.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (runTime.isEmpty()) {
@@ -1599,7 +1833,10 @@ public class MainActivity extends AppCompatActivity {
         mode.put("modeId", modeId);
         mode.put("modeName", modeName);
         mode.put("basePoint", basePoint);
+        mode.put("repeatDays", repeatDays);
+        mode.put("repeatDaysText", repeatDaysText);
         mode.put("runTime", runTime);
+        mode.put("scheduleText", repeatDaysText + " " + runTime);
         mode.put("route", route);
         mode.put("active", true);
         mode.put("updatedAt", System.currentTimeMillis());
@@ -1639,12 +1876,14 @@ public class MainActivity extends AppCompatActivity {
                 String modeName = child.child("modeName").getValue(String.class);
                 String basePoint = child.child("basePoint").getValue(String.class);
                 String runTime = child.child("runTime").getValue(String.class);
+                String repeatDaysText = child.child("repeatDaysText").getValue(String.class);
                 String route = child.child("route").getValue(String.class);
+                Boolean active = child.child("active").getValue(Boolean.class);
                 if (modeName == null || modeName.trim().isEmpty()) {
                     continue;
                 }
                 hasMode = true;
-                addModeCard(modeId, modeName, basePoint, runTime, route);
+                addModeCard(modeId, modeName, basePoint, repeatDaysText, runTime, route, active == null || active);
             }
             if (!hasMode) {
                 TextView empty = new TextView(this);
@@ -1658,7 +1897,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void addModeCard(String modeId, String modeName, String basePoint, String runTime, String route) {
+    private void addModeCard(String modeId, String modeName, String basePoint, String repeatDaysText, String runTime, String route, boolean isActive) {
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setBackgroundResource(R.drawable.bg_card);
@@ -1695,6 +1934,11 @@ public class MainActivity extends AppCompatActivity {
         String timeText = runTime == null || runTime.trim().isEmpty() ? "시간 미설정" : runTime.trim();
         String routeText = route == null || route.trim().isEmpty() ? "이동 내용 미설정" : route.trim();
         subtitle.setText("거점: " + baseText + "  |  시간: " + timeText + "\n" + routeText);
+        String displayBaseText = basePoint == null || basePoint.trim().isEmpty() ? "거점 미설정" : basePoint.trim();
+        String displayRepeatText = repeatDaysText == null || repeatDaysText.trim().isEmpty() ? "요일 미설정" : repeatDaysText.trim();
+        String displayTimeText = runTime == null || runTime.trim().isEmpty() ? "시간 미설정" : runTime.trim();
+        String displayRouteText = route == null || route.trim().isEmpty() ? "이동 내용 미설정" : route.trim();
+        subtitle.setText("거점: " + displayBaseText + "  |  반복: " + displayRepeatText + "  |  시간: " + displayTimeText + "\n" + displayRouteText);
         subtitle.setTextColor(0xFF74787F);
         subtitle.setTextSize(13);
         subtitle.setTypeface(null, android.graphics.Typeface.BOLD);
@@ -1707,6 +1951,28 @@ public class MainActivity extends AppCompatActivity {
         more.setTypeface(null, android.graphics.Typeface.BOLD);
         more.setGravity(android.view.Gravity.CENTER);
         more.setLayoutParams(new LinearLayout.LayoutParams(dp(42), dp(42)));
+
+        LinearLayout activeToggle = new LinearLayout(this);
+        activeToggle.setOrientation(LinearLayout.HORIZONTAL);
+        activeToggle.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        activeToggle.setPadding(dp(3), 0, dp(3), 0);
+        activeToggle.setBackgroundResource(isActive ? R.drawable.bg_switch_on : R.drawable.bg_switch_off);
+        activeToggle.setContentDescription(isActive ? "루틴 활성화" : "루틴 비활성화");
+        activeToggle.setLayoutParams(new LinearLayout.LayoutParams(dp(42), dp(24)));
+
+        View toggleThumb = new View(this);
+        toggleThumb.setBackgroundResource(R.drawable.bg_switch_thumb);
+        LinearLayout.LayoutParams thumbParams = new LinearLayout.LayoutParams(dp(18), dp(18));
+        if (isActive) {
+            thumbParams.setMargins(dp(18), 0, 0, 0);
+        }
+        activeToggle.addView(toggleThumb, thumbParams);
+
+        LinearLayout actionStack = new LinearLayout(this);
+        actionStack.setOrientation(LinearLayout.VERTICAL);
+        actionStack.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
+        actionStack.addView(activeToggle);
+        actionStack.addView(more);
 
         LinearLayout inlineMenu = new LinearLayout(this);
         inlineMenu.setOrientation(LinearLayout.HORIZONTAL);
@@ -1732,6 +1998,7 @@ public class MainActivity extends AppCompatActivity {
             inlineMenu.setVisibility(View.GONE);
             deleteCurrentMode();
         });
+        activeToggle.setOnClickListener(v -> toggleModeActive(modeId, !isActive));
         more.setOnClickListener(v -> {
             selectedModeId = modeId;
             modeMoreMenu.setVisibility(View.GONE);
@@ -1741,12 +2008,20 @@ public class MainActivity extends AppCompatActivity {
         textBox.addView(title);
         textBox.addView(subtitle);
         cardTop.addView(textBox);
-        cardTop.addView(more);
+        cardTop.addView(actionStack);
         inlineMenu.addView(edit);
         inlineMenu.addView(delete);
         card.addView(cardTop);
         card.addView(inlineMenu);
         modeListContainer.addView(card);
+    }
+
+    private void toggleModeActive(String modeId, boolean active) {
+        db.child("modes").child(modeId).child("active").setValue(active)
+                .addOnSuccessListener(unused -> {
+                    loadModes();
+                    Toast.makeText(this, active ? "루틴이 활성화됐어요." : "루틴이 비활성화됐어요.", Toast.LENGTH_SHORT).show();
+                });
     }
 
     private TextView buildInlineModeButton(String label, int textColor) {
