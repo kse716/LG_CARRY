@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="14dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -50,7 +50,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="132dp"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -59,23 +59,23 @@
             android:layout_weight="1"
             android:background="@drawable/bg_card"
             android:orientation="vertical"
-            android:padding="22dp">
+            android:padding="18dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="배터리"
-                android:textColor="#74787F"
-                android:textSize="15sp"
+                android:textColor="#C30B45"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="16dp"
                 android:text="86%"
                 android:textColor="#111111"
-                android:textSize="20sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -86,20 +86,20 @@
             android:layout_weight="1"
             android:background="@drawable/bg_card"
             android:orientation="vertical"
-            android:padding="22dp">
+            android:padding="18dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Wi-fi 연결"
-                android:textColor="#74787F"
-                android:textSize="15sp"
+                android:textColor="#C30B45"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="16dp"
                 android:text="AI-CAM"
                 android:textColor="#111111"
                 android:textSize="20sp"
@@ -107,45 +107,135 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
+    <LinearLayout
         android:id="@+id/storageHistoryButton"
         android:layout_width="match_parent"
-        android:layout_height="76dp"
-        android:layout_marginTop="18dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="14dp"
         android:background="@drawable/bg_card"
         android:gravity="center_vertical"
-        android:paddingStart="28dp"
-        android:paddingEnd="22dp"
-        android:text="보관 기록 조회                                      &gt;&#10;물품 생성, 삭제, 보관 이력"
-        android:textColor="#111111"
-        android:textSize="17sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:paddingStart="22dp"
+        android:paddingEnd="18dp">
 
-    <TextView
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="보관 기록 조회"
+                android:textColor="#111111"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="물품 생성, 삭제, 보관 이력"
+                android:textColor="#74787F"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="&gt;"
+            android:textColor="#8A8D94"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/logDetailButton"
         android:layout_width="match_parent"
-        android:layout_height="76dp"
-        android:layout_marginTop="12dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/bg_card"
         android:gravity="center_vertical"
-        android:paddingStart="28dp"
-        android:paddingEnd="22dp"
-        android:text="실행 로그 상세                                      &gt;&#10;이동, 도착, 실패 상태"
-        android:textColor="#111111"
-        android:textSize="17sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:paddingStart="22dp"
+        android:paddingEnd="18dp">
 
-    <TextView
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="실행 로그 상세"
+                android:textColor="#111111"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="이동, 도착, 실패 상태"
+                android:textColor="#74787F"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="&gt;"
+            android:textColor="#8A8D94"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/locationManageButton"
         android:layout_width="match_parent"
-        android:layout_height="76dp"
-        android:layout_marginTop="12dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/bg_card"
         android:gravity="center_vertical"
-        android:paddingStart="28dp"
-        android:paddingEnd="22dp"
-        android:text="지정 위치 관리                                      &gt;&#10;거실, 현관, 방 좌표값"
-        android:textColor="#111111"
-        android:textSize="17sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:paddingStart="22dp"
+        android:paddingEnd="18dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="지정 위치 관리"
+                android:textColor="#111111"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="거실, 현관, 방 좌표값"
+                android:textColor="#74787F"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="&gt;"
+            android:textColor="#8A8D94"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 </LinearLayout>

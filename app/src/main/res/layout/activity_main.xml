@@ -56,6 +56,16 @@
                 android:id="@+id/settingsScreen"
                 layout="@layout/screen_settings"
                 android:visibility="gone" />
+
+            <include
+                android:id="@+id/executionLogScreen"
+                layout="@layout/screen_execution_log"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/storageHistoryScreen"
+                layout="@layout/screen_storage_history"
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 
