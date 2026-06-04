@@ -1,0 +1,844 @@
+﻿text,label,weight
+기저귀 가져다 줘,CALL_TRAY_BABY,1
+기저귀 보관함 와줘,CALL_TRAY_BABY,1
+기저귀 서랍 불러줘,CALL_TRAY_BABY,1
+기저귀 있는 서랍 가져와,CALL_TRAY_BABY,1
+기저귀 있는 트레이 와줘,CALL_TRAY_BABY,1
+기저귀 좀 갖다줘,CALL_TRAY_BABY,1
+기저귀 준비해줘,CALL_TRAY_BABY,1
+기저귀 챙겨줘,CALL_TRAY_BABY,1
+기저귀 트레이 불러줘,CALL_TRAY_BABY,1
+기저귀 트레이 와줘,CALL_TRAY_BABY,1
+기저귀 필요해,CALL_TRAY_BABY,1
+등원 준비용 기저귀 가져와,CALL_TRAY_BABY,1
+등원 준비용 물티슈 가져와,CALL_TRAY_BABY,1
+등원 준비용 손수건 가져와,CALL_TRAY_BABY,1
+등원 준비용 장난감 가져와,CALL_TRAY_BABY,1
+등원 준비용 젖병 가져와,CALL_TRAY_BABY,1
+물티슈 가져다 줘,CALL_TRAY_BABY,1
+물티슈 보관함 와줘,CALL_TRAY_BABY,1
+물티슈 서랍 불러줘,CALL_TRAY_BABY,1
+물티슈 있는 서랍 가져와,CALL_TRAY_BABY,1
+물티슈 있는 트레이 와줘,CALL_TRAY_BABY,1
+물티슈 좀 갖다줘,CALL_TRAY_BABY,1
+물티슈 준비해줘,CALL_TRAY_BABY,1
+물티슈 챙겨줘,CALL_TRAY_BABY,1
+물티슈 트레이 불러줘,CALL_TRAY_BABY,1
+물티슈 트레이 와줘,CALL_TRAY_BABY,1
+물티슈 필요해,CALL_TRAY_BABY,1
+손수건 가져다 줘,CALL_TRAY_BABY,1
+손수건 보관함 와줘,CALL_TRAY_BABY,1
+손수건 서랍 불러줘,CALL_TRAY_BABY,1
+손수건 있는 서랍 가져와,CALL_TRAY_BABY,1
+손수건 있는 트레이 와줘,CALL_TRAY_BABY,1
+손수건 좀 갖다줘,CALL_TRAY_BABY,1
+손수건 준비해줘,CALL_TRAY_BABY,1
+손수건 챙겨줘,CALL_TRAY_BABY,1
+손수건 트레이 불러줘,CALL_TRAY_BABY,1
+손수건 트레이 와줘,CALL_TRAY_BABY,1
+손수건 필요해,CALL_TRAY_BABY,1
+아기 기저귀 트레이 호출해,CALL_TRAY_BABY,1
+아기 물티슈 트레이 호출해,CALL_TRAY_BABY,1
+아기 손수건 트레이 호출해,CALL_TRAY_BABY,1
+아기 장난감 트레이 호출해,CALL_TRAY_BABY,1
+아기 젖병 트레이 호출해,CALL_TRAY_BABY,1
+아기용 기저귀 가져와,CALL_TRAY_BABY,1
+아기용 물티슈 가져와,CALL_TRAY_BABY,1
+아기용 손수건 가져와,CALL_TRAY_BABY,1
+아기용 장난감 가져와,CALL_TRAY_BABY,1
+아기용 젖병 가져와,CALL_TRAY_BABY,1
+아이 기저귀 가져와줘,CALL_TRAY_BABY,1
+아이 물티슈 가져와줘,CALL_TRAY_BABY,1
+아이 손수건 가져와줘,CALL_TRAY_BABY,1
+아이 장난감 가져와줘,CALL_TRAY_BABY,1
+아이 젖병 가져와줘,CALL_TRAY_BABY,1
+육아 트레이에서 기저귀 가져와,CALL_TRAY_BABY,1
+육아 트레이에서 물티슈 가져와,CALL_TRAY_BABY,1
+육아 트레이에서 손수건 가져와,CALL_TRAY_BABY,1
+육아 트레이에서 장난감 가져와,CALL_TRAY_BABY,1
+육아 트레이에서 젖병 가져와,CALL_TRAY_BABY,1
+장난감 가져다 줘,CALL_TRAY_BABY,1
+장난감 보관함 와줘,CALL_TRAY_BABY,1
+장난감 서랍 불러줘,CALL_TRAY_BABY,1
+장난감 있는 서랍 가져와,CALL_TRAY_BABY,1
+장난감 있는 트레이 와줘,CALL_TRAY_BABY,1
+장난감 좀 갖다줘,CALL_TRAY_BABY,1
+장난감 준비해줘,CALL_TRAY_BABY,1
+장난감 챙겨줘,CALL_TRAY_BABY,1
+장난감 트레이 불러줘,CALL_TRAY_BABY,1
+장난감 트레이 와줘,CALL_TRAY_BABY,1
+장난감 필요해,CALL_TRAY_BABY,1
+젖병 가져다 줘,CALL_TRAY_BABY,1
+젖병 보관함 와줘,CALL_TRAY_BABY,1
+젖병 서랍 불러줘,CALL_TRAY_BABY,1
+젖병 있는 서랍 가져와,CALL_TRAY_BABY,1
+젖병 있는 트레이 와줘,CALL_TRAY_BABY,1
+젖병 좀 갖다줘,CALL_TRAY_BABY,1
+젖병 준비해줘,CALL_TRAY_BABY,1
+젖병 챙겨줘,CALL_TRAY_BABY,1
+젖병 트레이 불러줘,CALL_TRAY_BABY,1
+젖병 트레이 와줘,CALL_TRAY_BABY,1
+젖병 필요해,CALL_TRAY_BABY,1
+캐리 기저귀 부탁해,CALL_TRAY_BABY,1
+캐리 물티슈 부탁해,CALL_TRAY_BABY,1
+캐리 손수건 부탁해,CALL_TRAY_BABY,1
+캐리 장난감 부탁해,CALL_TRAY_BABY,1
+캐리 젖병 부탁해,CALL_TRAY_BABY,1
+캐리야 기저귀 가져와,CALL_TRAY_BABY,1
+캐리야 물티슈 가져와,CALL_TRAY_BABY,1
+캐리야 손수건 가져와,CALL_TRAY_BABY,1
+캐리야 장난감 가져와,CALL_TRAY_BABY,1
+캐리야 젖병 가져와,CALL_TRAY_BABY,1
+게임 패드 가져다 줘,CALL_TRAY_HOBBY,1
+게임 패드 서랍 불러줘,CALL_TRAY_HOBBY,1
+게임 패드 트레이 와줘,CALL_TRAY_HOBBY,1
+게임패드 보관함 호출해,CALL_TRAY_HOBBY,1
+게임패드 있는 서랍 가져와,CALL_TRAY_HOBBY,1
+게임패드 있는 트레이 와줘,CALL_TRAY_HOBBY,1
+게임패드 좀 갖다줘,CALL_TRAY_HOBBY,1
+게임패드 준비해줘,CALL_TRAY_HOBBY,1
+게임패드 트레이 불러줘,CALL_TRAY_HOBBY,1
+게임패드 필요해,CALL_TRAY_HOBBY,1
+뜨개질 도구 가져다 줘,CALL_TRAY_HOBBY,1
+뜨개질 도구 서랍 불러줘,CALL_TRAY_HOBBY,1
+뜨개질 도구 트레이 와줘,CALL_TRAY_HOBBY,1
+뜨개질 보관함 호출해,CALL_TRAY_HOBBY,1
+뜨개질 있는 서랍 가져와,CALL_TRAY_HOBBY,1
+뜨개질 있는 트레이 와줘,CALL_TRAY_HOBBY,1
+뜨개질 좀 갖다줘,CALL_TRAY_HOBBY,1
+뜨개질 준비해줘,CALL_TRAY_HOBBY,1
+뜨개질 트레이 불러줘,CALL_TRAY_HOBBY,1
+뜨개질 필요해,CALL_TRAY_HOBBY,1
+스케치북 가져다 줘,CALL_TRAY_HOBBY,1
+스케치북 보관함 호출해,CALL_TRAY_HOBBY,1
+스케치북 서랍 불러줘,CALL_TRAY_HOBBY,1
+스케치북 있는 서랍 가져와,CALL_TRAY_HOBBY,1
+스케치북 있는 트레이 와줘,CALL_TRAY_HOBBY,1
+스케치북 좀 갖다줘,CALL_TRAY_HOBBY,1
+스케치북 준비해줘,CALL_TRAY_HOBBY,1
+스케치북 트레이 불러줘,CALL_TRAY_HOBBY,1
+스케치북 트레이 와줘,CALL_TRAY_HOBBY,1
+스케치북 필요해,CALL_TRAY_HOBBY,1
+액체 괴물 가져다 줘,CALL_TRAY_HOBBY,1
+액체 괴물 서랍 불러줘,CALL_TRAY_HOBBY,1
+액체 괴물 트레이 와줘,CALL_TRAY_HOBBY,1
+액체괴물 보관함 호출해,CALL_TRAY_HOBBY,1
+액체괴물 있는 서랍 가져와,CALL_TRAY_HOBBY,1
+액체괴물 있는 트레이 와줘,CALL_TRAY_HOBBY,1
+액체괴물 좀 갖다줘,CALL_TRAY_HOBBY,1
+액체괴물 준비해줘,CALL_TRAY_HOBBY,1
+액체괴물 트레이 불러줘,CALL_TRAY_HOBBY,1
+액체괴물 필요해,CALL_TRAY_HOBBY,1
+작업할 때 쓰는 게임 패드 가져와,CALL_TRAY_HOBBY,1
+작업할 때 쓰는 뜨개질 도구 가져와,CALL_TRAY_HOBBY,1
+작업할 때 쓰는 스케치북 가져와,CALL_TRAY_HOBBY,1
+작업할 때 쓰는 액체 괴물 가져와,CALL_TRAY_HOBBY,1
+작업할 때 쓰는 충전 케이블 가져와,CALL_TRAY_HOBBY,1
+작업할 때 쓰는 충전기 가져와,CALL_TRAY_HOBBY,1
+충전 케이블 서랍 불러줘,CALL_TRAY_HOBBY,1
+충전 케이블 트레이 와줘,CALL_TRAY_HOBBY,1
+충전기 가져다 줘,CALL_TRAY_HOBBY,1
+충전기 보관함 호출해,CALL_TRAY_HOBBY,1
+충전기 서랍 불러줘,CALL_TRAY_HOBBY,1
+충전기 있는 서랍 가져와,CALL_TRAY_HOBBY,1
+충전기 있는 트레이 와줘,CALL_TRAY_HOBBY,1
+충전기 좀 갖다줘,CALL_TRAY_HOBBY,1
+충전기 준비해줘,CALL_TRAY_HOBBY,1
+충전기 줄 가져다 줘,CALL_TRAY_HOBBY,1
+충전기 케이블 보관함 호출해,CALL_TRAY_HOBBY,1
+충전기 케이블 있는 서랍 가져와,CALL_TRAY_HOBBY,1
+충전기 케이블 있는 트레이 와줘,CALL_TRAY_HOBBY,1
+충전기 케이블 좀 갖다줘,CALL_TRAY_HOBBY,1
+충전기 케이블 준비해줘,CALL_TRAY_HOBBY,1
+충전기 케이블 트레이 불러줘,CALL_TRAY_HOBBY,1
+충전기 케이블 필요해,CALL_TRAY_HOBBY,1
+충전기 트레이 불러줘,CALL_TRAY_HOBBY,1
+충전기 트레이 와줘,CALL_TRAY_HOBBY,1
+충전기 필요해,CALL_TRAY_HOBBY,1
+취미 트레이에서 게임패드 가져와,CALL_TRAY_HOBBY,1
+취미 트레이에서 뜨개질 가져와,CALL_TRAY_HOBBY,1
+취미 트레이에서 스케치북 가져와,CALL_TRAY_HOBBY,1
+취미 트레이에서 액체괴물 가져와,CALL_TRAY_HOBBY,1
+취미 트레이에서 충전기 가져와,CALL_TRAY_HOBBY,1
+취미 트레이에서 충전기 케이블 가져와,CALL_TRAY_HOBBY,1
+취미용 게임 패드 가져와,CALL_TRAY_HOBBY,1
+취미용 뜨개질 도구 가져와,CALL_TRAY_HOBBY,1
+취미용 스케치북 가져와,CALL_TRAY_HOBBY,1
+취미용 액체 괴물 가져와,CALL_TRAY_HOBBY,1
+취미용 충전기 가져와,CALL_TRAY_HOBBY,1
+취미용 충전기 줄 가져와,CALL_TRAY_HOBBY,1
+캐리 게임패드 부탁해,CALL_TRAY_HOBBY,1
+캐리 뜨개질 부탁해,CALL_TRAY_HOBBY,1
+캐리 스케치북 부탁해,CALL_TRAY_HOBBY,1
+캐리 액체괴물 부탁해,CALL_TRAY_HOBBY,1
+캐리 충전기 부탁해,CALL_TRAY_HOBBY,1
+캐리 충전기 케이블 부탁해,CALL_TRAY_HOBBY,1
+캐리야 게임패드 가져와,CALL_TRAY_HOBBY,1
+캐리야 뜨개질 가져와,CALL_TRAY_HOBBY,1
+캐리야 스케치북 가져와,CALL_TRAY_HOBBY,1
+캐리야 액체괴물 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전기 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전기 케이블 가져와,CALL_TRAY_HOBBY,1
+당뇨약 보관함 호출해,CALL_TRAY_MEDICINE,1
+당뇨약 있는 서랍 가져와,CALL_TRAY_MEDICINE,1
+당뇨약 있는 트레이 와줘,CALL_TRAY_MEDICINE,1
+당뇨약 좀 갖다줘,CALL_TRAY_MEDICINE,1
+당뇨약 준비해줘,CALL_TRAY_MEDICINE,1
+당뇨약 트레이 불러줘,CALL_TRAY_MEDICINE,1
+당뇨약 필요해,CALL_TRAY_MEDICINE,1
+돋보기 안경 보관함 호출해,CALL_TRAY_MEDICINE,1
+돋보기 안경 있는 트레이 와줘,CALL_TRAY_MEDICINE,1
+돋보기 안경 준비해줘,CALL_TRAY_MEDICINE,1
+돋보기 있는 서랍 가져와,CALL_TRAY_MEDICINE,1
+돋보기 좀 갖다줘,CALL_TRAY_MEDICINE,1
+돋보기 트레이 불러줘,CALL_TRAY_MEDICINE,1
+돋보기 필요해,CALL_TRAY_MEDICINE,1
+복약 트레이에서 당뇨약 가져와,CALL_TRAY_MEDICINE,1
+복약 트레이에서 돋보기 가져와,CALL_TRAY_MEDICINE,1
+복약 트레이에서 비타민 가져와,CALL_TRAY_MEDICINE,1
+복약 트레이에서 안경 가져와,CALL_TRAY_MEDICINE,1
+복약 트레이에서 약 가져와,CALL_TRAY_MEDICINE,1
+복약 트레이에서 영양제 가져와,CALL_TRAY_MEDICINE,1
+복약 트레이에서 통풍약 가져와,CALL_TRAY_MEDICINE,1
+복약 트레이에서 한약 가져와,CALL_TRAY_MEDICINE,1
+복약 트레이에서 혈압약 가져와,CALL_TRAY_MEDICINE,1
+비타민 보관함 호출해,CALL_TRAY_MEDICINE,1
+비타민 있는 서랍 가져와,CALL_TRAY_MEDICINE,1
+비타민 있는 트레이 와줘,CALL_TRAY_MEDICINE,1
+비타민 좀 갖다줘,CALL_TRAY_MEDICINE,1
+비타민 준비해줘,CALL_TRAY_MEDICINE,1
+비타민 트레이 불러줘,CALL_TRAY_MEDICINE,1
+비타민 필요해,CALL_TRAY_MEDICINE,1
+아침 약 보관함 호출해,CALL_TRAY_MEDICINE,1
+안경 있는 서랍 가져와,CALL_TRAY_MEDICINE,1
+안경 좀 갖다줘,CALL_TRAY_MEDICINE,1
+안경 트레이 불러줘,CALL_TRAY_MEDICINE,1
+안경 필요해,CALL_TRAY_MEDICINE,1
+약 있는 서랍 가져와,CALL_TRAY_MEDICINE,1
+약 좀 갖다줘,CALL_TRAY_MEDICINE,1
+약 트레이 불러줘,CALL_TRAY_MEDICINE,1
+약 필요해,CALL_TRAY_MEDICINE,1
+어르신 당뇨약 가져와줘,CALL_TRAY_MEDICINE,1
+어르신 돋보기 가져와줘,CALL_TRAY_MEDICINE,1
+어르신 비타민 가져와줘,CALL_TRAY_MEDICINE,1
+어르신 안경 가져와줘,CALL_TRAY_MEDICINE,1
+어르신 약 가져와줘,CALL_TRAY_MEDICINE,1
+어르신 영양제 가져와줘,CALL_TRAY_MEDICINE,1
+어르신 통풍약 가져와줘,CALL_TRAY_MEDICINE,1
+어르신 한약 가져와줘,CALL_TRAY_MEDICINE,1
+어르신 혈압약 가져와줘,CALL_TRAY_MEDICINE,1
+영양제 보관함 호출해,CALL_TRAY_MEDICINE,1
+영양제 있는 서랍 가져와,CALL_TRAY_MEDICINE,1
+영양제 있는 트레이 와줘,CALL_TRAY_MEDICINE,1
+영양제 좀 갖다줘,CALL_TRAY_MEDICINE,1
+영양제 준비해줘,CALL_TRAY_MEDICINE,1
+영양제 트레이 불러줘,CALL_TRAY_MEDICINE,1
+영양제 필요해,CALL_TRAY_MEDICINE,1
+오늘 먹을 약 준비해줘,CALL_TRAY_MEDICINE,1
+저녁 약 있는 트레이 와줘,CALL_TRAY_MEDICINE,1
+캐리야 당뇨약 가져와,CALL_TRAY_MEDICINE,1
+캐리야 돋보기 가져와,CALL_TRAY_MEDICINE,1
+캐리야 비타민 가져와,CALL_TRAY_MEDICINE,1
+캐리야 안경 가져와,CALL_TRAY_MEDICINE,1
+캐리야 약 가져와,CALL_TRAY_MEDICINE,1
+캐리야 영양제 가져와,CALL_TRAY_MEDICINE,1
+캐리야 통풍약 가져와,CALL_TRAY_MEDICINE,1
+캐리야 한약 가져와,CALL_TRAY_MEDICINE,1
+캐리야 혈압약 가져와,CALL_TRAY_MEDICINE,1
+통풍약 보관함 호출해,CALL_TRAY_MEDICINE,1
+통풍약 있는 서랍 가져와,CALL_TRAY_MEDICINE,1
+통풍약 있는 트레이 와줘,CALL_TRAY_MEDICINE,1
+통풍약 좀 갖다줘,CALL_TRAY_MEDICINE,1
+통풍약 준비해줘,CALL_TRAY_MEDICINE,1
+통풍약 트레이 불러줘,CALL_TRAY_MEDICINE,1
+통풍약 필요해,CALL_TRAY_MEDICINE,1
+한약 보관함 호출해,CALL_TRAY_MEDICINE,1
+한약 있는 서랍 가져와,CALL_TRAY_MEDICINE,1
+한약 있는 트레이 와줘,CALL_TRAY_MEDICINE,1
+한약 좀 갖다줘,CALL_TRAY_MEDICINE,1
+한약 준비해줘,CALL_TRAY_MEDICINE,1
+한약 트레이 불러줘,CALL_TRAY_MEDICINE,1
+한약 필요해,CALL_TRAY_MEDICINE,1
+할머니 안경 있는 트레이 와줘,CALL_TRAY_MEDICINE,1
+할머니 안경 준비해줘,CALL_TRAY_MEDICINE,1
+할아버지 안경 보관함 호출해,CALL_TRAY_MEDICINE,1
+혈압약 보관함 호출해,CALL_TRAY_MEDICINE,1
+혈압약 있는 서랍 가져와,CALL_TRAY_MEDICINE,1
+혈압약 있는 트레이 와줘,CALL_TRAY_MEDICINE,1
+혈압약 좀 갖다줘,CALL_TRAY_MEDICINE,1
+혈압약 준비해줘,CALL_TRAY_MEDICINE,1
+혈압약 트레이 불러줘,CALL_TRAY_MEDICINE,1
+혈압약 필요해,CALL_TRAY_MEDICINE,1
+거기서 멈춰,STOP,1
+그 자리 대기,STOP,1
+그 자리에서 멈춰,STOP,1
+그만,STOP,1
+그만 움직여,STOP,1
+긴급 정지,STOP,1
+대기해,STOP,1
+더 가지마,STOP,1
+동작 멈춰,STOP,1
+로봇 멈춰,STOP,1
+멈추고 대기,STOP,1
+멈추기,STOP,1
+멈추라고,STOP,1
+멈추면 돼,STOP,1
+멈추세요,STOP,1
+멈춤,STOP,1
+멈춰,STOP,1
+멈춰 주세요,STOP,1
+멈춰 줘,STOP,1
+멈춰 캐리,STOP,1
+멈춰라,STOP,1
+멈춰야 해,STOP,1
+멈춰줘 캐리야,STOP,1
+바로 멈춰,STOP,1
+바로 정지,STOP,1
+스탑,STOP,1
+스톱,STOP,1
+오지 마 멈춰,STOP,1
+운행 그만,STOP,1
+운행 중단,STOP,1
+운행 중지,STOP,1
+움직이지 마,STOP,1
+이동 그만,STOP,1
+이동 멈추기,STOP,1
+이동 멈춰,STOP,1
+이동 중단,STOP,1
+이동 중지,STOP,1
+이동하지 마,STOP,1
+이제 그만,STOP,1
+일단 멈춰,STOP,1
+작동 그만,STOP,1
+작동 중지,STOP,1
+잠깐 대기,STOP,1
+잠깐 멈춰,STOP,1
+잠시 정지,STOP,1
+정지,STOP,1
+정지 명령,STOP,1
+정지하기,STOP,1
+정지해,STOP,1
+정지해야 해,STOP,1
+정지해줘,STOP,1
+주행 그만,STOP,1
+주행 멈춰,STOP,1
+주행 중지,STOP,1
+중단해,STOP,1
+중지,STOP,1
+중지해,STOP,1
+즉시 정지,STOP,1
+캐리 멈춤,STOP,1
+캐리 스톱,STOP,1
+캐리 정지,STOP,1
+캐리 중지,STOP,1
+캐리야 멈춰,STOP,1
+캐리야 스톱,STOP,1
+캐리야 정지해,STOP,1
+거치대로 가,RETURN_HOME,1
+거치대로 돌아가,RETURN_HOME,1
+기본 위치로 가,RETURN_HOME,1
+기본 자리로 가줘,RETURN_HOME,1
+다시 돌아가,RETURN_HOME,1
+대기 위치로 돌아가,RETURN_HOME,1
+대기 위치로 이동,RETURN_HOME,1
+대기 장소로 가,RETURN_HOME,1
+도크로 가,RETURN_HOME,1
+도크로 돌아가,RETURN_HOME,1
+도킹 스테이션으로 가,RETURN_HOME,1
+도킹 위치로 복귀,RETURN_HOME,1
+돌아가,RETURN_HOME,1
+돌아가 줘,RETURN_HOME,1
+돌아가도 돼,RETURN_HOME,1
+베이스로 가,RETURN_HOME,1
+베이스로 돌아가,RETURN_HOME,1
+보관 위치로 돌아가,RETURN_HOME,1
+복귀 명령,RETURN_HOME,1
+복귀 시작,RETURN_HOME,1
+복귀해,RETURN_HOME,1
+복귀해도 돼,RETURN_HOME,1
+쉘터로 돌아가,RETURN_HOME,1
+쉘터로 복귀,RETURN_HOME,1
+스테이션으로 돌아가,RETURN_HOME,1
+업무 끝났어 돌아가,RETURN_HOME,1
+원래 위치로 돌아가,RETURN_HOME,1
+원래 자리로 돌아가,RETURN_HOME,1
+원래 자리로 이동,RETURN_HOME,1
+원위치 복귀,RETURN_HOME,1
+원위치로 가,RETURN_HOME,1
+원위치로 복귀해줘,RETURN_HOME,1
+이제 돌아가,RETURN_HOME,1
+이제 복귀해,RETURN_HOME,1
+자리로 돌아가,RETURN_HOME,1
+작업 끝났어 복귀해,RETURN_HOME,1
+제자리 복귀,RETURN_HOME,1
+제자리로 돌아가,RETURN_HOME,1
+제자리로 복귀해줘,RETURN_HOME,1
+제자리로 이동,RETURN_HOME,1
+집에 가,RETURN_HOME,1
+집으로 돌아가,RETURN_HOME,1
+처음 위치로 가,RETURN_HOME,1
+처음 자리로 돌아가,RETURN_HOME,1
+충전 도크로 가,RETURN_HOME,1
+충전 위치로 돌아가,RETURN_HOME,1
+충전 위치로 이동,RETURN_HOME,1
+충전하러 가,RETURN_HOME,1
+충전하러 돌아가,RETURN_HOME,1
+캐리 복귀,RETURN_HOME,1
+캐리야 돌아가,RETURN_HOME,1
+캐리야 복귀해,RETURN_HOME,1
+캐리야 집에 가,RETURN_HOME,1
+트레이 두고 돌아가,RETURN_HOME,1
+홈 복귀,RETURN_HOME,1
+홈 위치로 이동,RETURN_HOME,1
+홈 포지션으로 가,RETURN_HOME,1
+홈으로 가줘,RETURN_HOME,1
+홈으로 돌아가,RETURN_HOME,1
+홈으로 복귀해줘,RETURN_HOME,1
+기기 보고,STATUS_CHECK,1
+기기 상태 확인,STATUS_CHECK,1
+기기 연결 확인,STATUS_CHECK,1
+기기 점검,STATUS_CHECK,1
+네 상태 말해줘,STATUS_CHECK,1
+대기 중이야,STATUS_CHECK,1
+동작 가능한 상태야,STATUS_CHECK,1
+동작 상태 알려줘,STATUS_CHECK,1
+로봇 상태,STATUS_CHECK,1
+멈춰 있어,STATUS_CHECK,1
+명령 상태 알려줘,STATUS_CHECK,1
+문제 있어,STATUS_CHECK,1
+배터리 보고,STATUS_CHECK,1
+배터리 얼마나 남았어,STATUS_CHECK,1
+배터리 잔량 알려줘,STATUS_CHECK,1
+배터리 체크,STATUS_CHECK,1
+배터리 확인,STATUS_CHECK,1
+복귀 상태 알려줘,STATUS_CHECK,1
+사용 가능해,STATUS_CHECK,1
+상태 보고,STATUS_CHECK,1
+상태 알려줘,STATUS_CHECK,1
+상태 점검,STATUS_CHECK,1
+상태 체크,STATUS_CHECK,1
+상태 확인해줘,STATUS_CHECK,1
+서랍 상태 알려줘,STATUS_CHECK,1
+서버 연결 확인,STATUS_CHECK,1
+시스템 상태 알려줘,STATUS_CHECK,1
+어디 있어,STATUS_CHECK,1
+에러 확인해줘,STATUS_CHECK,1
+연결 상태 알려줘,STATUS_CHECK,1
+연결됐는지 알려줘,STATUS_CHECK,1
+오류 있어,STATUS_CHECK,1
+와이파이 연결 상태,STATUS_CHECK,1
+운행 상태 알려줘,STATUS_CHECK,1
+움직이는 중이야,STATUS_CHECK,1
+위치 보고,STATUS_CHECK,1
+위치 알려줘,STATUS_CHECK,1
+위치 체크,STATUS_CHECK,1
+작동 중이야,STATUS_CHECK,1
+장치 상태 알려줘,STATUS_CHECK,1
+정상 동작 중이야,STATUS_CHECK,1
+준비 상태 알려줘,STATUS_CHECK,1
+준비됐어,STATUS_CHECK,1
+지금 뭐하고 있어,STATUS_CHECK,1
+지금 어디야,STATUS_CHECK,1
+지금 위치 보여줘,STATUS_CHECK,1
+충전 상태 알려줘,STATUS_CHECK,1
+충전 중이야,STATUS_CHECK,1
+캐리 상태 알려줘,STATUS_CHECK,1
+캐리 위치 확인,STATUS_CHECK,1
+캐리야 배터리,STATUS_CHECK,1
+캐리야 상태,STATUS_CHECK,1
+트레이 상태 알려줘,STATUS_CHECK,1
+트레이 연결됐어,STATUS_CHECK,1
+현재 명령 뭐야,STATUS_CHECK,1
+현재 배터리 알려줘,STATUS_CHECK,1
+현재 상태 확인해,STATUS_CHECK,1
+현재 정보 알려줘,STATUS_CHECK,1
+현재 준비됐는지 알려줘,STATUS_CHECK,1
+홈에 있어,STATUS_CHECK,1
+가스 불 꺼줘,UNKNOWN,1
+검색해줘,UNKNOWN,1
+게임 실행해줘,UNKNOWN,1
+계산해줘,UNKNOWN,1
+고마워,UNKNOWN,1
+공기청정기 켜줘,UNKNOWN,1
+그거 가져와,UNKNOWN,1
+길 안내해줘,UNKNOWN,1
+날씨 알려줘,UNKNOWN,1
+냉장고 열어줘,UNKNOWN,1
+너 이름 뭐야,UNKNOWN,1
+노래 불러줘,UNKNOWN,1
+농담해줘,UNKNOWN,1
+누구야,UNKNOWN,1
+라디오 틀어줘,UNKNOWN,1
+라면 끓여줘,UNKNOWN,1
+로봇청소기 돌려줘,UNKNOWN,1
+메모해줘,UNKNOWN,1
+몇 시야,UNKNOWN,1
+문 열어줘,UNKNOWN,1
+문자 보내줘,UNKNOWN,1
+뭐 좀 해줘,UNKNOWN,1
+밥 해줘,UNKNOWN,1
+배고파,UNKNOWN,1
+배달 시켜줘,UNKNOWN,1
+버스 시간 알려줘,UNKNOWN,1
+번역해줘,UNKNOWN,1
+불 꺼줘,UNKNOWN,1
+불 켜줘,UNKNOWN,1
+블루투스 켜줘,UNKNOWN,1
+빨래해줘,UNKNOWN,1
+사진 찍어줘,UNKNOWN,1
+소파 움직여줘,UNKNOWN,1
+숙제 도와줘,UNKNOWN,1
+심심해,UNKNOWN,1
+아무거나 가져와,UNKNOWN,1
+안녕,UNKNOWN,1
+알람 맞춰줘,UNKNOWN,1
+알아서 해줘,UNKNOWN,1
+엄마한테 전화해줘,UNKNOWN,1
+에어컨 켜줘,UNKNOWN,1
+영화 추천해줘,UNKNOWN,1
+오늘 뉴스 알려줘,UNKNOWN,1
+오늘 며칠이야,UNKNOWN,1
+오늘 미세먼지 어때,UNKNOWN,1
+온도 내려줘,UNKNOWN,1
+온도 올려줘,UNKNOWN,1
+유튜브 틀어줘,UNKNOWN,1
+음악 틀어줘,UNKNOWN,1
+이거 해줘,UNKNOWN,1
+인터넷 연결해줘,UNKNOWN,1
+일정 알려줘,UNKNOWN,1
+저거 가져와,UNKNOWN,1
+전화 걸어줘,UNKNOWN,1
+조명 색 바꿔줘,UNKNOWN,1
+졸려,UNKNOWN,1
+집 온도 알려줘,UNKNOWN,1
+창고 정리해줘,UNKNOWN,1
+창문 열어줘,UNKNOWN,1
+청소해줘,UNKNOWN,1
+카카오톡 보내줘,UNKNOWN,1
+커튼 닫아줘,UNKNOWN,1
+커피 내려줘,UNKNOWN,1
+쿠팡 주문해줘,UNKNOWN,1
+택배 확인해줘,UNKNOWN,1
+택시 불러줘,UNKNOWN,1
+티비 켜줘,UNKNOWN,1
+피곤해,UNKNOWN,1
+학교 일정 알려줘,UNKNOWN,1
+현관문 잠가줘,UNKNOWN,1
+기저귀 여기로 갖다줘,CALL_TRAY_BABY,1
+기저귀 좀 가져와,CALL_TRAY_BABY,1
+기저기 가져와,CALL_TRAY_BABY,1
+기저기 좀 갖다줘,CALL_TRAY_BABY,1
+물 티슈 갖다줘,CALL_TRAY_BABY,1
+물 티슈 좀 가져와,CALL_TRAY_BABY,1
+물티수 빨리 갖다줘,CALL_TRAY_BABY,1
+물티수 지금 가져와,CALL_TRAY_BABY,1
+물티슈 지금 가져와,CALL_TRAY_BABY,1
+손 수건 가져와,CALL_TRAY_BABY,1
+손 수건 여기로 갖다줘,CALL_TRAY_BABY,1
+손수건 가져와,CALL_TRAY_BABY,1
+손수건 지금 갖다줘,CALL_TRAY_BABY,1
+장난 깜 좀 가져와,CALL_TRAY_BABY,1
+장난 깜 지금 갖다줘,CALL_TRAY_BABY,1
+장난감 빨리 가져와,CALL_TRAY_BABY,1
+장난감 여기로 갖다줘,CALL_TRAY_BABY,1
+젓병 좀 가져와,CALL_TRAY_BABY,1
+젓병 좀 갖다줘,CALL_TRAY_BABY,1
+젖병 가져와,CALL_TRAY_BABY,1
+젖병 갖다줘,CALL_TRAY_BABY,1
+캐리야 기저귀 갖다줘,CALL_TRAY_BABY,1
+캐리야 기저귀 트레이 가져와,CALL_TRAY_BABY,1
+캐리야 기저귀 트레이 갖다줘,CALL_TRAY_BABY,1
+캐리야 기저기 갖다줘,CALL_TRAY_BABY,1
+캐리야 기저기 좀 가져와,CALL_TRAY_BABY,1
+캐리야 기저기 트레이 가져와,CALL_TRAY_BABY,1
+캐리야 기저기 트레이 갖다줘,CALL_TRAY_BABY,1
+캐리야 물 티슈 빨리 가져와,CALL_TRAY_BABY,1
+캐리야 물 티슈 빨리 갖다줘,CALL_TRAY_BABY,1
+캐리야 물 티슈 트레이 가져와,CALL_TRAY_BABY,1
+캐리야 물 티슈 트레이 갖다줘,CALL_TRAY_BABY,1
+캐리야 물티수 빨리 가져와,CALL_TRAY_BABY,1
+캐리야 물티수 지금 갖다줘,CALL_TRAY_BABY,1
+캐리야 물티수 트레이 가져와,CALL_TRAY_BABY,1
+캐리야 물티수 트레이 갖다줘,CALL_TRAY_BABY,1
+캐리야 물티슈 빨리 가져와,CALL_TRAY_BABY,1
+캐리야 물티슈 빨리 갖다줘,CALL_TRAY_BABY,1
+캐리야 물티슈 트레이 가져와,CALL_TRAY_BABY,1
+캐리야 물티슈 트레이 갖다줘,CALL_TRAY_BABY,1
+캐리야 손 수건 빨리 갖다줘,CALL_TRAY_BABY,1
+캐리야 손 수건 지금 가져와,CALL_TRAY_BABY,1
+캐리야 손 수건 트레이 가져와,CALL_TRAY_BABY,1
+캐리야 손 수건 트레이 갖다줘,CALL_TRAY_BABY,1
+캐리야 손수건 갖다줘,CALL_TRAY_BABY,1
+캐리야 손수건 여기로 가져와,CALL_TRAY_BABY,1
+캐리야 손수건 트레이 가져와,CALL_TRAY_BABY,1
+캐리야 손수건 트레이 갖다줘,CALL_TRAY_BABY,1
+캐리야 장난 깜 좀 가져와,CALL_TRAY_BABY,1
+캐리야 장난 깜 좀 갖다줘,CALL_TRAY_BABY,1
+캐리야 장난 깜 트레이 가져와,CALL_TRAY_BABY,1
+캐리야 장난 깜 트레이 갖다줘,CALL_TRAY_BABY,1
+캐리야 장난감 빨리 가져와,CALL_TRAY_BABY,1
+캐리야 장난감 좀 갖다줘,CALL_TRAY_BABY,1
+캐리야 장난감 트레이 가져와,CALL_TRAY_BABY,1
+캐리야 장난감 트레이 갖다줘,CALL_TRAY_BABY,1
+캐리야 젓병 좀 가져와,CALL_TRAY_BABY,1
+캐리야 젓병 좀 갖다줘,CALL_TRAY_BABY,1
+캐리야 젓병 트레이 가져와,CALL_TRAY_BABY,1
+캐리야 젓병 트레이 갖다줘,CALL_TRAY_BABY,1
+캐리야 젖병 빨리 가져와,CALL_TRAY_BABY,1
+캐리야 젖병 빨리 갖다줘,CALL_TRAY_BABY,1
+캐리야 젖병 트레이 가져와,CALL_TRAY_BABY,1
+캐리야 젖병 트레이 갖다줘,CALL_TRAY_BABY,1
+게임 패드 여기로 가져와,CALL_TRAY_HOBBY,1
+게임패드 빨리 가져와,CALL_TRAY_HOBBY,1
+게임패트 가져와,CALL_TRAY_HOBBY,1
+뜨개질 빨리 가져와,CALL_TRAY_HOBBY,1
+뜨게질 여기로 가져와,CALL_TRAY_HOBBY,1
+스케치 북 빨리 가져와,CALL_TRAY_HOBBY,1
+스케치북 여기로 가져와,CALL_TRAY_HOBBY,1
+액채 괴물 여기로 가져와,CALL_TRAY_HOBBY,1
+액체 괴물 여기로 가져와,CALL_TRAY_HOBBY,1
+액체괴물 빨리 가져와,CALL_TRAY_HOBBY,1
+충전 케이블 지금 가져와,CALL_TRAY_HOBBY,1
+충전기 좀 가져와,CALL_TRAY_HOBBY,1
+충전기 줄 여기로 가져와,CALL_TRAY_HOBBY,1
+충전기 케블 빨리 가져와,CALL_TRAY_HOBBY,1
+충전기 케이블 빨리 가져와,CALL_TRAY_HOBBY,1
+충전끼 여기로 가져와,CALL_TRAY_HOBBY,1
+캐리야 게임 패드 가져와,CALL_TRAY_HOBBY,1
+캐리야 게임 패드 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 게임 패드 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 게임 패드 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 게임패드 좀 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 게임패드 지금 가져와,CALL_TRAY_HOBBY,1
+캐리야 게임패드 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 게임패드 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 게임패트 가져와,CALL_TRAY_HOBBY,1
+캐리야 게임패트 여기로 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 게임패트 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 게임패트 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 뜨개질 빨리 가져와,CALL_TRAY_HOBBY,1
+캐리야 뜨개질 여기로 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 뜨개질 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 뜨개질 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 뜨게질 지금 가져와,CALL_TRAY_HOBBY,1
+캐리야 뜨게질 지금 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 뜨게질 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 뜨게질 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 스케치 북 여기로 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 스케치 북 좀 가져와,CALL_TRAY_HOBBY,1
+캐리야 스케치 북 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 스케치 북 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 스케치북 빨리 가져와,CALL_TRAY_HOBBY,1
+캐리야 스케치북 여기로 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 스케치북 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 스케치북 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 액채 괴물 빨리 가져와,CALL_TRAY_HOBBY,1
+캐리야 액채 괴물 지금 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 액채 괴물 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 액채 괴물 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 액체 괴물 빨리 가져와,CALL_TRAY_HOBBY,1
+캐리야 액체 괴물 지금 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 액체 괴물 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 액체 괴물 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 액체괴물 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 액체괴물 빨리 가져와,CALL_TRAY_HOBBY,1
+캐리야 액체괴물 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 액체괴물 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 충전 케이블 빨리 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 충전 케이블 지금 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전 케이블 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전 케이블 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 충전기 여기로 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 충전기 좀 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전기 줄 빨리 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 충전기 줄 좀 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전기 줄 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전기 줄 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 충전기 케블 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 충전기 케블 지금 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전기 케블 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전기 케블 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 충전기 케이블 빨리 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 충전기 케이블 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전기 케이블 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 충전기 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전기 트레이 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 충전끼 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전끼 여기로 갖다줘,CALL_TRAY_HOBBY,1
+캐리야 충전끼 트레이 가져와,CALL_TRAY_HOBBY,1
+캐리야 충전끼 트레이 갖다줘,CALL_TRAY_HOBBY,1
+당뇨 약 좀 가져와,CALL_TRAY_MEDICINE,1
+당뇨약 좀 가져와,CALL_TRAY_MEDICINE,1
+당뇨약이 빨리 가져와,CALL_TRAY_MEDICINE,1
+돋보기 가져와,CALL_TRAY_MEDICINE,1
+돋보기 안경 여기로 가져와,CALL_TRAY_MEDICINE,1
+비타민 가져와,CALL_TRAY_MEDICINE,1
+비타민제 가져와,CALL_TRAY_MEDICINE,1
+안경 가져와,CALL_TRAY_MEDICINE,1
+약 좀 가져와,CALL_TRAY_MEDICINE,1
+영양재 여기로 가져와,CALL_TRAY_MEDICINE,1
+영양제 빨리 가져와,CALL_TRAY_MEDICINE,1
+캐리야 당뇨 약 여기로 가져와,CALL_TRAY_MEDICINE,1
+캐리야 당뇨 약 좀 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 당뇨 약 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 당뇨 약 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 당뇨약 빨리 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 당뇨약 좀 가져와,CALL_TRAY_MEDICINE,1
+캐리야 당뇨약 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 당뇨약 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 당뇨약이 빨리 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 당뇨약이 좀 가져와,CALL_TRAY_MEDICINE,1
+캐리야 당뇨약이 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 당뇨약이 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 돋보기 안경 가져와,CALL_TRAY_MEDICINE,1
+캐리야 돋보기 안경 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 돋보기 안경 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 돋보기 안경 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 돋보기 좀 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 돋보기 지금 가져와,CALL_TRAY_MEDICINE,1
+캐리야 돋보기 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 돋보기 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 비타민 빨리 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 비타민 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 비타민 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 비타민제 좀 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 비타민제 지금 가져와,CALL_TRAY_MEDICINE,1
+캐리야 비타민제 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 비타민제 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 안경 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 안경 좀 가져와,CALL_TRAY_MEDICINE,1
+캐리야 안경 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 안경 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 약 좀 가져와,CALL_TRAY_MEDICINE,1
+캐리야 약 지금 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 약 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 약 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 영양재 좀 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 영양재 지금 가져와,CALL_TRAY_MEDICINE,1
+캐리야 영양재 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 영양재 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 영양제 빨리 가져와,CALL_TRAY_MEDICINE,1
+캐리야 영양제 지금 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 영양제 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 영양제 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 통풍 약 빨리 가져와,CALL_TRAY_MEDICINE,1
+캐리야 통풍 약 빨리 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 통풍 약 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 통풍 약 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 통풍약 빨리 가져와,CALL_TRAY_MEDICINE,1
+캐리야 통풍약 좀 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 통풍약 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 통풍약 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 한 약 가져와,CALL_TRAY_MEDICINE,1
+캐리야 한 약 지금 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 한 약 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 한 약 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 한약 좀 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 한약 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 한약 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 혈압 약 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 혈압 약 좀 가져와,CALL_TRAY_MEDICINE,1
+캐리야 혈압 약 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 혈압 약 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 혈압약 갖다줘,CALL_TRAY_MEDICINE,1
+캐리야 혈압약 좀 가져와,CALL_TRAY_MEDICINE,1
+캐리야 혈압약 트레이 가져와,CALL_TRAY_MEDICINE,1
+캐리야 혈압약 트레이 갖다줘,CALL_TRAY_MEDICINE,1
+통풍 약 지금 가져와,CALL_TRAY_MEDICINE,1
+통풍약 가져와,CALL_TRAY_MEDICINE,1
+한 약 좀 가져와,CALL_TRAY_MEDICINE,1
+한약 가져와,CALL_TRAY_MEDICINE,1
+혈압 약 여기로 가져와,CALL_TRAY_MEDICINE,1
+혈압약 지금 가져와,CALL_TRAY_MEDICINE,1
+거기서 정지,STOP,1
+멈처,STOP,1
+멈춰줘,STOP,1
+스탑해,STOP,1
+스톱해,STOP,1
+운행 정지,STOP,1
+정지 해,STOP,1
+정지해 줘,STOP,1
+캐리 멈처,STOP,1
+캐리 아 멈춰,STOP,1
+캐리아 멈춰,STOP,1
+캐리아 정지,STOP,1
+케리 정지해,STOP,1
+케리야 멈춰,STOP,1
+기지로 돌아가,RETURN_HOME,1
+돌아 와,RETURN_HOME,1
+돌아가줘,RETURN_HOME,1
+돌아와,RETURN_HOME,1
+복귀,RETURN_HOME,1
+복귀 해,RETURN_HOME,1
+복귀하자,RETURN_HOME,1
+본래 자리로 돌아가,RETURN_HOME,1
+원 위치로 돌아가,RETURN_HOME,1
+원래 자리로 가,RETURN_HOME,1
+원위치로 돌아가,RETURN_HOME,1
+제 자리로 가,RETURN_HOME,1
+제자리로 가,RETURN_HOME,1
+집으로 가,RETURN_HOME,1
+충전 위치로 가,RETURN_HOME,1
+캐리 복귀해,RETURN_HOME,1
+캐리 아 돌아가,RETURN_HOME,1
+캐리아 돌아가,RETURN_HOME,1
+케리 복귀해,RETURN_HOME,1
+케리야 돌아가,RETURN_HOME,1
+홈으로 가,RETURN_HOME,1
+기기 상태 알려줘,STATUS_CHECK,1
+배터리 몇 퍼센트야,STATUS_CHECK,1
+배터리 상태 알려줘,STATUS_CHECK,1
+배터리 알려줘,STATUS_CHECK,1
+베터리 상태 알려줘,STATUS_CHECK,1
+상태 알려 줘,STATUS_CHECK,1
+상태 알여줘,STATUS_CHECK,1
+상태 체크해,STATUS_CHECK,1
+상태 확인해,STATUS_CHECK,1
+어디쯤이야,STATUS_CHECK,1
+지금 상태 어때,STATUS_CHECK,1
+캐리 상태 확인,STATUS_CHECK,1
+캐리아 상태 알려줘,STATUS_CHECK,1
+캐리야 배터리 확인,STATUS_CHECK,1
+캐리야 상태 알려줘,STATUS_CHECK,1
+케리야 상태 알려줘,STATUS_CHECK,1
+현재 상태 알려줘,STATUS_CHECK,1
+게임패드 얼마야,UNKNOWN,1
+기저귀 가격 알려줘,UNKNOWN,1
+내일 일정 알려줘,UNKNOWN,1
+노래 틀어줘,UNKNOWN,1
+뉴스 알려줘,UNKNOWN,1
+당뇨약 부작용 알려줘,UNKNOWN,1
+돋보기 어디서 사,UNKNOWN,1
+문 닫아줘,UNKNOWN,1
+물 끓여줘,UNKNOWN,1
+불 좀 꺼줘,UNKNOWN,1
+비타민 추천해줘,UNKNOWN,1
+세탁기 돌려줘,UNKNOWN,1
+스케치북 그림 그려줘,UNKNOWN,1
+안경 도수 알려줘,UNKNOWN,1
+액체괴물 만드는 법 알려줘,UNKNOWN,1
+약 먹는 시간 알려줘,UNKNOWN,1
+에어컨 꺼줘,UNKNOWN,1
+오늘 날씨 알려줘,UNKNOWN,1
+오늘 일정 알려줘,UNKNOWN,1
+요리법 알려줘,UNKNOWN,1
+인터넷 검색해줘,UNKNOWN,1
+젖병 어디서 사,UNKNOWN,1
+조명 어둡게 해줘,UNKNOWN,1
+타이머 맞춰줘,UNKNOWN,1
+텔레비전 켜줘,UNKNOWN,1
+한약 효과 알려줘,UNKNOWN,1
+혈압약 설명해줘,UNKNOWN,1
+캐리아 기저기 가져와,CALL_TRAY_BABY,1
+케리야 물 티슈 갖다줘,CALL_TRAY_BABY,5
+젓병 좀 챙겨줘,CALL_TRAY_BABY,1
+아이 장난감 불러줘,CALL_TRAY_BABY,1
+게임 패드 불러줘,CALL_TRAY_HOBBY,1
+충전 케이블 좀 갖다줘,CALL_TRAY_HOBBY,1
+액체 괴물 불러줘,CALL_TRAY_HOBBY,1
+뜨게질 도구 가져와,CALL_TRAY_HOBBY,1
+혈압 약 챙겨줘,CALL_TRAY_MEDICINE,1
+당뇨 약 불러줘,CALL_TRAY_MEDICINE,1
+비타민 챙겨줘,CALL_TRAY_MEDICINE,5
+그만해,STOP,1
+충전 장소로 가,RETURN_HOME,1

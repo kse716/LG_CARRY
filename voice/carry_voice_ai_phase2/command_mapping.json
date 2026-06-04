@@ -1,0 +1,47 @@
+{
+  "confidence_threshold": 0.7,
+  "labels": {
+    "CALL_TRAY_BABY": {
+      "intent": "CALL_TRAY",
+      "targetTrayId": "TRAY_BABY",
+      "requiresConfirm": true,
+      "confirmText": "육아 트레이를 호출할까요?"
+    },
+    "CALL_TRAY_MEDICINE": {
+      "intent": "CALL_TRAY",
+      "targetTrayId": "TRAY_MEDICINE",
+      "requiresConfirm": true,
+      "confirmText": "복약 트레이를 호출할까요?"
+    },
+    "CALL_TRAY_HOBBY": {
+      "intent": "CALL_TRAY",
+      "targetTrayId": "TRAY_HOBBY",
+      "requiresConfirm": true,
+      "confirmText": "취미 트레이를 호출할까요?"
+    },
+    "STOP": {
+      "intent": "STOP",
+      "targetTrayId": null,
+      "requiresConfirm": false,
+      "confirmText": null
+    },
+    "RETURN_HOME": {
+      "intent": "RETURN_HOME",
+      "targetTrayId": null,
+      "requiresConfirm": true,
+      "confirmText": "Carry를 복귀시킬까요?"
+    },
+    "STATUS_CHECK": {
+      "intent": "STATUS_CHECK",
+      "targetTrayId": null,
+      "requiresConfirm": false,
+      "confirmText": null
+    },
+    "UNKNOWN": {
+      "intent": "UNKNOWN",
+      "targetTrayId": null,
+      "requiresConfirm": false,
+      "confirmText": null
+    }
+  }
+}
