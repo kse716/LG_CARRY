@@ -1,8 +1,14 @@
 package com.example.dx_carry;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.Editable;
@@ -21,7 +27,9 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
@@ -33,6 +41,14 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -104,10 +120,16 @@ public class MainActivity extends AppCompatActivity {
 
     private View micButton;
     private View micPulseRing;
+    private TextView voiceCommandText;
+    private TextView voiceStatusText;
+    private TextView voiceDestinationText;
     private AnimatorSet micPulseAnimator;
+    private SpeechRecognizer speechRecognizer;
 
     private final int activeColor = 0xFF111111;
     private final int inactiveColor = 0xFF8A8D94;
+    private static final int REQUEST_RECORD_AUDIO = 1001;
+    private static final String VOICE_INTENT_API_URL = "http://10.0.2.2:5000/api/ai/voice-intent";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,6 +200,9 @@ public class MainActivity extends AppCompatActivity {
 
         micButton = findViewById(R.id.micButton);
         micPulseRing = findViewById(R.id.micPulseRing);
+        voiceCommandText = findViewById(R.id.voiceCommandText);
+        voiceStatusText = findViewById(R.id.voiceStatusText);
+        voiceDestinationText = findViewById(R.id.voiceDestinationText);
     }
 
     private void bindNavigation() {
@@ -1812,15 +1837,270 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void toggleMicButton() {
-        boolean isCollectingVoice = !micButton.isSelected();
-        micButton.setSelected(isCollectingVoice);
-        micButton.setContentDescription(isCollectingVoice ? "Voice input active" : "Voice input");
-
-        if (isCollectingVoice) {
-            startMicPulse();
-        } else {
-            stopMicPulse();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO);
+            return;
         }
+
+        startVoiceRecognition();
+    }
+
+    private void startVoiceRecognition() {
+        if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+            voiceCommandText.setText("명령 : 이 기기에서 음성 인식을 사용할 수 없어요.");
+            Toast.makeText(this, "음성 인식을 사용할 수 없어요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        stopVoiceRecognition();
+        micButton.setSelected(true);
+        micButton.setContentDescription("음성 입력 중");
+        voiceStatusText.setText("상태 · 음성 인식 중");
+        voiceCommandText.setText("명령 : 듣는 중...");
+        startMicPulse();
+
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        speechRecognizer.setRecognitionListener(new RecognitionListener() {
+            @Override
+            public void onReadyForSpeech(Bundle params) {
+                voiceCommandText.setText("명령 : 말씀해주세요.");
+            }
+
+            @Override
+            public void onBeginningOfSpeech() {
+                voiceStatusText.setText("상태 · 음성 수집 중");
+            }
+
+            @Override
+            public void onRmsChanged(float rmsdB) {
+            }
+
+            @Override
+            public void onBufferReceived(byte[] buffer) {
+            }
+
+            @Override
+            public void onEndOfSpeech() {
+                voiceStatusText.setText("상태 · 인식 결과 처리 중");
+                stopMicPulse();
+            }
+
+            @Override
+            public void onError(int error) {
+                stopVoiceRecognition();
+                String message = voiceErrorMessage(error);
+                voiceCommandText.setText("명령 : " + message);
+                saveVoiceResult("", "error", message, 0f);
+            }
+
+            @Override
+            public void onResults(Bundle results) {
+                stopVoiceRecognition();
+                ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                float confidence = 0f;
+                float[] scores = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
+                if (scores != null && scores.length > 0) {
+                    confidence = scores[0];
+                }
+                String command = matches == null || matches.isEmpty() ? "" : matches.get(0);
+                if (command.trim().isEmpty()) {
+                    voiceCommandText.setText("명령 : 인식된 음성이 없어요.");
+                    saveVoiceResult("", "empty", "인식된 음성이 없음", confidence);
+                    return;
+                }
+                voiceCommandText.setText("명령 : " + command);
+                voiceDestinationText.setText("DB에 음성 인식 결과를 저장했어요.");
+                requestVoiceIntentFromPklApi(command, confidence);
+            }
+
+            @Override
+            public void onPartialResults(Bundle partialResults) {
+                ArrayList<String> partials = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                if (partials != null && !partials.isEmpty()) {
+                    voiceCommandText.setText("명령 : " + partials.get(0));
+                }
+            }
+
+            @Override
+            public void onEvent(int eventType, Bundle params) {
+            }
+        });
+
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.KOREAN.toLanguageTag());
+        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "필요한 물건을 말해주세요.");
+        speechRecognizer.startListening(intent);
+    }
+
+    private void stopVoiceRecognition() {
+        micButton.setSelected(false);
+        micButton.setContentDescription("음성 입력");
+        stopMicPulse();
+        if (speechRecognizer != null) {
+            speechRecognizer.destroy();
+            speechRecognizer = null;
+        }
+        if (voiceStatusText != null) {
+            voiceStatusText.setText("상태 · 대기중");
+        }
+    }
+
+    private void requestVoiceIntentFromPklApi(String command, float speechConfidence) {
+        voiceCommandText.setText("명령 : " + command);
+        voiceDestinationText.setText("pkl 모델로 명령을 분석하는 중...");
+        new Thread(() -> {
+            HttpURLConnection connection = null;
+            try {
+                URL url = new URL(VOICE_INTENT_API_URL);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(5000);
+                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                connection.setDoOutput(true);
+
+                JSONObject request = new JSONObject();
+                request.put("text", command);
+                byte[] body = request.toString().getBytes(StandardCharsets.UTF_8);
+                try (OutputStream outputStream = connection.getOutputStream()) {
+                    outputStream.write(body);
+                }
+
+                int responseCode = connection.getResponseCode();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        responseCode >= 200 && responseCode < 300
+                                ? connection.getInputStream()
+                                : connection.getErrorStream(),
+                        StandardCharsets.UTF_8
+                ));
+                StringBuilder responseText = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    responseText.append(line);
+                }
+
+                JSONObject response = new JSONObject(responseText.toString());
+                String label = response.optString("label", "UNKNOWN");
+                String intent = response.optString("intent", "UNKNOWN");
+                String targetTrayId = response.optString("targetTrayId", "");
+                String message = response.optString("message", "");
+                boolean accepted = response.optBoolean("accepted", false);
+                double modelConfidence = response.optDouble("confidence", 0.0);
+                String confirmText = response.optString("confirmText", "");
+
+                runOnUiThread(() -> {
+                    String commandLine = "명령 : " + command + " → " + intent;
+                    if (!targetTrayId.isEmpty() && !"null".equals(targetTrayId)) {
+                        commandLine += " / " + targetTrayId;
+                    }
+                    voiceCommandText.setText(commandLine);
+                    voiceDestinationText.setText(
+                            accepted
+                                    ? (confirmText.isEmpty() || "null".equals(confirmText) ? message : confirmText)
+                                    : message
+                    );
+                });
+
+                saveVoiceIntentResult(command, "success", message, speechConfidence, label, intent, targetTrayId, accepted, modelConfidence, confirmText);
+            } catch (Exception error) {
+                String message = "pkl 모델 API 연결 실패: " + error.getMessage();
+                runOnUiThread(() -> {
+                    voiceCommandText.setText("명령 : " + command);
+                    voiceDestinationText.setText(message);
+                });
+                saveVoiceIntentResult(command, "api_error", message, speechConfidence, "UNKNOWN", "UNKNOWN", "", false, 0.0, "");
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+        }).start();
+    }
+
+    private void saveVoiceResult(String command, String status, String message, float confidence) {
+        long now = System.currentTimeMillis();
+        Map<String, Object> voice = new HashMap<>();
+        voice.put("command", command);
+        voice.put("status", status);
+        voice.put("message", message);
+        voice.put("confidence", confidence);
+        voice.put("createdAt", now);
+        voice.put("createdAtText", formatTime(now));
+        db.child("voiceRecognitionResults").push().setValue(voice);
+    }
+
+    private void saveVoiceIntentResult(
+            String command,
+            String status,
+            String message,
+            float speechConfidence,
+            String label,
+            String intent,
+            String targetTrayId,
+            boolean accepted,
+            double modelConfidence,
+            String confirmText
+    ) {
+        long now = System.currentTimeMillis();
+        Map<String, Object> voice = new HashMap<>();
+        voice.put("command", command);
+        voice.put("status", status);
+        voice.put("message", message);
+        voice.put("speechConfidence", speechConfidence);
+        voice.put("label", label);
+        voice.put("intent", intent);
+        voice.put("targetTrayId", targetTrayId);
+        voice.put("accepted", accepted);
+        voice.put("modelConfidence", modelConfidence);
+        voice.put("confirmText", confirmText);
+        voice.put("apiUrl", VOICE_INTENT_API_URL);
+        voice.put("createdAt", now);
+        voice.put("createdAtText", formatTime(now));
+        db.child("voiceIntentResults").push().setValue(voice);
+    }
+
+    private String voiceErrorMessage(int error) {
+        switch (error) {
+            case SpeechRecognizer.ERROR_AUDIO:
+                return "오디오 입력 오류";
+            case SpeechRecognizer.ERROR_CLIENT:
+                return "음성 인식 클라이언트 오류";
+            case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
+                return "마이크 권한이 필요해요.";
+            case SpeechRecognizer.ERROR_NETWORK:
+            case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
+                return "네트워크 오류로 음성 인식에 실패했어요.";
+            case SpeechRecognizer.ERROR_NO_MATCH:
+                return "인식된 명령이 없어요.";
+            case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
+                return "음성 인식기가 사용 중이에요.";
+            case SpeechRecognizer.ERROR_SERVER:
+                return "음성 인식 서버 오류";
+            case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+                return "음성이 감지되지 않았어요.";
+            default:
+                return "음성 인식에 실패했어요.";
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_RECORD_AUDIO) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startVoiceRecognition();
+            } else {
+                voiceCommandText.setText("명령 : 마이크 권한이 필요해요.");
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopVoiceRecognition();
+        super.onDestroy();
     }
 
     private void startMicPulse() {
