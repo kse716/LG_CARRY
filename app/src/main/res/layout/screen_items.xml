@@ -209,19 +209,33 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             android:text="물품 이름을 입력하면 DB에서 보관 트레이를 찾아요."
-            android:textColor="#74787F"
-            android:textSize="15sp"
+            android:textColor="#111111"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/itemListText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="6dp"
             android:text="검색하면 물품의 트레이 번호와 등록 시점을 보여줘요."
             android:textColor="#74787F"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:id="@+id/itemListContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical" />
+
+        <View
+            android:id="@+id/itemSearchDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="14dp"
+            android:background="#E6E7EA"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/itemSearchActionRow"

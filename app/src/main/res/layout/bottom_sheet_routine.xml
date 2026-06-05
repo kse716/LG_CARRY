@@ -34,11 +34,20 @@
         android:textSize="13sp"
         android:textStyle="bold" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="루틴명"
+        android:textColor="#C30B45"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
     <EditText
         android:id="@+id/routineNameInput"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/bg_input"
         android:hint="루틴 이름"
         android:inputType="text"
@@ -49,11 +58,20 @@
         android:textColorHint="#8A8D94"
         android:textSize="14sp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="거점 설정"
+        android:textColor="#C30B45"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
     <Spinner
         android:id="@+id/routineBaseSpinner"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/bg_input"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
@@ -175,14 +193,23 @@
         android:textColor="#8A8D94"
         android:textSize="14sp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="메모"
+        android:textColor="#C30B45"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
     <EditText
         android:id="@+id/routineRouteInput"
         android:layout_width="match_parent"
         android:layout_height="74dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/bg_input"
         android:gravity="top"
-        android:hint="이동 내용"
+        android:hint="메모"
         android:inputType="textMultiLine"
         android:paddingStart="16dp"
         android:paddingTop="14dp"

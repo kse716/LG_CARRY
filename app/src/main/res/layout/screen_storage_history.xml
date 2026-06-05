@@ -31,15 +31,6 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="물품 생성, 삭제, 보관 이력과 현재 상태를 확인하세요."
-        android:textColor="#74787F"
-        android:textSize="13sp"
-        android:textStyle="bold" />
-
     <LinearLayout
         android:id="@+id/storageHistoryContainer"
         android:layout_width="match_parent"

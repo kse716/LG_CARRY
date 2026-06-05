@@ -55,7 +55,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -96,9 +95,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView homeTrayName3;
     private TextView routineModeTitle;
     private LinearLayout modeListContainer;
+    private LinearLayout itemListContainer;
     private LinearLayout executionLogContainer;
     private LinearLayout storageHistoryContainer;
     private View itemSearchActionRow;
+    private View itemSearchDivider;
     private View modeCreatePanel;
     private View modeMoreMenu;
 
@@ -124,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView voiceCommandText;
     private TextView voiceStatusText;
     private TextView voiceDestinationText;
+    private TextView voiceConfidenceText;
     private AnimatorSet micPulseAnimator;
     private SpeechRecognizer speechRecognizer;
 
@@ -185,9 +187,11 @@ public class MainActivity extends AppCompatActivity {
         homeTrayName3 = findViewById(R.id.tray_name3);
         routineModeTitle = findViewById(R.id.routineModeTitle);
         modeListContainer = findViewById(R.id.modeListContainer);
+        itemListContainer = findViewById(R.id.itemListContainer);
         executionLogContainer = findViewById(R.id.executionLogContainer);
         storageHistoryContainer = findViewById(R.id.storageHistoryContainer);
         itemSearchActionRow = findViewById(R.id.itemSearchActionRow);
+        itemSearchDivider = findViewById(R.id.itemSearchDivider);
         modeCreatePanel = findViewById(R.id.modeCreatePanel);
         modeMoreMenu = findViewById(R.id.modeMoreMenu);
 
@@ -204,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
         voiceCommandText = findViewById(R.id.voiceCommandText);
         voiceStatusText = findViewById(R.id.voiceStatusText);
         voiceDestinationText = findViewById(R.id.voiceDestinationText);
+        voiceConfidenceText = findViewById(R.id.voiceConfidenceText);
     }
 
     private void bindNavigation() {
@@ -239,6 +244,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_tray1).setOnClickListener(v -> loadHomeTrayItems("tray1"));
         findViewById(R.id.btn_tray2).setOnClickListener(v -> loadHomeTrayItems("tray2"));
         findViewById(R.id.btn_tray3).setOnClickListener(v -> loadHomeTrayItems("tray3"));
+        homeTrayName1.setOnClickListener(v -> loadHomeTrayItems("tray1"));
+        homeTrayName2.setOnClickListener(v -> loadHomeTrayItems("tray2"));
+        homeTrayName3.setOnClickListener(v -> loadHomeTrayItems("tray3"));
 
         itemSearchInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -442,12 +450,12 @@ public class MainActivity extends AppCompatActivity {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        itemListText.setText(buildItemNameList(snapshot));
+                        renderSelectedTrayItems(snapshot);
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        itemListText.setText("물품 목록을 불러오지 못했어요.");
+                        renderSelectedTrayItemsError();
                     }
                 });
     }
@@ -456,8 +464,16 @@ public class MainActivity extends AppCompatActivity {
         db.child("trays").child(trayId).child("items")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        showTrayItemsPopup(trayId, buildItemNameList(snapshot));
+                    public void onDataChange(@NonNull DataSnapshot itemsSnapshot) {
+                        db.child("trays").child(trayId).child("name").get()
+                                .addOnSuccessListener(nameSnapshot -> {
+                                    String trayName = nameSnapshot.getValue(String.class);
+                                    if (trayName == null || trayName.trim().isEmpty()) {
+                                        trayName = defaultTrayName(trayId);
+                                    }
+                                    TrayItemsBottomSheet.show(MainActivity.this, trayName, itemsSnapshot);
+                                })
+                                .addOnFailureListener(error -> TrayItemsBottomSheet.show(MainActivity.this, defaultTrayName(trayId), itemsSnapshot));
                     }
 
                     @Override
@@ -470,8 +486,7 @@ public class MainActivity extends AppCompatActivity {
     private void searchItemAcrossTrays(String query) {
         if (query.isEmpty()) {
             clearSearchedItem();
-            itemSearchResultText.setText("물품 이름을 입력하면 DB에서 보관 트레이를 찾아요.");
-            itemListText.setText("검색하면 물품의 트레이 번호와 등록 시점을 보여줘요.");
+            renderItemSearchGuide();
             return;
         }
 
@@ -493,25 +508,60 @@ public class MainActivity extends AppCompatActivity {
                                     searchedItemTrayId = trayId;
                                     searchedItemKey = child.getKey();
                                     searchedItemName = name;
-                                    itemSearchResultText.setText(name);
-                                    itemListText.setText("트레이 위치 : " + trayName + " (" + trayNumber(trayId) + "번)\n넣은 일시 : " + formatCreatedAt(createdAtText, createdAt));
+                                    renderItemSearchResult(name, trayName, trayId, createdAtText, createdAt);
                                     itemSearchActionRow.setVisibility(View.VISIBLE);
                                     return;
                                 }
                             }
                         }
                         clearSearchedItem();
-                        itemSearchResultText.setText(query + " 물품은 아직 등록되지 않았어요.");
-                        itemListText.setText("검색어를 다시 확인해주세요.");
+                        renderItemSearchMessage(query + " 물품은 아직 등록되지 않았어요.", "검색어를 다시 확인해주세요.");
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                         clearSearchedItem();
-                        itemSearchResultText.setText("검색에 실패했어요.");
-                        itemListText.setText("네트워크 상태를 확인해주세요.");
+                        renderItemSearchMessage("검색에 실패했어요.", "네트워크 상태를 확인해주세요.");
                     }
                 });
+    }
+
+    private void renderItemSearchGuide() {
+        itemSearchResultText.setText("보관 중인 물품");
+        itemSearchResultText.setTextColor(0xFF111111);
+        itemSearchResultText.setTextSize(18);
+        itemSearchResultText.setTypeface(null, android.graphics.Typeface.BOLD);
+        itemListText.setVisibility(View.GONE);
+        itemListContainer.setVisibility(View.VISIBLE);
+        itemSearchDivider.setVisibility(View.GONE);
+    }
+
+    private void renderItemSearchMessage(String title, String description) {
+        itemSearchResultText.setText(title);
+        itemSearchResultText.setTextColor(0xFF74787F);
+        itemSearchResultText.setTextSize(15);
+        itemSearchResultText.setTypeface(null, android.graphics.Typeface.BOLD);
+        itemListContainer.setVisibility(View.GONE);
+        itemListText.setVisibility(View.VISIBLE);
+        itemListText.setText(description);
+        itemListText.setTextColor(0xFF74787F);
+        itemListText.setTextSize(12);
+        itemListText.setTypeface(null, android.graphics.Typeface.NORMAL);
+        itemSearchDivider.setVisibility(View.GONE);
+    }
+
+    private void renderItemSearchResult(String itemName, String trayName, String trayId, String createdAtText, Long createdAt) {
+        itemSearchResultText.setText(itemName.trim());
+        itemSearchResultText.setTextColor(0xFF111111);
+        itemSearchResultText.setTextSize(18);
+        itemSearchResultText.setTypeface(null, android.graphics.Typeface.BOLD);
+        itemListContainer.setVisibility(View.GONE);
+        itemListText.setVisibility(View.VISIBLE);
+        itemListText.setText("보관 트레이 " + trayName + " (" + trayNumber(trayId) + "번)\n보관 일시 " + formatCreatedAt(createdAtText, createdAt));
+        itemListText.setTextColor(0xFF8A8D94);
+        itemListText.setTextSize(12);
+        itemListText.setTypeface(null, android.graphics.Typeface.NORMAL);
+        itemSearchDivider.setVisibility(View.VISIBLE);
     }
 
     private String formatCreatedAt(String createdAtText, Long createdAt) {
@@ -529,6 +579,7 @@ public class MainActivity extends AppCompatActivity {
         searchedItemKey = null;
         searchedItemName = null;
         itemSearchActionRow.setVisibility(View.GONE);
+        itemSearchDivider.setVisibility(View.GONE);
     }
 
     private boolean hasSearchedItem() {
@@ -791,34 +842,68 @@ public class MainActivity extends AppCompatActivity {
         return builder.length() == 0 ? "등록된 물품이 없어요." : builder.toString();
     }
 
-    private String buildItemNameList(DataSnapshot snapshot) {
+    private void renderSelectedTrayItems(DataSnapshot snapshot) {
+        itemListContainer.removeAllViews();
         if (!snapshot.exists()) {
-            return "등록된 물품이 없어요.";
+            itemListContainer.addView(buildSelectedTrayEmptyText("등록된 물품이 없어요."));
+            return;
         }
 
-        StringBuilder builder = new StringBuilder();
+        boolean hasVisibleItem = false;
         for (DataSnapshot child : snapshot.getChildren()) {
             String name = child.child("itemName").getValue(String.class);
-            if (name != null && !name.trim().isEmpty()) {
-                if (builder.length() > 0) {
-                    builder.append("\n");
-                }
-                builder.append("• ").append(name);
+            if (name == null || name.trim().isEmpty()) {
+                continue;
             }
+            String createdAtText = child.child("createdAtText").getValue(String.class);
+            Long createdAt = child.child("createdAt").getValue(Long.class);
+            addSelectedTrayItemRow(name.trim(), formatCreatedAt(createdAtText, createdAt));
+            hasVisibleItem = true;
         }
-        return builder.length() == 0 ? "등록된 물품이 없어요." : builder.toString();
+
+        if (!hasVisibleItem) {
+            itemListContainer.addView(buildSelectedTrayEmptyText("등록된 물품이 없어요."));
+        }
     }
 
-    private void showTrayItemsPopup(String trayId, String itemList) {
-        db.child("trays").child(trayId).child("name").get().addOnSuccessListener(snapshot -> {
-            String trayName = snapshot.getValue(String.class);
-            if (trayName == null || trayName.trim().isEmpty()) {
-                trayName = defaultTrayName(trayId);
-            }
+    private void renderSelectedTrayItemsError() {
+        itemListContainer.removeAllViews();
+        itemListContainer.addView(buildSelectedTrayEmptyText("물품 목록을 불러오지 못했어요."));
+    }
 
-            TrayDialogFragment.newInstance(trayName + " 물품", itemList)
-                    .show(getSupportFragmentManager(), "trayItemsPopup");
-        });
+    private void addSelectedTrayItemRow(String itemName, String createdAtText) {
+        TextView nameView = new TextView(this);
+        nameView.setText(itemName);
+        nameView.setTextColor(0xFF111111);
+        nameView.setTextSize(18);
+        nameView.setTypeface(null, android.graphics.Typeface.BOLD);
+        itemListContainer.addView(nameView);
+
+        TextView dateView = new TextView(this);
+        dateView.setText("보관 일시 " + createdAtText);
+        dateView.setTextColor(0xFF8A8D94);
+        dateView.setTextSize(12);
+        dateView.setPadding(0, dp(5), 0, dp(14));
+        itemListContainer.addView(dateView);
+
+        View divider = new View(this);
+        divider.setBackgroundColor(0xFFE6E7EA);
+        LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(1)
+        );
+        dividerParams.setMargins(0, 0, 0, dp(14));
+        itemListContainer.addView(divider, dividerParams);
+    }
+
+    private TextView buildSelectedTrayEmptyText(String message) {
+        TextView empty = new TextView(this);
+        empty.setText(message);
+        empty.setTextColor(0xFF74787F);
+        empty.setTextSize(14);
+        empty.setTypeface(null, android.graphics.Typeface.BOLD);
+        empty.setPadding(0, dp(12), 0, dp(12));
+        return empty;
     }
 
     private String firstItemSummary(DataSnapshot snapshot, String trayNumber) {
@@ -1036,230 +1121,6 @@ public class MainActivity extends AppCompatActivity {
         return value == null || value.trim().isEmpty() ? fallback : value;
     }
 
-    private void renderStorageHistoryLegacy(DataSnapshot snapshot) {
-        storageHistoryContainer.removeAllViews();
-        Map<String, Map<String, String>> historyByItem = new LinkedHashMap<>();
-        for (DataSnapshot child : snapshot.getChildren()) {
-            String itemName = child.child("itemName").getValue(String.class);
-            if (itemName == null || itemName.trim().isEmpty()) {
-                itemName = "이름 없는 물품";
-            } else {
-                itemName = itemName.trim();
-            }
-
-            String action = child.child("action").getValue(String.class);
-            String trayId = child.child("trayId").getValue(String.class);
-            String createdAtText = child.child("createdAtText").getValue(String.class);
-            Long createdAt = child.child("createdAt").getValue(Long.class);
-            if ((createdAtText == null || createdAtText.trim().isEmpty()) && createdAt != null) {
-                createdAtText = formatTime(createdAt);
-            }
-            if (createdAtText == null || createdAtText.trim().isEmpty()) {
-                createdAtText = "시간 미상";
-            }
-
-            Map<String, String> itemHistory = historyByItem.get(itemName);
-            if (itemHistory == null) {
-                itemHistory = new HashMap<>();
-                itemHistory.put("itemName", itemName);
-                itemHistory.put("createHistory", "해당 없음");
-                itemHistory.put("deleteHistory", "해당 없음");
-                itemHistory.put("keepHistory", "해당 없음");
-                itemHistory.put("currentStatus", "보관 중");
-                historyByItem.put(itemName, itemHistory);
-            }
-
-            if ("create".equals(action)) {
-                itemHistory.put("createHistory", createdAtText + " 리스트에 물품 생성");
-                itemHistory.put("keepHistory", storageKeepHistorySummary(action, trayId, createdAtText));
-                itemHistory.put("currentStatus", "보관 중");
-            } else if ("delete".equals(action)) {
-                itemHistory.put("deleteHistory", createdAtText + " 삭제");
-                itemHistory.put("currentStatus", "삭제됨");
-            } else if ("update".equals(action) || "storage".equals(action)) {
-                itemHistory.put("keepHistory", storageKeepHistorySummary(action, trayId, createdAtText));
-                itemHistory.put("currentStatus", "보관 중");
-            }
-        }
-
-        if (historyByItem.isEmpty()) {
-            storageHistoryContainer.addView(buildLogEmptyText("아직 보관 기록이 없어요."));
-            return;
-        }
-
-        List<Map<String, String>> histories = new ArrayList<>(historyByItem.values());
-        for (int i = histories.size() - 1; i >= 0; i--) {
-            storageHistoryContainer.addView(buildStorageHistoryCardLegacy(histories.get(i)));
-        }
-    }
-
-    private LinearLayout buildStorageHistoryCardLegacy(Map<String, String> history) {
-        String itemName = history.get("itemName");
-        String createHistory = history.get("createHistory");
-        String deleteHistory = history.get("deleteHistory");
-        String keepHistory = history.get("keepHistory");
-        String currentStatus = history.get("currentStatus");
-
-        LinearLayout card = new LinearLayout(this);
-        card.setOrientation(LinearLayout.VERTICAL);
-        card.setBackgroundResource(R.drawable.bg_card);
-        card.setPadding(dp(18), dp(16), dp(18), dp(16));
-        LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        cardParams.setMargins(0, 0, 0, dp(12));
-        card.setLayoutParams(cardParams);
-
-        TextView itemNameView = new TextView(this);
-        itemNameView.setText(itemName);
-        itemNameView.setTextColor(0xFF111111);
-        itemNameView.setTextSize(18);
-        itemNameView.setTypeface(null, android.graphics.Typeface.BOLD);
-
-        TextView historyView = new TextView(this);
-        historyView.setText(
-                "리스트에 물품 생성 이력 : " + createHistory + "\n"
-                        + "삭제 이력 : " + deleteHistory + "\n"
-                        + "보관 이력 : " + keepHistory + "\n"
-                        + "현재 상태 : " + currentStatus
-        );
-        historyView.setTextColor(0xFF74787F);
-        historyView.setTextSize(13);
-        historyView.setLineSpacing(dp(2), 1.0f);
-        historyView.setPadding(0, dp(12), 0, 0);
-
-        card.addView(itemNameView);
-        card.addView(historyView);
-        return card;
-    }
-
-    private void loadStorageHistoryLegacy() {
-        storageHistoryContainer.removeAllViews();
-        storageHistoryContainer.addView(buildLogEmptyText("보관 기록을 불러오는 중이에요."));
-
-        db.child("storageHistory").orderByChild("createdAt").limitToLast(80)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        storageHistoryContainer.removeAllViews();
-                        List<DataSnapshot> histories = new ArrayList<>();
-                        Map<String, String> latestActionByItem = new HashMap<>();
-                        for (DataSnapshot child : snapshot.getChildren()) {
-                            histories.add(child);
-                            String itemName = child.child("itemName").getValue(String.class);
-                            String action = child.child("action").getValue(String.class);
-                            if (itemName != null && action != null) {
-                                latestActionByItem.put(itemName, action);
-                            }
-                        }
-                        if (histories.isEmpty()) {
-                            storageHistoryContainer.addView(buildLogEmptyText("아직 보관 기록이 없어요."));
-                            return;
-                        }
-                        for (int i = histories.size() - 1; i >= 0; i--) {
-                            storageHistoryContainer.addView(buildStorageHistoryCardLegacy(histories.get(i), latestActionByItem));
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        storageHistoryContainer.removeAllViews();
-                        storageHistoryContainer.addView(buildLogEmptyText("보관 기록을 불러오지 못했어요."));
-                    }
-                });
-    }
-
-    private LinearLayout buildStorageHistoryCardLegacy(DataSnapshot snapshot, Map<String, String> latestActionByItem) {
-        String action = snapshot.child("action").getValue(String.class);
-        String trayId = snapshot.child("trayId").getValue(String.class);
-        String itemName = snapshot.child("itemName").getValue(String.class);
-        String createdAtText = snapshot.child("createdAtText").getValue(String.class);
-        Long createdAt = snapshot.child("createdAt").getValue(Long.class);
-
-        if (itemName == null || itemName.trim().isEmpty()) {
-            itemName = "이름 없는 물품";
-        }
-        if (action == null || action.trim().isEmpty()) {
-            action = "storage";
-        }
-        if ((createdAtText == null || createdAtText.trim().isEmpty()) && createdAt != null) {
-            createdAtText = formatTime(createdAt);
-        }
-        if (createdAtText == null || createdAtText.trim().isEmpty()) {
-            createdAtText = "시간 미상";
-        }
-
-        String latestAction = latestActionByItem.get(itemName);
-        String currentStatus = "delete".equals(latestAction) ? "삭제됨" : "보관 중";
-
-        LinearLayout card = new LinearLayout(this);
-        card.setOrientation(LinearLayout.VERTICAL);
-        card.setBackgroundResource(R.drawable.bg_card);
-        card.setPadding(dp(18), dp(16), dp(18), dp(16));
-        LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        cardParams.setMargins(0, 0, 0, dp(12));
-        card.setLayoutParams(cardParams);
-
-        TextView itemNameView = new TextView(this);
-        itemNameView.setText(itemName);
-        itemNameView.setTextColor(0xFF111111);
-        itemNameView.setTextSize(18);
-        itemNameView.setTypeface(null, android.graphics.Typeface.BOLD);
-
-        TextView historyView = new TextView(this);
-        historyView.setText(
-                "리스트에 물품 생성 이력 : " + storageCreateHistoryText(action, createdAtText) + "\n"
-                        + "삭제 이력 : " + storageDeleteHistoryText(action, createdAtText) + "\n"
-                        + "보관 이력 : " + storageKeepHistoryText(action, trayId, createdAtText) + "\n"
-                        + "현재 상태 : " + currentStatus
-        );
-        historyView.setTextColor(0xFF74787F);
-        historyView.setTextSize(13);
-        historyView.setLineSpacing(dp(2), 1.0f);
-        historyView.setPadding(0, dp(12), 0, 0);
-
-        card.addView(itemNameView);
-        card.addView(historyView);
-        return card;
-    }
-
-    private String storageCreateHistoryText(String action, String createdAtText) {
-        return "create".equals(action) ? createdAtText + " 생성" : "해당 없음";
-    }
-
-    private String storageDeleteHistoryText(String action, String createdAtText) {
-        return "delete".equals(action) ? createdAtText + " 삭제" : "해당 없음";
-    }
-
-    private String storageKeepHistoryText(String action, String trayId, String createdAtText) {
-        String trayText = trayId == null || trayId.trim().isEmpty() ? "트레이 미상" : trayNumber(trayId) + "번 트레이";
-        if ("create".equals(action)) {
-            return createdAtText + " " + trayText + " 보관";
-        }
-        if ("update".equals(action)) {
-            return createdAtText + " " + trayText + " 보관 정보 수정";
-        }
-        return "해당 없음";
-    }
-
-    private String storageKeepHistorySummary(String action, String trayId, String createdAtText) {
-        String trayText = trayId == null || trayId.trim().isEmpty() ? "트레이 미상" : trayNumber(trayId) + "번 트레이";
-        if ("create".equals(action)) {
-            return createdAtText + " " + trayText + " 보관";
-        }
-        if ("update".equals(action)) {
-            return createdAtText + " " + trayText + " 보관 정보 수정";
-        }
-        if ("storage".equals(action)) {
-            return createdAtText + " " + trayText + " 보관";
-        }
-        return "해당 없음";
-    }
-
     private TextView buildLogEmptyText(String message) {
         TextView empty = new TextView(this);
         empty.setText(message);
@@ -1379,72 +1240,6 @@ public class MainActivity extends AppCompatActivity {
             history.putAll(extra);
         }
         db.child("storageHistory").push().setValue(history);
-    }
-
-    private void showModeCreatePanelLegacy(boolean editMode) {
-        modeMoreMenu.setVisibility(View.GONE);
-        modeCreatePanel.setVisibility(View.VISIBLE);
-        if (editMode) {
-            db.child("modes").child("currentMode").get().addOnSuccessListener(snapshot -> {
-                String modeName = snapshot.child("modeName").getValue(String.class);
-                String route = snapshot.child("route").getValue(String.class);
-                modeNameInput.setText(modeName == null ? "" : modeName);
-                modeRouteInput.setText(route == null ? "" : route);
-            });
-        } else {
-            modeNameInput.setText("");
-            modeRouteInput.setText("");
-        }
-    }
-
-    private void saveCurrentModeLegacy() {
-        String modeName = modeNameInput.getText().toString().trim();
-        String route = modeRouteInput.getText().toString().trim();
-        if (modeName.isEmpty()) {
-            Toast.makeText(this, "모드 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (route.isEmpty()) {
-            route = "이동 경로 미설정";
-        }
-
-        Map<String, Object> mode = new HashMap<>();
-        mode.put("modeId", "currentMode");
-        mode.put("modeName", modeName);
-        mode.put("route", route);
-        mode.put("active", true);
-        mode.put("updatedAt", System.currentTimeMillis());
-
-        db.child("modes").child("currentMode").setValue(mode).addOnSuccessListener(unused -> {
-            modeCreatePanel.setVisibility(View.GONE);
-            loadCurrentMode();
-            Toast.makeText(this, "모드가 저장됐어요.", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    private void deleteCurrentModeLegacy() {
-        db.child("modes").child("currentMode").removeValue().addOnSuccessListener(unused -> {
-            modeMoreMenu.setVisibility(View.GONE);
-            routineModeTitle.setText("모드 없음");
-            TextView status = findViewById(R.id.routineStatusText);
-            status.setText("+ 버튼을 눌러 모드를 만들어주세요.");
-            Toast.makeText(this, "모드가 삭제됐어요.", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    private void loadCurrentModeLegacy() {
-        db.child("modes").child("currentMode").get().addOnSuccessListener(snapshot -> {
-            TextView status = findViewById(R.id.routineStatusText);
-            String modeName = snapshot.child("modeName").getValue(String.class);
-            String route = snapshot.child("route").getValue(String.class);
-            if (modeName == null || modeName.trim().isEmpty()) {
-                routineModeTitle.setText("모드 없음");
-                status.setText("DB에 저장된 루틴이 없어요.");
-                return;
-            }
-            routineModeTitle.setText(modeName);
-            status.setText(route == null || route.trim().isEmpty() ? "이동 경로 미설정" : route);
-        });
     }
 
     private void showModeCreatePanel(boolean editMode) {
@@ -1793,37 +1588,6 @@ private void loadRoutineBaseOptions(Spinner spinner) {
         datePicker.show();
     }
 
-    private void saveCurrentMode() {
-        String modeName = modeNameInput.getText().toString().trim();
-        String route = modeRouteInput.getText().toString().trim();
-        if (modeName.isEmpty()) {
-            Toast.makeText(this, "모드 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (route.isEmpty()) {
-            route = "이동 경로 미설정";
-        }
-
-        DatabaseReference modeRef = selectedModeId == null
-                ? db.child("modes").push()
-                : db.child("modes").child(selectedModeId);
-        String modeId = modeRef.getKey();
-
-        Map<String, Object> mode = new HashMap<>();
-        mode.put("modeId", modeId);
-        mode.put("modeName", modeName);
-        mode.put("route", route);
-        mode.put("active", true);
-        mode.put("updatedAt", System.currentTimeMillis());
-
-        modeRef.setValue(mode).addOnSuccessListener(unused -> {
-            selectedModeId = null;
-            modeCreatePanel.setVisibility(View.GONE);
-            loadModes();
-            Toast.makeText(this, "모드가 저장됐어요.", Toast.LENGTH_SHORT).show();
-        });
-    }
-
     private void saveCurrentModeFromSheet(String modeName, String basePoint, String repeatDays, String repeatDaysText, String runTime, String route, BottomSheetDialog sheet) {
         if (modeName.isEmpty()) {
             Toast.makeText(this, "루틴 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
@@ -1888,8 +1652,35 @@ private void loadRoutineBaseOptions(Spinner spinner) {
         });
     }
 
-    private void loadCurrentMode() {
-        loadModes();
+    private void saveCurrentMode() {
+        String modeName = modeNameInput.getText().toString().trim();
+        String route = modeRouteInput.getText().toString().trim();
+        if (modeName.isEmpty()) {
+            Toast.makeText(this, "모드 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (route.isEmpty()) {
+            route = "이동 경로 미설정";
+        }
+
+        DatabaseReference modeRef = selectedModeId == null
+                ? db.child("modes").push()
+                : db.child("modes").child(selectedModeId);
+        String modeId = modeRef.getKey();
+
+        Map<String, Object> mode = new HashMap<>();
+        mode.put("modeId", modeId);
+        mode.put("modeName", modeName);
+        mode.put("route", route);
+        mode.put("active", true);
+        mode.put("updatedAt", System.currentTimeMillis());
+
+        modeRef.setValue(mode).addOnSuccessListener(unused -> {
+            selectedModeId = null;
+            modeCreatePanel.setVisibility(View.GONE);
+            loadModes();
+            Toast.makeText(this, "모드가 저장됐어요.", Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void loadModes() {
@@ -2130,8 +1921,10 @@ private void loadRoutineBaseOptions(Spinner spinner) {
         stopVoiceRecognition();
         micButton.setSelected(true);
         micButton.setContentDescription("음성 입력 중");
-        voiceStatusText.setText("상태 · 음성 인식 중");
+        voiceStatusText.setText("듣는 중");
         voiceCommandText.setText("명령 : 듣는 중...");
+        voiceDestinationText.setText("대상 : 음성 명령을 기다리는 중입니다.");
+        voiceConfidenceText.setText("신뢰도 : 계산 중");
         startMicPulse();
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
@@ -2143,7 +1936,7 @@ private void loadRoutineBaseOptions(Spinner spinner) {
 
             @Override
             public void onBeginningOfSpeech() {
-                voiceStatusText.setText("상태 · 음성 수집 중");
+                voiceStatusText.setText("음성 수집 중");
             }
 
             @Override
@@ -2156,7 +1949,7 @@ private void loadRoutineBaseOptions(Spinner spinner) {
 
             @Override
             public void onEndOfSpeech() {
-                voiceStatusText.setText("상태 · 인식 결과 처리 중");
+                voiceStatusText.setText("분석 중");
                 stopMicPulse();
             }
 
@@ -2165,6 +1958,7 @@ private void loadRoutineBaseOptions(Spinner spinner) {
                 stopVoiceRecognition();
                 String message = voiceErrorMessage(error);
                 voiceCommandText.setText("명령 : " + message);
+                voiceConfidenceText.setText("신뢰도 : 관련 코드 없음");
                 saveVoiceResult("", "error", message, 0f);
             }
 
@@ -2180,11 +1974,13 @@ private void loadRoutineBaseOptions(Spinner spinner) {
                 String command = matches == null || matches.isEmpty() ? "" : matches.get(0);
                 if (command.trim().isEmpty()) {
                     voiceCommandText.setText("명령 : 인식된 음성이 없어요.");
+                    voiceConfidenceText.setText("신뢰도 : 관련 코드 없음");
                     saveVoiceResult("", "empty", "인식된 음성이 없음", confidence);
                     return;
                 }
                 voiceCommandText.setText("명령 : " + command);
-                voiceDestinationText.setText("DB에 음성 인식 결과를 저장했어요.");
+                voiceDestinationText.setText("대상 : 모델 분석을 요청하는 중입니다.");
+                voiceConfidenceText.setText("음성 신뢰도 : " + formatConfidence(confidence));
                 requestVoiceIntentFromPklApi(command, confidence);
             }
 
@@ -2218,13 +2014,13 @@ private void loadRoutineBaseOptions(Spinner spinner) {
             speechRecognizer = null;
         }
         if (voiceStatusText != null) {
-            voiceStatusText.setText("상태 · 대기중");
+            voiceStatusText.setText("대기 중");
         }
     }
 
     private void requestVoiceIntentFromPklApi(String command, float speechConfidence) {
         voiceCommandText.setText("명령 : " + command);
-        voiceDestinationText.setText("pkl 모델로 명령을 분석하는 중...");
+        voiceDestinationText.setText("대상 : pkl 모델로 명령을 분석하는 중입니다.");
         new Thread(() -> {
             HttpURLConnection connection = null;
             try {
@@ -2276,6 +2072,7 @@ private void loadRoutineBaseOptions(Spinner spinner) {
                                     ? (confirmText.isEmpty() || "null".equals(confirmText) ? message : confirmText)
                                     : message
                     );
+                    voiceConfidenceText.setText("모델 신뢰도 : " + formatConfidence(modelConfidence));
                 });
 
                 saveVoiceIntentResult(command, "success", message, speechConfidence, label, intent, targetTrayId, accepted, modelConfidence, confirmText);
@@ -2284,6 +2081,7 @@ private void loadRoutineBaseOptions(Spinner spinner) {
                 runOnUiThread(() -> {
                     voiceCommandText.setText("명령 : " + command);
                     voiceDestinationText.setText(message);
+                    voiceConfidenceText.setText("신뢰도 : 관련 코드 없음");
                 });
                 saveVoiceIntentResult(command, "api_error", message, speechConfidence, "UNKNOWN", "UNKNOWN", "", false, 0.0, "");
             } finally {
@@ -2292,6 +2090,14 @@ private void loadRoutineBaseOptions(Spinner spinner) {
                 }
             }
         }).start();
+    }
+
+    private String formatConfidence(double confidence) {
+        if (confidence <= 0) {
+            return "관련 코드 없음";
+        }
+        double normalized = confidence > 1 ? confidence : confidence * 100;
+        return String.format(Locale.KOREA, "%.0f%%", normalized);
     }
 
     private void saveVoiceResult(String command, String status, String message, float confidence) {
