@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     private final int activeColor = 0xFF111111;
     private final int inactiveColor = 0xFF8A8D94;
     private static final int REQUEST_RECORD_AUDIO = 1001;
-    private static final String VOICE_INTENT_API_URL = "http://10.0.2.2:5000/api/ai/voice-intent";
+    private static final String VOICE_INTENT_API_URL = "http://192.168.0.202:5000/api/ai/voice-intent";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
