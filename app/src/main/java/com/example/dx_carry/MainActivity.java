@@ -124,7 +124,13 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        getWindow().setStatusBarColor(APP_BACKGROUND);
+        getWindow().setNavigationBarColor(0xFFFFFFFF);
+        int systemUiFlags = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            systemUiFlags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+        }
+        getWindow().getDecorView().setSystemUiVisibility(systemUiFlags);
 
         appRoot = findViewById(R.id.appRoot);
         contentContainer = findViewById(R.id.contentContainer);
@@ -136,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
         listenToTrays();
         listenToRoutines();
         createNotificationChannel();
+        listenToNotificationSettings();
         listenToBatteryLevel();
 
         ViewCompat.setOnApplyWindowInsetsListener(appRoot, (v, insets) -> {
@@ -215,6 +222,39 @@ public class MainActivity extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
         NotificationManagerCompat.from(this).notify((int) (System.currentTimeMillis() % 100000), builder.build());
+    }
+
+    private void listenToNotificationSettings() {
+        db.child("notificationSettings").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Boolean push = snapshot.child("pushEnabled").getValue(Boolean.class);
+                Boolean move = snapshot.child("moveCompleteEnabled").getValue(Boolean.class);
+                Boolean battery = snapshot.child("batteryLowEnabled").getValue(Boolean.class);
+                if (push == null) {
+                    push = snapshot.child("push").getValue(Boolean.class);
+                }
+                if (move == null) {
+                    move = snapshot.child("move").getValue(Boolean.class);
+                }
+                if (battery == null) {
+                    battery = snapshot.child("battery").getValue(Boolean.class);
+                }
+                if (push != null) pushNotificationsEnabled = push;
+                if (move != null) moveNotificationsEnabled = move;
+                if (battery != null) {
+                    batteryNotificationsEnabled = battery;
+                    if (battery) batteryLowNotified = false;
+                }
+                if ("notification".equals(screen)) {
+                    render();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
     private void listenToBatteryLevel() {
@@ -1972,11 +2012,17 @@ public class MainActivity extends AppCompatActivity {
     private void setNotificationToggleValue(String type, boolean enabled) {
         if ("move".equals(type)) {
             moveNotificationsEnabled = enabled;
+            db.child("notificationSettings").child("moveCompleteEnabled").setValue(enabled);
+            db.child("notificationSettings").child("move").setValue(enabled);
         } else if ("battery".equals(type)) {
             batteryNotificationsEnabled = enabled;
             if (enabled) batteryLowNotified = false;
+            db.child("notificationSettings").child("batteryLowEnabled").setValue(enabled);
+            db.child("notificationSettings").child("battery").setValue(enabled);
         } else {
             pushNotificationsEnabled = enabled;
+            db.child("notificationSettings").child("pushEnabled").setValue(enabled);
+            db.child("notificationSettings").child("push").setValue(enabled);
         }
     }
 
@@ -2969,7 +3015,7 @@ public class MainActivity extends AppCompatActivity {
             sendLocalNotification("호출 실패", "CARRY 호출에 실패했습니다.");
             saveNotificationLog("호출 실패", recognizedModule, recognizedLocation, "호출 실패", "call", createdAt);
         } else if ("sent".equals(status)) {
-            sendLocalNotification("호출 완료 알림", recognizedModule + " 이동이 완료되었습니다.");
+            sendLocalNotification("호출 완료 알림", recognizedModule + " 트레이의 이동이 완료되었습니다.");
             saveNotificationLog("호출 완료 알림", recognizedModule, recognizedLocation, "호출 완료", "call", createdAt);
         }
     }
@@ -3003,14 +3049,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveRoutineExecutionLog(RoutineData routine, boolean success, long createdAt) {
         if (routine == null) return;
+        String title = emptyToFallback(routine.title, "루틴 실행");
+        String destination = emptyToFallback(routine.place, "목적지 미상");
+        String action = success ? "루틴 실행" : "루틴 실행 실패";
         saveExecutionLog(
                 "routine",
-                emptyToFallback(routine.title, "루틴 실행"),
+                title,
                 "",
-                success ? "루틴 실행" : "루틴 실행 실패",
-                emptyToFallback(routine.place, "목적지 미상"),
+                action,
+                destination,
                 createdAt
         );
+        if(!success) {
+            sendLocalNotification("루틴 실행 실패", title + " 루틴 실행에 실패했습니다.");
+            saveNotificationLog("루틴 실행 실패", title, destination, action, "routine", createdAt);
+        }
     }
 
     private void saveExecutionLog(String source, String title, String command, String action, String destination, long createdAt) {
