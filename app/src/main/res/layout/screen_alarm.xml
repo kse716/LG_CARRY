@@ -17,21 +17,23 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="center"
+            android:layout_gravity="start|center_vertical"
             android:contentDescription="@null"
             android:src="@drawable/ic_chevron_left" />
     </FrameLayout>
 
+
+
     <TextView
-        android:layout_width="262dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="30dp"
-        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="18dp"
+        android:gravity="center_vertical"
         android:includeFontPadding="false"
         android:text="알림음"
-        android:textColor="#14191B"
-        android:textSize="18sp"
+        android:textColor="#12181B"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <TextView

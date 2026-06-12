@@ -1,6 +1,8 @@
 package com.example.dx_carry;
 
 import android.Manifest;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
     private String recognizedMessage = "";
     private double recognizedConfidence = 0.0;
     private boolean voiceIntentAccepted = false;
+    private AnimatorSet voiceMicPulseAnimator;
     private SpeechRecognizer speechRecognizer;
     private DatabaseReference db;
     private boolean pushNotificationsEnabled = true;
@@ -148,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        stopVoiceMicPulse();
         if (speechRecognizer != null) {
             speechRecognizer.destroy();
             speechRecognizer = null;
@@ -594,7 +598,7 @@ public class MainActivity extends AppCompatActivity {
         homeView.findViewById(R.id.homeLogsChevron).setOnClickListener(v -> setScreen("logs"));
         homeView.findViewById(R.id.homeVoiceButton).setOnClickListener(v -> setScreen("voice"));
         homeView.findViewById(R.id.homeRoutineManageButton).setOnClickListener(v -> setScreen("routine"));
-        homeView.findViewById(R.id.homeModuleCard).setOnClickListener(v -> setScreen("modules"));
+        homeView.findViewById(R.id.homeModuleCard).setOnClickListener(v -> openRepresentativeTrayDetail());
     }
 
     private void bindHomeQuickRoutines(View homeView) {
@@ -648,6 +652,13 @@ public class MainActivity extends AppCompatActivity {
         bindHomeItemText((TextView) homeView.findViewById(R.id.homeModuleItemFirst), tray, 0);
         bindHomeItemText((TextView) homeView.findViewById(R.id.homeModuleItemSecond), tray, 1);
         bindHomeItemText((TextView) homeView.findViewById(R.id.homeModuleItemThird), tray, 2);
+    }
+
+    private void openRepresentativeTrayDetail() {
+        TrayData tray = representativeTray();
+        selectedTrayId = tray.id;
+        selectedModule = tray.name;
+        setScreen("moduleDetail");
     }
 
     private TrayData representativeTray() {
@@ -744,7 +755,9 @@ public class MainActivity extends AppCompatActivity {
 
         voiceView.findViewById(R.id.voiceBackIcon).setOnClickListener(v -> setScreen("home"));
         voiceView.findViewById(R.id.voiceIdleMic).setOnClickListener(startOrFinishClick);
-        voiceView.findViewById(R.id.voiceListeningMic).setOnClickListener(startOrFinishClick);
+        View listeningMic = voiceView.findViewById(R.id.voiceListeningMic);
+        listeningMic.setSelected(true);
+        listeningMic.setOnClickListener(startOrFinishClick);
         voiceView.findViewById(R.id.voiceStopButton).setOnClickListener(v -> {
             stopSpeechRecognition();
             setSampleVoiceResult();
@@ -763,6 +776,11 @@ public class MainActivity extends AppCompatActivity {
         voiceView.findViewById(R.id.voiceIdleGroup).setVisibility(voiceState == 0 ? View.VISIBLE : View.GONE);
         voiceView.findViewById(R.id.voiceListeningGroup).setVisibility(voiceState == 1 ? View.VISIBLE : View.GONE);
         voiceView.findViewById(R.id.voiceResultGroup).setVisibility(voiceState == 2 ? View.VISIBLE : View.GONE);
+        if (voiceState == 1) {
+            startVoiceMicPulse(voiceView.findViewById(R.id.voiceMicPulseRing));
+        } else {
+            stopVoiceMicPulse();
+        }
 
         if (voiceState == 2) {
             ((TextView) voiceView.findViewById(R.id.voiceResultCommand)).setText(recognizedCommand);
@@ -821,7 +839,7 @@ public class MainActivity extends AppCompatActivity {
 
         View helpText = canvas.findViewById(R.id.routineEditHelpText);
         View saveButton = canvas.findViewById(R.id.routineEditSaveButton);
-        int helpTop = dp(235) + cardHeight + dp(12);
+        int helpTop = dp(335) + cardHeight + dp(12);
         if (helpText != null) setTopMargin(helpText, helpTop);
         if (saveButton != null) setTopMargin(saveButton, helpTop + dp(41));
         setHeight(canvas, helpTop + dp(120));
@@ -1190,7 +1208,7 @@ public class MainActivity extends AppCompatActivity {
         remove.setTextSize(20);
         remove.setGravity(Gravity.CENTER);
         remove.setIncludeFontPadding(false);
-        remove.setBackgroundResource(R.drawable.bg_module_icon_circle);
+        remove.setBackgroundResource(R.drawable.bg_item_remove_circle);
         remove.setOnClickListener(v -> confirmRemoveItem(itemName));
         row.addView(remove, new LinearLayout.LayoutParams(dp(34), dp(34)));
         return row;
@@ -1360,12 +1378,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void bindModuleAddPlace(View rootView) {
         LinearLayout selector = rootView.findViewById(R.id.moduleAddLocationSelector);
+        FrameLayout dropdown = rootView.findViewById(R.id.moduleAddLocationDropdown);
         selector.removeAllViews();
         selector.setGravity(Gravity.CENTER_VERTICAL);
         selector.setPadding(dp(16), 0, dp(14), 0);
         selector.setClickable(true);
         selector.setFocusable(true);
         selectedModuleAddPlaceIndex = clampPlaceIndex(selectedModuleAddPlaceIndex);
+        moduleAddPlaceDropdownOpen = false;
+        if (dropdown != null) {
+            dropdown.removeAllViews();
+            setHeight(dropdown, 0);
+            dropdown.setVisibility(View.GONE);
+        }
+        setTopMargin(rootView.findViewById(R.id.moduleAddHelpText), dp(270));
+        setTopMargin(rootView.findViewById(R.id.moduleAddSaveButton), dp(312));
 
         TextView value = new TextView(this);
         value.setGravity(Gravity.CENTER_VERTICAL);
@@ -1379,7 +1406,7 @@ public class MainActivity extends AppCompatActivity {
         TextView selectedCheck = new TextView(this);
         selectedCheck.setGravity(Gravity.CENTER);
         selectedCheck.setIncludeFontPadding(false);
-        selectedCheck.setText("✓");
+        selectedCheck.setText("\u2713");
         selectedCheck.setTextColor(0xFF14191B);
         selectedCheck.setTextSize(16);
         selectedCheck.setTypeface(null, android.graphics.Typeface.BOLD);
@@ -1392,13 +1419,9 @@ public class MainActivity extends AppCompatActivity {
         selector.addView(chevron, new LinearLayout.LayoutParams(dp(18), dp(18)));
 
         selector.setOnClickListener(v -> {
-            moduleAddPlaceDropdownOpen = !moduleAddPlaceDropdownOpen;
-            if (moduleAddPlaceDropdownOpen) {
-                moduleAddPlaceDropdownOrder = orderedPlaceIndexes(selectedModuleAddPlaceIndex);
-            }
-            bindModuleAddPlace(rootView);
+            final int[] selectedPlace = {selectedModuleAddPlaceIndex};
+            showPlacePopup(selector, selectedPlace, value, index -> selectedModuleAddPlaceIndex = index);
         });
-        bindModuleAddPlaceDropdown(rootView, value);
     }
 
     private void bindModuleAddPlaceDropdown(View rootView, TextView valueView) {
@@ -1460,7 +1483,7 @@ public class MainActivity extends AppCompatActivity {
             TextView check = new TextView(this);
             check.setGravity(Gravity.CENTER);
             check.setIncludeFontPadding(false);
-            check.setText(index == selectedModuleAddPlaceIndex ? "✓" : "");
+            check.setText(index == selectedModuleAddPlaceIndex ? "\u2713" : "");
             check.setTextColor(0xFF14191B);
             check.setTextSize(16);
             check.setTypeface(null, android.graphics.Typeface.BOLD);
@@ -1471,7 +1494,7 @@ public class MainActivity extends AppCompatActivity {
                 selectedModuleAddPlaceIndex = index;
                 valueView.setText(routinePlaceName(index));
                 for (int checkIndex = 0; checkIndex < checks.size(); checkIndex++) {
-                    checks.get(checkIndex).setText(displayOrder[checkIndex] == selectedModuleAddPlaceIndex ? "✓" : "");
+                    checks.get(checkIndex).setText(displayOrder[checkIndex] == selectedModuleAddPlaceIndex ? "\u2713" : "");
                 }
             });
             list.addView(row, new LinearLayout.LayoutParams(
@@ -1529,12 +1552,14 @@ public class MainActivity extends AppCompatActivity {
         list.removeAllViews();
 
         if (normalizedQuery.isEmpty()) {
+            resultCount.setVisibility(View.GONE);
             resultCount.setText("물품명을 입력하세요");
             emptyText.setVisibility(View.GONE);
             return;
         }
 
         List<ItemSearchResult> results = findItemSearchResults(normalizedQuery);
+        resultCount.setVisibility(View.VISIBLE);
         resultCount.setText("검색 결과 " + results.size() + "건");
         emptyText.setVisibility(results.isEmpty() ? View.VISIBLE : View.GONE);
         for (int i = 0; i < results.size(); i++) {
@@ -1780,6 +1805,9 @@ public class MainActivity extends AppCompatActivity {
         contentContainer.addView(editView);
         centerScreen(editView);
 
+        EditText nameInput = editView.findViewById(R.id.routineEditNameInput);
+        nameInput.setText(routine.title);
+        nameInput.setSelection(nameInput.getText().length());
         ((TextView) editView.findViewById(R.id.routineEditTrayValue)).setText(selectedTray().name);
         ((TextView) editView.findViewById(R.id.routineEditTimeValue)).setText("매일 " + formatDialTime(selectedRoutineHour, selectedRoutineMinute));
         bindRoutinePlace(editView);
@@ -1787,15 +1815,17 @@ public class MainActivity extends AppCompatActivity {
         editView.findViewById(R.id.routineEditBackButton).setOnClickListener(v -> setScreen("routine"));
         editView.findViewById(R.id.routineEditTrayRow).setOnClickListener(v -> setScreen("moduleSelect"));
         editView.findViewById(R.id.routineEditTimeRow).setOnClickListener(v -> showTimePickerSheet("루틴 시간 설정", "routineEdit"));
-        editView.findViewById(R.id.routineEditSaveButton).setOnClickListener(v -> saveRoutineEdit());
+        editView.findViewById(R.id.routineEditSaveButton).setOnClickListener(v -> saveRoutineEdit(nameInput.getText().toString().trim()));
     }
 
-    private void saveRoutineEdit() {
+    private void saveRoutineEdit(String routineName) {
         RoutineData routine = selectedRoutine();
         TrayData tray = selectedTray();
         String place = routinePlaceName(selectedRoutinePlaceIndex);
+        String title = emptyToFallback(routineName, routine.title);
         DatabaseReference ref = db.child("routines").child(routine.id);
-        ref.child("title").setValue(routine.title);
+        ref.child("title").setValue(title);
+        ref.child("name").setValue(title);
         ref.child("trayId").setValue(tray.id);
         ref.child("trayName").setValue(tray.name);
         ref.child("hour").setValue(selectedRoutineHour);
@@ -2708,6 +2738,38 @@ public class MainActivity extends AppCompatActivity {
         View item = nav.findViewById(itemId);
         item.setSelected(isBottomNavSelected(target));
         item.setOnClickListener(v -> setScreen(target));
+    }
+
+    private void startVoiceMicPulse(View pulseRing) {
+        if (pulseRing == null) return;
+        stopVoiceMicPulse();
+        pulseRing.setVisibility(View.VISIBLE);
+        pulseRing.setAlpha(0.72f);
+        pulseRing.setScaleX(0.86f);
+        pulseRing.setScaleY(0.86f);
+
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(pulseRing, View.SCALE_X, 0.86f, 1.32f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(pulseRing, View.SCALE_Y, 0.86f, 1.32f);
+        ObjectAnimator alpha = ObjectAnimator.ofFloat(pulseRing, View.ALPHA, 0.72f, 0f);
+        voiceMicPulseAnimator = new AnimatorSet();
+        voiceMicPulseAnimator.playTogether(scaleX, scaleY, alpha);
+        voiceMicPulseAnimator.setDuration(1200);
+        voiceMicPulseAnimator.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                if (voiceState == 1 && pulseRing.getParent() != null) {
+                    startVoiceMicPulse(pulseRing);
+                }
+            }
+        });
+        voiceMicPulseAnimator.start();
+    }
+
+    private void stopVoiceMicPulse() {
+        if (voiceMicPulseAnimator != null) {
+            voiceMicPulseAnimator.cancel();
+            voiceMicPulseAnimator = null;
+        }
     }
 
     private boolean isBottomNavSelected(String target) {

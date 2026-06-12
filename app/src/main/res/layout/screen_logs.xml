@@ -19,26 +19,21 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_chevron_left"
-            android:layout_gravity="center"
+            android:layout_gravity="start|center_vertical"
             android:contentDescription="@null" />
     </FrameLayout>
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="22dp"
-        android:layout_marginLeft="60dp"
-        android:layout_marginTop="17dp"
-        android:gravity="left|center_vertical"
+        android:layout_height="44dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="18dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
         android:text="로그 기록"
         android:textColor="#12181B"
-        android:textSize="17sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="56dp"
-        android:background="#ECEDEF" />
 
     <TextView
         android:id="@+id/logsChipToday"
@@ -108,6 +103,7 @@
 
     <TextView
         android:id="@+id/logsFilterLabel"
+        android:visibility="gone"
         android:layout_width="62dp"
         android:layout_height="17dp"
         android:layout_marginLeft="288dp"

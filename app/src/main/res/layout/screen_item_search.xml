@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/itemSearchCanvas"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,26 +12,26 @@
         android:layout_marginStart="14dp"
         android:layout_marginTop="18dp"
         android:clickable="true"
-        android:focusable="true" >
+        android:focusable="true">
 
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_chevron_left"
-            android:layout_gravity="center"
+            android:layout_gravity="start|center_vertical"
             android:contentDescription="@null" />
     </FrameLayout>
 
     <TextView
-        android:layout_width="262dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="30dp"
-        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="18dp"
+        android:gravity="center_vertical"
         android:includeFontPadding="false"
         android:text="물품 검색"
-        android:textColor="#14191B"
-        android:textSize="18sp"
+        android:textColor="#12181B"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <EditText
@@ -40,11 +39,11 @@
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
         android:layout_marginTop="78dp"
+        android:layout_marginEnd="20dp"
         android:background="@drawable/bg_input"
         android:gravity="center_vertical"
-        android:hint="마스크"
+        android:hint="물품명 입력"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:singleLine="true"
@@ -58,76 +57,27 @@
         android:layout_width="match_parent"
         android:layout_height="16dp"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
         android:layout_marginTop="142dp"
+        android:layout_marginEnd="20dp"
         android:includeFontPadding="false"
-        android:text="검색 결과 1건"
         android:textColor="#798385"
         android:textSize="12sp"
-        android:textStyle="bold" />
-
-    <FrameLayout
-        android:id="@+id/itemSearchResultCard"
-        android:layout_width="match_parent"
-        android:layout_height="76dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="172dp"
-        android:background="@drawable/bg_card"
-        android:elevation="3dp">
-
-        <ImageView
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-        android:layout_marginTop="12dp"
-            android:contentDescription="@null"
-            android:scaleType="fitCenter"
-            android:src="@drawable/carry_product" />
-
-        <TextView
-            android:layout_width="180dp"
-            android:layout_height="17dp"
-            android:layout_marginStart="82dp"
-            android:layout_marginTop="17dp"
-            android:includeFontPadding="false"
-            android:text="마스크"
-            android:textColor="#14191B"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/itemSearchTrayText"
-            android:layout_width="180dp"
-            android:layout_height="14dp"
-            android:layout_marginStart="82dp"
-            android:layout_marginTop="40dp"
-            android:includeFontPadding="false"
-            android:textColor="#008E84"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <FrameLayout
-            android:id="@+id/itemSearchChevron"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginStart="316dp"
-            android:layout_marginTop="29dp" />
-    </FrameLayout>
+        android:textStyle="bold"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/itemSearchEmptyText"
         android:layout_width="match_parent"
         android:layout_height="28dp"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="172dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginTop="270dp"
         android:includeFontPadding="false"
-        android:text="물품명을 입력하면 어떤 트레이에 보관되어 있는지 찾을 수 있습니다."
+        android:text="검색어와 일치하는 물품이 없습니다."
         android:textColor="#798385"
-        android:textSize="11sp"
-        android:textStyle="bold" />
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/itemSearchResultsList"

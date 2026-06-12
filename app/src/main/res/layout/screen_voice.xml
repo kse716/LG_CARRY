@@ -19,20 +19,21 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_chevron_left"
-            android:layout_gravity="center"
+            android:layout_gravity="start|center_vertical"
             android:contentDescription="@null" />
     </FrameLayout>
 
     <TextView
         android:id="@+id/voiceTitle"
         android:layout_width="match_parent"
-        android:layout_height="23dp"
-        android:layout_marginTop="29dp"
-        android:gravity="center"
+        android:layout_height="44dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="18dp"
+        android:gravity="center_vertical"
         android:includeFontPadding="false"
         android:text="음성 호출"
-        android:textColor="#14191B"
-        android:textSize="18sp"
+        android:textColor="#12181B"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <FrameLayout
@@ -45,21 +46,34 @@
             android:layout_height="280dp"
             android:layout_marginStart="55dp"
             android:layout_marginTop="160dp"
-            android:background="@drawable/bg_voice_circle_idle_outer" />
+            android:background="@drawable/bg_voice_circle_idle_outer"
+            android:visibility="gone" />
 
         <View
             android:layout_width="216dp"
             android:layout_height="216dp"
             android:layout_marginStart="87dp"
             android:layout_marginTop="192dp"
-            android:background="@drawable/bg_voice_circle_idle_mid" />
+            android:background="@drawable/bg_voice_circle_idle_mid"
+            android:visibility="gone" />
 
         <View
             android:layout_width="156dp"
             android:layout_height="156dp"
             android:layout_marginStart="117dp"
-            android:layout_marginTop="222dp"
-            android:background="@drawable/bg_voice_circle_idle_inner" />
+            android:layout_marginTop="234dp"
+            android:background="@drawable/bg_voice_circle_idle_inner"
+            android:visibility="gone" />
+
+        <ImageView
+            android:layout_width="190dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="268dp"
+            android:alpha="0.95"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_voice_wave_rose"
+            android:visibility="gone" />
 
         <FrameLayout
             android:id="@+id/voiceIdleMic"
@@ -67,17 +81,17 @@
             android:layout_height="112dp"
             android:layout_marginStart="139dp"
             android:layout_marginTop="244dp"
-            android:background="@drawable/bg_voice_circle_teal"
+            android:background="@drawable/bg_voice_mic_button"
             android:clickable="true"
+            android:elevation="8dp"
             android:focusable="true" >
 
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/ic_mic_white"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
                 android:layout_gravity="center"
                 android:contentDescription="@null"
-                app:tint="#FFFFFF"/>
+                android:src="@drawable/ic_mic" />
         </FrameLayout>
 
         <TextView
@@ -131,31 +145,63 @@
             android:layout_height="300dp"
             android:layout_marginStart="45dp"
             android:layout_marginTop="138dp"
-            android:background="@drawable/bg_voice_circle_idle_outer" />
+            android:background="@drawable/bg_voice_circle_idle_outer"
+            android:visibility="gone" />
 
         <View
             android:layout_width="244dp"
             android:layout_height="244dp"
             android:layout_marginStart="73dp"
             android:layout_marginTop="166dp"
-            android:background="@drawable/bg_voice_circle_idle_mid" />
+            android:background="@drawable/bg_voice_circle_idle_mid"
+            android:visibility="gone" />
 
         <View
             android:layout_width="188dp"
             android:layout_height="188dp"
             android:layout_marginStart="101dp"
             android:layout_marginTop="194dp"
-            android:background="@drawable/bg_voice_circle_idle_inner" />
+            android:background="@drawable/bg_voice_circle_idle_inner"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/voiceMicPulseRing"
+            android:layout_width="132dp"
+            android:layout_height="132dp"
+            android:layout_marginStart="129dp"
+            android:layout_marginTop="234dp"
+            android:alpha="0"
+            android:background="@drawable/bg_voice_mic_pulse_ring"
+            android:visibility="gone" />
+
+        <ImageView
+            android:layout_width="190dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="256dp"
+            android:alpha="0.95"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_voice_wave_rose"
+            android:visibility="gone" />
 
         <FrameLayout
             android:id="@+id/voiceListeningMic"
             android:layout_width="112dp"
             android:layout_height="112dp"
             android:layout_marginStart="139dp"
-            android:layout_marginTop="232dp"
-            android:background="@drawable/bg_voice_circle_teal_dark"
+            android:layout_marginTop="244dp"
+            android:background="@drawable/bg_voice_mic_button"
             android:clickable="true"
-            android:focusable="true" />
+            android:elevation="8dp"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_mic" />
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/voiceBars"
@@ -184,7 +230,7 @@
             android:layout_height="24dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="470dp"
+            android:layout_marginTop="470dp"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="듣고 있어요..."
@@ -197,7 +243,7 @@
             android:layout_height="16dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="502dp"
+            android:layout_marginTop="502dp"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="명령을 말한 뒤 잠시 기다리세요"
@@ -232,7 +278,15 @@
             android:layout_height="72dp"
             android:layout_marginStart="159dp"
             android:layout_marginTop="96dp"
-            android:background="@drawable/bg_voice_circle_teal" />
+            android:background="@drawable/bg_voice_circle_teal">
+
+            <ImageView
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_check_white" />
+        </FrameLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -294,7 +348,16 @@
                 android:layout_height="36dp"
                 android:layout_marginStart="18dp"
                 android:layout_marginTop="101dp"
-                android:background="@drawable/bg_voice_soft_circle" />
+                android:background="@drawable/bg_voice_soft_circle">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_box"
+                    android:tint="#008E84" />
+            </FrameLayout>
 
             <TextView
                 android:layout_width="150dp"
@@ -326,7 +389,15 @@
                 android:layout_height="36dp"
                 android:layout_marginStart="18dp"
                 android:layout_marginTop="145dp"
-                android:background="@drawable/bg_voice_soft_circle" />
+                android:background="@drawable/bg_voice_soft_circle">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_pin" />
+            </FrameLayout>
 
             <TextView
                 android:layout_width="150dp"
@@ -357,9 +428,9 @@
             android:id="@+id/voiceExecuteButton"
             android:layout_width="157dp"
             android:layout_height="52dp"
-            android:layout_marginStart="20dp"
+            android:layout_gravity="top|end"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="513dp"
+            android:layout_marginTop="513dp"
             android:background="@drawable/bg_voice_primary_button"
             android:gravity="center"
             android:includeFontPadding="false"
@@ -372,9 +443,9 @@
             android:id="@+id/voiceRetryButton"
             android:layout_width="116dp"
             android:layout_height="48dp"
-            android:layout_marginStart="20dp"
+            android:layout_gravity="top|end"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="575dp"
+            android:layout_marginTop="575dp"
             android:background="@drawable/bg_voice_outline_button"
             android:gravity="center"
             android:includeFontPadding="false"
