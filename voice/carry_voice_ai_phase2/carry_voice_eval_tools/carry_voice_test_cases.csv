@@ -1,0 +1,52 @@
+text,expected_label,category
+캐리야 기저귀 가져와,CALL_TRAY_BABY,baby
+기저귀 트레이 불러줘,CALL_TRAY_BABY,baby
+물티슈 가져와,CALL_TRAY_BABY,baby
+젖병 가져와,CALL_TRAY_BABY,baby
+장난감 가져와,CALL_TRAY_BABY,baby
+손수건 가져와,CALL_TRAY_BABY,baby
+캐리아 기저기 가져와,CALL_TRAY_BABY,baby
+케리야 물 티슈 갖다줘,CALL_TRAY_BABY,baby
+젓병 좀 챙겨줘,CALL_TRAY_BABY,baby
+아이 장난감 불러줘,CALL_TRAY_BABY,baby
+게임패드 가져와,CALL_TRAY_HOBBY,hobby
+게임 패드 불러줘,CALL_TRAY_HOBBY,hobby
+충전기 가져와,CALL_TRAY_HOBBY,hobby
+충전기 케이블 가져와,CALL_TRAY_HOBBY,hobby
+충전 케이블 좀 갖다줘,CALL_TRAY_HOBBY,hobby
+액체괴물 가져와,CALL_TRAY_HOBBY,hobby
+액체 괴물 불러줘,CALL_TRAY_HOBBY,hobby
+스케치북 가져와,CALL_TRAY_HOBBY,hobby
+뜨개질 가져와,CALL_TRAY_HOBBY,hobby
+뜨게질 도구 가져와,CALL_TRAY_HOBBY,hobby
+약 가져와,CALL_TRAY_MEDICINE,medicine
+혈압약 가져와,CALL_TRAY_MEDICINE,medicine
+혈압 약 챙겨줘,CALL_TRAY_MEDICINE,medicine
+당뇨약 가져와,CALL_TRAY_MEDICINE,medicine
+당뇨 약 불러줘,CALL_TRAY_MEDICINE,medicine
+통풍약 가져와,CALL_TRAY_MEDICINE,medicine
+영양제 가져와,CALL_TRAY_MEDICINE,medicine
+비타민 챙겨줘,CALL_TRAY_MEDICINE,medicine
+한약 가져와,CALL_TRAY_MEDICINE,medicine
+안경 가져와,CALL_TRAY_MEDICINE,medicine
+돋보기 가져와,CALL_TRAY_MEDICINE,medicine
+돋보기 안경 갖다줘,CALL_TRAY_MEDICINE,medicine
+멈춰,STOP,control
+정지해,STOP,control
+그만해,STOP,control
+스탑,STOP,control
+바로 멈춰,STOP,control
+돌아가,RETURN_HOME,control
+복귀해,RETURN_HOME,control
+원래 자리로 돌아가,RETURN_HOME,control
+충전 장소로 가,RETURN_HOME,control
+상태 알려줘,STATUS_CHECK,control
+배터리 상태 알려줘,STATUS_CHECK,control
+캐리 상태 확인해줘,STATUS_CHECK,control
+날씨 알려줘,UNKNOWN,unknown
+음악 틀어줘,UNKNOWN,unknown
+뉴스 알려줘,UNKNOWN,unknown
+불 꺼줘,UNKNOWN,unknown
+에어컨 켜줘,UNKNOWN,unknown
+유튜브 틀어줘,UNKNOWN,unknown
+커튼 닫아줘,UNKNOWN,unknown

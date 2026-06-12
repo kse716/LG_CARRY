@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/modulesScroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9F9"
+    android:clipToPadding="false"
+    android:fillViewport="false">
+
+    <FrameLayout
+        android:id="@+id/modulesCanvas"
+        android:layout_width="match_parent"
+        android:layout_height="896dp"
+        android:background="#F7F9F9">
+
+        <TextView
+            android:layout_width="250dp"
+            android:layout_height="29dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+        android:layout_marginTop="27dp"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:text="트레이"
+            android:textColor="#14191B"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:id="@+id/modulesAddButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end|top"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="30dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_plus"
+                android:contentDescription="@null"
+                app:tint="#000000"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/modulesSearchButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end|top"
+            android:layout_marginEnd="64dp"
+            android:layout_marginTop="30dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_search" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+        android:layout_marginTop="78dp"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:text="내 트레이"
+            android:textColor="#798385"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:id="@+id/modulesList"
+            android:layout_width="match_parent"
+            android:layout_height="760dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="108dp"
+            android:layout_marginEnd="20dp" />
+
+        <TextView
+            android:id="@+id/modulesAddBottomButton"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="780dp"
+            android:background="@drawable/bg_add_module_dashed"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="+ 모듈 추가"
+            android:textColor="#7C878A"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+</ScrollView>

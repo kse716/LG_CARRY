@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9F9"
+    android:clipToPadding="false">
+
+    <FrameLayout
+        android:id="@+id/menuCanvas"
+        android:layout_width="match_parent"
+        android:layout_height="704dp"
+        android:background="#F7F9F9">
+
+        <TextView
+            android:layout_width="250dp"
+            android:layout_height="29dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+        android:layout_marginTop="27dp"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:text="메뉴"
+            android:textColor="#14191B"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="132dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+        android:layout_marginTop="78dp"
+            android:background="@drawable/bg_card"
+            android:elevation="3dp">
+
+            <FrameLayout android:id="@+id/menuUserIcon"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+        android:layout_marginTop="40dp"
+                android:background="@drawable/bg_voice_soft_circle">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_user"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="47dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="LG Carry"
+                android:textColor="#14191B"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="71dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="계정 및 ThinQ 설정"
+                android:textColor="#798385"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <FrameLayout android:id="@+id/menuAccountChevron"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="316dp"
+                android:layout_marginTop="57dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_chevron_left"
+                    android:contentDescription="@null"
+                    android:rotation="180"
+                    android:layout_gravity="center"
+                    app:tint="#798385"/>
+            </FrameLayout>
+        </FrameLayout>
+
+        <TextView android:layout_width="match_parent" android:layout_height="16dp" android:layout_marginStart="20dp" android:layout_marginEnd="20dp"
+        android:layout_marginTop="224dp" android:includeFontPadding="false" android:text="설정" android:textColor="#798385" android:textSize="13sp" android:textStyle="bold" />
+
+        <FrameLayout
+            android:id="@+id/menuListCard"
+            android:layout_width="match_parent"
+            android:layout_height="329dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+        android:layout_marginTop="254dp"
+            android:background="@drawable/bg_card"
+            android:elevation="3dp">
+
+            <FrameLayout android:id="@+id/menuDeviceRow" android:layout_width="match_parent" android:layout_height="54dp" android:clickable="true" android:focusable="true" />
+            <FrameLayout android:id="@+id/menuDeviceIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+        android:layout_marginTop="17dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_settings"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    app:tint="#008E84"/>
+            </FrameLayout>
+
+
+            <TextView android:layout_width="match_parent" android:layout_height="18dp" android:layout_marginStart="48dp" android:layout_marginTop="18dp" android:includeFontPadding="false" android:text="기기 설정" android:textColor="#14191B" android:textSize="15sp" />
+            <FrameLayout android:id="@+id/menuDeviceChevron" android:layout_width="18dp" android:layout_height="18dp" android:layout_marginStart="316dp" android:layout_marginTop="18dp" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="54dp" android:background="#E2E7E7" />
+
+            <FrameLayout android:id="@+id/menuNotificationRow" android:layout_width="match_parent" android:layout_height="54dp" android:layout_marginTop="55dp" android:clickable="true" android:focusable="true" />
+            <FrameLayout
+                android:id="@+id/menuNotificationIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+        android:layout_marginTop="72dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_bell"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    app:tint="#008E84"/>
+            </FrameLayout>
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="18dp" android:layout_marginStart="48dp" android:layout_marginTop="73dp" android:includeFontPadding="false" android:text="알림 설정" android:textColor="#14191B" android:textSize="15sp" />
+            <FrameLayout android:id="@+id/menuNotificationChevron" android:layout_width="18dp" android:layout_height="18dp" android:layout_marginStart="316dp" android:layout_marginTop="73dp" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="109dp" android:background="#E2E7E7" />
+
+            <FrameLayout
+                android:id="@+id/menuShareIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+        android:layout_marginTop="127dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_share"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="18dp"
+                android:layout_marginStart="48dp"
+                android:layout_marginTop="128dp"
+                android:includeFontPadding="false"
+                android:text="공유 및 권한"
+                android:textColor="#14191B"
+                android:textSize="15sp" />
+
+            <FrameLayout android:id="@+id/menuShareChevron" android:layout_width="18dp" android:layout_height="18dp" android:layout_marginStart="316dp" android:layout_marginTop="128dp" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="164dp" android:background="#E2E7E7" />
+
+            <FrameLayout
+                android:id="@+id/menuHelpIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+        android:layout_marginTop="182dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_help"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null" />
+            </FrameLayout>
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="18dp" android:layout_marginStart="48dp" android:layout_marginTop="183dp" android:includeFontPadding="false" android:text="고객지원" android:textColor="#14191B" android:textSize="15sp" />
+            <FrameLayout android:id="@+id/menuHelpChevron" android:layout_width="18dp" android:layout_height="18dp" android:layout_marginStart="316dp" android:layout_marginTop="183dp" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="219dp" android:background="#E2E7E7" />
+
+            <FrameLayout
+                android:id="@+id/menuInfoIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+        android:layout_marginTop="237dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_info"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null" />
+            </FrameLayout>
+
+            <TextView android:layout_width="match_parent" android:layout_height="18dp" android:layout_marginStart="48dp" android:layout_marginTop="238dp" android:includeFontPadding="false" android:text="앱 정보" android:textColor="#14191B" android:textSize="15sp" />
+            <FrameLayout android:id="@+id/menuInfoChevron" android:layout_width="18dp" android:layout_height="18dp" android:layout_marginStart="316dp" android:layout_marginTop="238dp" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="274dp" android:background="#E2E7E7" />
+
+            <FrameLayout android:id="@+id/menuMapRow" android:layout_width="match_parent" android:layout_height="54dp" android:layout_marginTop="275dp" android:clickable="true" android:focusable="true" />
+            <FrameLayout
+                android:id="@+id/menuMapIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+        android:layout_marginTop="292dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_pin"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null" />
+            </FrameLayout>
+
+            <TextView android:layout_width="match_parent" android:layout_height="18dp" android:layout_marginStart="48dp" android:layout_marginTop="293dp" android:includeFontPadding="false" android:text="지도/거점 설정" android:textColor="#14191B" android:textSize="15sp" />
+            <FrameLayout android:id="@+id/menuMapChevron" android:layout_width="18dp" android:layout_height="18dp" android:layout_marginStart="316dp" android:layout_marginTop="293dp" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+        android:layout_marginTop="597dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="앱 버전 1.0.0"
+            android:textColor="#798385"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+</ScrollView>

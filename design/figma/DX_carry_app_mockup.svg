@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2380" height="980" viewBox="0 0 2380 980">
+  <defs>
+    <style>
+      .bg { fill: #f3f4f6; }
+      .phone { fill: #f6f7f9; stroke: #15161a; stroke-width: 10; }
+      .card { fill: #ffffff; stroke: #e4e6eb; stroke-width: 1; }
+      .dark { fill: #202124; }
+      .muted { fill: #74787f; }
+      .accent { fill: #c30b45; }
+      .pink { fill: #d37a9c; }
+      .input { fill: #f7f7fa; }
+      .btn { fill: #9fa0a2; }
+      .tray { fill: #eef0f3; stroke: #d8dce2; stroke-width: 1; }
+      .title { font-family: Arial, sans-serif; font-size: 28px; font-weight: 800; fill: #111111; }
+      .brand { font-family: Arial, sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 1px; fill: #c30b45; }
+      .h1 { font-family: Arial, sans-serif; font-size: 28px; font-weight: 800; fill: #111111; }
+      .h2 { font-family: Arial, sans-serif; font-size: 20px; font-weight: 800; fill: #111111; }
+      .body { font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; fill: #74787f; }
+      .small { font-family: Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #74787f; }
+      .white { fill: #ffffff; }
+      .center { text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="2380" height="980"/>
+
+  <!-- Home -->
+  <g id="Home" transform="translate(24 24)">
+    <rect class="phone" width="420" height="900" rx="42"/>
+    <rect fill="#111111" x="168" y="17" width="84" height="24" rx="12"/>
+    <text x="38" y="38" font-family="Arial" font-size="14" font-weight="800">15:34</text>
+    <text class="brand" x="42" y="78">CARRY</text>
+    <text class="title" x="42" y="106">&#54856;</text>
+    <rect class="card" x="324" y="72" width="62" height="36" rx="18"/>
+    <text class="small center" x="355" y="96">&#8226; 86%</text>
+
+    <rect class="card" x="30" y="126" width="360" height="360" rx="24"/>
+    <text class="h1 center" x="210" y="172">&#54596;&#50836;&#54620; &#47932;&#44148;&#51012; &#52880;&#47532;&#50640;</text>
+    <text class="h1 center" x="210" y="206">&#54840;&#52636;&#54644;&#48372;&#49464;&#50836;!</text>
+    <rect class="dark" x="135" y="236" width="150" height="160" rx="20"/>
+    <rect class="tray" x="154" y="260" width="112" height="36" rx="10"/>
+    <rect class="tray" x="154" y="310" width="112" height="36" rx="10"/>
+    <rect class="tray" x="154" y="360" width="112" height="36" rx="10"/>
+    <text class="h2 center" x="210" y="284">1&#52789;</text>
+    <text class="h2 center" x="210" y="334">2&#52789;</text>
+    <text class="h2 center" x="210" y="384">3&#52789;</text>
+    <text class="body center" x="210" y="434">CARRY&#44032; &#45824;&#44592; &#51473;&#51060;&#50640;&#50836;</text>
+    <rect class="btn" x="30" y="502" width="360" height="58" rx="18"/>
+    <text class="h2 white center" x="210" y="538">&#9678; &#45236; &#50948;&#52824;&#47196; &#48512;&#47476;&#44592;</text>
+    <rect class="card" x="30" y="578" width="360" height="150" rx="24"/>
+    <text class="brand" x="50" y="614">Favorite</text>
+    <text class="h2" x="50" y="646">&#51088;&#51452; &#50416;&#45716; &#47932;&#54408;</text>
+    <text class="body center" x="210" y="696">&#50500;&#51649; &#51088;&#51452; &#50416; &#47932;&#54408;&#51060; &#50630;&#50612;&#50836;.</text>
+    <rect class="card" x="30" y="812" width="360" height="58" rx="24"/>
+    <text class="accent center small" x="66" y="846">&#54856;</text>
+    <text class="small center" x="138" y="846">&#54840;&#52636;</text>
+    <text class="small center" x="210" y="846">&#47932;&#54408;</text>
+    <text class="small center" x="282" y="846">&#47336;&#54004;</text>
+    <text class="small center" x="354" y="846">&#49444;&#51221;</text>
+  </g>
+
+  <!-- Call -->
+  <g id="Call" transform="translate(492 24)">
+    <rect class="phone" width="420" height="900" rx="42"/>
+    <rect fill="#111111" x="168" y="17" width="84" height="24" rx="12"/>
+    <text x="38" y="38" font-family="Arial" font-size="14" font-weight="800">15:34</text>
+    <text class="brand" x="42" y="78">CARRY</text>
+    <text class="title" x="42" y="106">&#54840;&#52636;</text>
+    <rect class="card" x="324" y="72" width="62" height="36" rx="18"/>
+    <text class="small center" x="355" y="96">&#8226; 86%</text>
+    <rect class="card" x="30" y="126" width="360" height="306" rx="24"/>
+    <text class="h1 center" x="210" y="178">&#54596;&#50836;&#54620; &#47932;&#44148;&#51012; &#52880;&#47532;&#50640;</text>
+    <text class="h1 center" x="210" y="212">&#54840;&#52636;&#54644;&#48372;&#49464;&#50836;!</text>
+    <circle class="pink" cx="210" cy="296" r="58"/>
+    <text class="h1 white center" x="210" y="306">MIC</text>
+    <text class="body center" x="210" y="388">CARRY&#44032; &#51060;&#46041; &#51473;&#51060;&#50640;&#50836;</text>
+    <rect class="btn" x="30" y="448" width="360" height="58" rx="18"/>
+    <text class="h2 white center" x="210" y="484">&#9678; &#54788;&#51116; &#50948;&#52824;&#47196; &#54840;&#52636;</text>
+    <rect class="card" x="30" y="526" width="360" height="178" rx="24"/>
+    <text class="brand" x="50" y="562">Voice</text>
+    <text class="h2" x="50" y="596">&#51020;&#49457; &#51064;&#49885; &#44208;&#44284;</text>
+    <text class="body" x="50" y="630">&#47749;&#47161;: &#50504;&#44221;&#51012; 1&#52789;&#50640;&#49436; &#44032;&#51256;&#50752;</text>
+    <text class="body" x="50" y="660">&#49888;&#47280;&#46020; 92%  /  &#47785;&#51201;&#44144;&#51216; &#44144;&#49892;</text>
+    <rect class="card" x="30" y="812" width="360" height="58" rx="24"/>
+    <text class="small center" x="66" y="846">&#54856;</text>
+    <text class="accent center small" x="138" y="846">&#54840;&#52636;</text>
+    <text class="small center" x="210" y="846">&#47932;&#54408;</text>
+    <text class="small center" x="282" y="846">&#47336;&#54004;</text>
+    <text class="small center" x="354" y="846">&#49444;&#51221;</text>
+  </g>
+
+  <!-- Items -->
+  <g id="Items" transform="translate(960 24)">
+    <rect class="phone" width="420" height="900" rx="42"/>
+    <rect fill="#111111" x="168" y="17" width="84" height="24" rx="12"/>
+    <text x="38" y="38" font-family="Arial" font-size="14" font-weight="800">15:34</text>
+    <text class="brand" x="42" y="78">CARRY</text>
+    <text class="title" x="42" y="106">&#47932;&#54408;</text>
+    <rect class="card" x="324" y="72" width="62" height="36" rx="18"/>
+    <text class="small center" x="355" y="96">&#8226; 86%</text>
+    <rect class="dark" x="30" y="122" width="116" height="76" rx="18"/>
+    <rect class="card" x="156" y="122" width="116" height="76" rx="18"/>
+    <rect class="card" x="282" y="122" width="108" height="76" rx="18"/>
+    <text class="h2 white center" x="88" y="154">1&#52789;</text>
+    <text class="small white center" x="88" y="178">2&#44060;</text>
+    <text class="h2 center" x="214" y="154">2&#52789;</text>
+    <text class="small center" x="214" y="178">1&#44060;</text>
+    <text class="h2 center" x="336" y="154">3&#52789;</text>
+    <text class="small center" x="336" y="178">0&#44060;</text>
+    <rect class="card" x="30" y="212" width="360" height="206" rx="24"/>
+    <text class="brand" x="50" y="246">1&#52789;</text>
+    <text class="h2" x="50" y="280">&#51060; &#52856;&#51012; &#51088;&#50976;&#47213;&#44172; &#49444;&#51221;</text>
+    <rect class="input" x="50" y="304" width="320" height="48" rx="14"/>
+    <text class="body" x="68" y="334">Tag  &#52712;&#52840; / &#44060;&#51064; &#47932;&#54408;</text>
+    <rect class="input" x="50" y="364" width="270" height="48" rx="14"/>
+    <text class="body" x="68" y="394">1&#52789;&#50640; &#47932;&#54408; &#52628;&#44032;</text>
+    <rect class="dark" x="334" y="364" width="42" height="42" rx="14"/>
+    <text class="h1 white center" x="355" y="394">+</text>
+    <rect class="card" x="30" y="432" width="360" height="186" rx="24"/>
+    <rect class="input" x="50" y="462" width="320" height="48" rx="14"/>
+    <text class="body" x="68" y="492">&#44160;&#49353;  &#54788;&#51116; &#52856; &#47932;&#54408; &#44160;&#49353;</text>
+    <text class="body center" x="210" y="564">&#46321;&#47197; &#47932;&#54408;: &#50504;&#44221;, &#47532;&#47784;&#52968;</text>
+    <rect class="card" x="30" y="812" width="360" height="58" rx="24"/>
+    <text class="small center" x="66" y="846">&#54856;</text>
+    <text class="small center" x="138" y="846">&#54840;&#52636;</text>
+    <text class="accent center small" x="210" y="846">&#47932;&#54408;</text>
+    <text class="small center" x="282" y="846">&#47336;&#54004;</text>
+    <text class="small center" x="354" y="846">&#49444;&#51221;</text>
+  </g>
+
+  <!-- Routine -->
+  <g id="Routine" transform="translate(1428 24)">
+    <rect class="phone" width="420" height="900" rx="42"/>
+    <rect fill="#111111" x="168" y="17" width="84" height="24" rx="12"/>
+    <text x="38" y="38" font-family="Arial" font-size="14" font-weight="800">15:34</text>
+    <text class="brand" x="42" y="78">CARRY</text>
+    <text class="title" x="42" y="106">&#47336;&#54004;</text>
+    <rect class="card" x="324" y="72" width="62" height="36" rx="18"/>
+    <text class="small center" x="355" y="96">&#8226; 86%</text>
+    <rect class="card" x="30" y="128" width="360" height="96" rx="18"/>
+    <circle class="dark" cx="75" cy="176" r="24"/>
+    <text class="brand" x="118" y="162">Routine</text>
+    <text class="h2" x="118" y="188">&#47336;&#54004; &#47564;&#46308;&#44592;</text>
+    <text class="body" x="118" y="212">&#49884;&#44036;&#44284; &#50836;&#51068;&#47196; &#51088;&#46041; &#54840;&#52636;</text>
+    <text class="h2" x="356" y="184">&gt;</text>
+    <rect class="card" x="30" y="240" width="360" height="96" rx="18"/>
+    <circle class="dark" cx="75" cy="288" r="24"/>
+    <text class="brand" x="118" y="274">Mode</text>
+    <text class="h2" x="118" y="300">&#47784;&#46300; &#47564;&#46308;&#44592;</text>
+    <text class="body" x="118" y="324">&#47932;&#54408; &#49692;&#49436;&#50752; &#47785;&#51201; &#44144;&#51216; &#49444;&#51221;</text>
+    <text class="h2" x="356" y="296">&gt;</text>
+    <rect class="card" x="30" y="354" width="360" height="156" rx="24"/>
+    <text class="brand" x="50" y="390">Mode Detail</text>
+    <text class="h2" x="50" y="422">&#50500;&#52840; &#47784;&#46300;: &#47932; &#8594; &#50557; &#8594; &#50504;&#44221;</text>
+    <text class="body" x="50" y="456">&#47784;&#46300;, &#47932;&#54408;, &#53944;&#47112;&#51060;, &#47785;&#51201;&#44144;&#51216;</text>
+    <text class="body" x="50" y="480">&#44592;&#45733;&#51012; &#54620; &#55148;&#47492;&#51004;&#47196; &#51200;&#51109;</text>
+    <rect class="card" x="30" y="812" width="360" height="58" rx="24"/>
+    <text class="small center" x="66" y="846">&#54856;</text>
+    <text class="small center" x="138" y="846">&#54840;&#52636;</text>
+    <text class="small center" x="210" y="846">&#47932;&#54408;</text>
+    <text class="accent center small" x="282" y="846">&#47336;&#54004;</text>
+    <text class="small center" x="354" y="846">&#49444;&#51221;</text>
+  </g>
+
+  <!-- Settings -->
+  <g id="Settings" transform="translate(1896 24)">
+    <rect class="phone" width="420" height="900" rx="42"/>
+    <rect fill="#111111" x="168" y="17" width="84" height="24" rx="12"/>
+    <text x="38" y="38" font-family="Arial" font-size="14" font-weight="800">15:34</text>
+    <text class="brand" x="42" y="78">CARRY</text>
+    <text class="title" x="42" y="106">&#49444;&#51221;</text>
+    <rect class="card" x="324" y="72" width="62" height="36" rx="18"/>
+    <text class="small center" x="355" y="96">&#8226; 86%</text>
+    <rect class="card" x="30" y="126" width="172" height="108" rx="22"/>
+    <rect class="card" x="218" y="126" width="172" height="108" rx="22"/>
+    <rect class="card" x="30" y="248" width="172" height="108" rx="22"/>
+    <rect class="card" x="218" y="248" width="172" height="108" rx="22"/>
+    <text class="body" x="54" y="166">&#48176;&#53552;&#47532;</text>
+    <text class="h2" x="54" y="206">86%</text>
+    <text class="body" x="242" y="166">&#50672;&#44208;</text>
+    <text class="h2" x="242" y="206">&#45130;&#44608;</text>
+    <text class="body" x="54" y="288">&#52649;&#46028;</text>
+    <text class="h2" x="54" y="328">0&#54924;</text>
+    <text class="body" x="242" y="288">&#50724;&#47448; &#53076;&#46300;</text>
+    <text class="h2" x="242" y="328">C-00</text>
+    <rect class="card" x="30" y="378" width="360" height="86" rx="22"/>
+    <text class="h2" x="118" y="416">&#48520;&#48731; &#49444;&#51221;</text>
+    <text class="body" x="118" y="442">&#49353;&#44628;&#51012; &#52628;&#44032;&#54616;&#44144;&#45208; &#49325;&#51228;&#54644;&#50836;.</text>
+    <text class="h2" x="360" y="426">&gt;</text>
+    <rect class="card" x="30" y="480" width="360" height="86" rx="22"/>
+    <text class="h2" x="118" y="518">&#44592;&#48376;&#44050; &#49444;&#51221;</text>
+    <text class="body" x="118" y="544">&#54217;&#49548; &#54840;&#52636;&#50640; &#50120; &#44592;&#48376;&#44050;</text>
+    <text class="h2" x="360" y="528">&gt;</text>
+    <rect class="card" x="30" y="582" width="360" height="86" rx="22"/>
+    <text class="h2" x="118" y="620">&#49892;&#54665; &#47196;&#44536;</text>
+    <text class="body" x="118" y="646">&#51060;&#46041;, &#46020;&#52265;, &#49892;&#54056; &#49345;&#53468;</text>
+    <text class="h2" x="360" y="630">&gt;</text>
+    <rect class="card" x="30" y="812" width="360" height="58" rx="24"/>
+    <text class="small center" x="66" y="846">&#54856;</text>
+    <text class="small center" x="138" y="846">&#54840;&#52636;</text>
+    <text class="small center" x="210" y="846">&#47932;&#54408;</text>
+    <text class="small center" x="282" y="846">&#47336;&#54004;</text>
+    <text class="accent center small" x="354" y="846">&#49444;&#51221;</text>
+  </g>
+</svg>

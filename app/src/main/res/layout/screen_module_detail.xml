@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/moduleDetailScroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9F9"
+    android:clipToPadding="false"
+    android:fillViewport="false">
+
+    <FrameLayout
+        android:id="@+id/moduleDetailCanvas"
+        android:layout_width="match_parent"
+        android:layout_height="760dp"
+        android:background="#F7F9F9">
+
+        <FrameLayout
+            android:id="@+id/moduleDetailBackButton"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="18dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_chevron_left" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/moduleDetailTitle"
+            android:layout_width="262dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:textColor="#14191B"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:id="@+id/moduleDetailEditButton"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="end|top"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="18dp"
+            android:background="@drawable/bg_icon_outline_circle"
+            android:clickable="true"
+            android:elevation="2dp"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_edit_white"
+                app:tint="#14191B" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/moduleDetailTopCard"
+            android:layout_width="match_parent"
+            android:layout_height="92dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="86dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/bg_card"
+            android:elevation="3dp">
+
+            <FrameLayout
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="16dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/bg_module_icon_circle">
+
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/carry_product" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="96dp"
+                android:layout_marginEnd="18dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/moduleDetailTrayName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:textColor="#14191B"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/moduleDetailTrayLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:includeFontPadding="false"
+                    android:textColor="#798385"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/moduleDetailItemCount"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="198dp"
+            android:layout_marginEnd="20dp"
+            android:includeFontPadding="false"
+            android:textColor="#798385"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:id="@+id/moduleDetailItemsCard"
+            android:layout_width="match_parent"
+            android:layout_height="142dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="225dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/bg_card"
+            android:elevation="3dp" />
+
+        <TextView
+            android:id="@+id/moduleDetailAddLabel"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="383dp"
+            android:layout_marginEnd="20dp"
+            android:includeFontPadding="false"
+            android:text="물건 추가"
+            android:textColor="#798385"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/moduleDetailItemInput"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="411dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/bg_input"
+            android:gravity="center_vertical"
+            android:hint="물건명 입력"
+            android:includeFontPadding="false"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:singleLine="true"
+            android:textColor="#14191B"
+            android:textColorHint="#9AA3A5"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/moduleDetailFrequentLabel"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="479dp"
+            android:layout_marginEnd="20dp"
+            android:includeFontPadding="false"
+            android:text="자주 추가하는 물건"
+            android:textColor="#798385"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/moduleDetailChipRows"
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="506dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:orientation="horizontal">
+
+                <TextView android:id="@+id/moduleDetailChipRemote" style="@style/CarryChip" android:text="+ 리모컨" />
+                <TextView android:id="@+id/moduleDetailChipMedicine" style="@style/CarryChip" android:text="+ 상비약" />
+                <TextView android:id="@+id/moduleDetailChipGlasses" style="@style/CarryChip" android:text="+ 안경" />
+                <TextView android:id="@+id/moduleDetailChipKey" style="@style/CarryChip" android:text="+ 열쇠" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView android:id="@+id/moduleDetailChipCharger" style="@style/CarryChip" android:text="+ 충전기" />
+                <TextView android:id="@+id/moduleDetailChipMask" style="@style/CarryChip" android:text="+ 마스크" />
+                <TextView android:id="@+id/moduleDetailChipVitamin" style="@style/CarryChip" android:text="+ 영양제" />
+                <TextView android:id="@+id/moduleDetailChipTumbler" style="@style/CarryChip" android:text="+ 텀블러" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/moduleDetailAddItemButton"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="602dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/bg_voice_primary_button"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="+ 모듈에 추가"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+</ScrollView>

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mapCanvas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9F9">
+
+    <FrameLayout
+        android:id="@+id/mapBackButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="18dp"
+        android:clickable="true"
+        android:focusable="true" >
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_chevron_left"
+            android:layout_gravity="center"
+            android:contentDescription="@null" />
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="22dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="30dp"
+        android:gravity="left|center_vertical"
+        android:text="지도/거점 설정"
+        android:textColor="#12181B"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:id="@+id/mapPreviewCard"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="76dp"
+        android:background="@drawable/bg_card">
+
+        <FrameLayout
+            android:id="@+id/mapPreviewIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="155dp"
+            android:layout_marginTop="56dp"
+            android:background="@drawable/bg_chip_soft">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_map"
+                android:contentDescription="@null" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="104dp"
+            android:gravity="center"
+            android:text="CARRY 매핑 이미지"
+            android:textColor="#12181B"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="130dp"
+            android:gravity="center"
+            android:text="CARRY 로봇이 자동으로 지도를 생성합니다"
+            android:textColor="#7C878A"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/mapBasesCard"
+        android:layout_width="match_parent"
+        android:layout_height="229dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="288dp"
+        android:background="@drawable/bg_card">
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="19dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+        android:layout_marginTop="22dp"
+            android:gravity="left"
+            android:text="거점 목록"
+            android:textColor="#12181B"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:id="@+id/mapAddBaseButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="302dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_chip_soft" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+        android:layout_marginTop="48dp"
+            android:background="#ECEDEF" />
+
+        <FrameLayout
+            android:id="@+id/mapBaseLivingIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+        android:layout_marginTop="66dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_pin"
+                android:layout_gravity="center"
+                android:contentDescription="@null" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="46dp"
+            android:layout_marginTop="67dp"
+            android:text="거실"
+            android:textColor="#12181B"
+            android:textSize="15sp" />
+
+        <FrameLayout
+            android:id="@+id/mapBaseLivingChevron"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="316dp"
+            android:layout_marginTop="67dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_chevron_left"
+                android:contentDescription="@null"
+                android:rotation="180"
+                android:layout_gravity="center"
+                app:tint="#798385"/>
+        </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+        android:layout_marginTop="103dp"
+            android:background="#ECEDEF" />
+
+        <FrameLayout
+            android:id="@+id/mapBaseDoorIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+        android:layout_marginTop="121dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_pin"
+                android:layout_gravity="center"
+                android:contentDescription="@null" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="46dp"
+            android:layout_marginTop="122dp"
+            android:text="현관"
+            android:textColor="#12181B"
+            android:textSize="15sp" />
+
+        <FrameLayout
+            android:id="@+id/mapBaseDoorChevron"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="316dp"
+            android:layout_marginTop="122dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_chevron_left"
+                android:contentDescription="@null"
+                android:rotation="180"
+                android:layout_gravity="center"
+                app:tint="#798385"/>
+        </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+        android:layout_marginTop="158dp"
+            android:background="#ECEDEF" />
+
+        <FrameLayout
+            android:id="@+id/mapBaseBedIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+        android:layout_marginTop="176dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_pin"
+                android:layout_gravity="center"
+                android:contentDescription="@null" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="46dp"
+            android:layout_marginTop="177dp"
+            android:text="침실"
+            android:textColor="#12181B"
+            android:textSize="15sp" />
+
+        <FrameLayout
+            android:id="@+id/mapBaseBedChevron"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="316dp"
+            android:layout_marginTop="177dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_chevron_left"
+                android:contentDescription="@null"
+                android:rotation="180"
+                android:layout_gravity="center"
+                app:tint="#798385"/>
+        </FrameLayout>
+    </FrameLayout>
+
+</FrameLayout>

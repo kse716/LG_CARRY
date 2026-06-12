@@ -1,0 +1,10 @@
+text	predicted_label	confidence
+캐리야 기저귀 가져와	CALL_TRAY_BABY	0.9720
+케리야 물 티슈 갖다줘	CALL_TRAY_BABY	0.9177
+비타민 챙겨줘	CALL_TRAY_MEDICINE	0.9003
+약 트레이 불러줘	CALL_TRAY_MEDICINE	0.8976
+게임 패드 불러줘	CALL_TRAY_HOBBY	0.8804
+멈춰	STOP	0.9826
+제자리로 돌아가	RETURN_HOME	0.9872
+배터리 알려줘	STATUS_CHECK	0.9209
+날씨 알려줘	UNKNOWN	0.8753

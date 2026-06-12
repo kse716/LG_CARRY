@@ -1,0 +1,1484 @@
+﻿text,label,label_location,weight
+현관으로 기저귀 가져다 줘,CALL_TRAY_BABY,porch,1
+거실까지 기저귀 보관함 와줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 기저귀 서랍 불러줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 기저귀 있는 서랍 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 기저귀 있는 트레이 와줘,CALL_TRAY_BABY,porch,1
+거실까지 기저귀 좀 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 기저귀 준비해줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 기저귀 챙겨줘,CALL_TRAY_BABY,living_room,1
+현관으로 기저귀 트레이 불러줘,CALL_TRAY_BABY,porch,1
+거실까지 기저귀 트레이 와줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 기저귀 필요해,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 등원 준비용 기저귀 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 등원 준비용 물티슈 가져와,CALL_TRAY_BABY,porch,1
+거실까지 등원 준비용 손수건 가져와,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 등원 준비용 장난감 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 등원 준비용 젖병 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 물티슈 가져다 줘,CALL_TRAY_BABY,porch,1
+거실까지 물티슈 보관함 와줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 물티슈 서랍 불러줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 물티슈 있는 서랍 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 물티슈 있는 트레이 와줘,CALL_TRAY_BABY,porch,1
+거실까지 물티슈 좀 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 물티슈 준비해줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 물티슈 챙겨줘,CALL_TRAY_BABY,living_room,1
+현관으로 물티슈 트레이 불러줘,CALL_TRAY_BABY,porch,1
+거실까지 물티슈 트레이 와줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 물티슈 필요해,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 손수건 가져다 줘,CALL_TRAY_BABY,living_room,1
+현관으로 손수건 보관함 와줘,CALL_TRAY_BABY,porch,1
+거실까지 손수건 서랍 불러줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 손수건 있는 서랍 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 손수건 있는 트레이 와줘,CALL_TRAY_BABY,living_room,1
+현관으로 손수건 좀 갖다줘,CALL_TRAY_BABY,porch,1
+거실까지 손수건 준비해줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 손수건 챙겨줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 손수건 트레이 불러줘,CALL_TRAY_BABY,living_room,1
+현관으로 손수건 트레이 와줘,CALL_TRAY_BABY,porch,1
+거실까지 손수건 필요해,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 아기 기저귀 트레이 호출해,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 아기 물티슈 트레이 호출해,CALL_TRAY_BABY,living_room,1
+현관으로 아기 손수건 트레이 호출해,CALL_TRAY_BABY,porch,1
+거실까지 아기 장난감 트레이 호출해,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 아기 젖병 트레이 호출해,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 아기용 기저귀 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 아기용 물티슈 가져와,CALL_TRAY_BABY,porch,1
+거실까지 아기용 손수건 가져와,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 아기용 장난감 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 아기용 젖병 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 아이 기저귀 가져와줘,CALL_TRAY_BABY,porch,1
+거실까지 아이 물티슈 가져와줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 아이 손수건 가져와줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 아이 장난감 가져와줘,CALL_TRAY_BABY,living_room,1
+현관으로 아이 젖병 가져와줘,CALL_TRAY_BABY,porch,1
+거실까지 육아 트레이에서 기저귀 가져와,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 육아 트레이에서 물티슈 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 육아 트레이에서 손수건 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 육아 트레이에서 장난감 가져와,CALL_TRAY_BABY,porch,1
+거실까지 육아 트레이에서 젖병 가져와,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 장난감 가져다 줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 장난감 보관함 와줘,CALL_TRAY_BABY,living_room,1
+현관으로 장난감 서랍 불러줘,CALL_TRAY_BABY,porch,1
+거실까지 장난감 있는 서랍 가져와,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 장난감 있는 트레이 와줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 장난감 좀 갖다줘,CALL_TRAY_BABY,living_room,1
+현관으로 장난감 준비해줘,CALL_TRAY_BABY,porch,1
+거실까지 장난감 챙겨줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 장난감 트레이 불러줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 장난감 트레이 와줘,CALL_TRAY_BABY,living_room,1
+현관으로 장난감 필요해,CALL_TRAY_BABY,porch,1
+거실까지 젖병 가져다 줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 젖병 보관함 와줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 젖병 서랍 불러줘,CALL_TRAY_BABY,living_room,1
+현관으로 젖병 있는 서랍 가져와,CALL_TRAY_BABY,porch,1
+거실까지 젖병 있는 트레이 와줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 젖병 좀 갖다줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 젖병 준비해줘,CALL_TRAY_BABY,living_room,1
+현관으로 젖병 챙겨줘,CALL_TRAY_BABY,porch,1
+거실까지 젖병 트레이 불러줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 젖병 트레이 와줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 젖병 필요해,CALL_TRAY_BABY,living_room,1
+현관으로 캐리 기저귀 부탁해,CALL_TRAY_BABY,porch,1
+거실까지 캐리 물티슈 부탁해,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 캐리 손수건 부탁해,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리 장난감 부탁해,CALL_TRAY_BABY,living_room,1
+현관으로 캐리 젖병 부탁해,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 기저귀 가져와,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 캐리야 물티슈 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리야 손수건 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 캐리야 장난감 가져와,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 젖병 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 당뇨약 보관함 호출해,CALL_TRAY_MEDICINE,porch,1
+거실까지 당뇨약 있는 서랍 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 당뇨약 있는 트레이 와줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 당뇨약 좀 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 당뇨약 준비해줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 당뇨약 트레이 불러줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 당뇨약 필요해,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 돋보기 안경 보관함 호출해,CALL_TRAY_MEDICINE,living_room,1
+현관으로 돋보기 안경 있는 트레이 와줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 돋보기 안경 준비해줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 돋보기 있는 서랍 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 돋보기 좀 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 돋보기 트레이 불러줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 돋보기 필요해,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 복약 트레이에서 당뇨약 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 복약 트레이에서 돋보기 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 복약 트레이에서 비타민 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 복약 트레이에서 안경 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 복약 트레이에서 약 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 복약 트레이에서 영양제 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 복약 트레이에서 통풍약 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 복약 트레이에서 한약 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 복약 트레이에서 혈압약 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 비타민 보관함 호출해,CALL_TRAY_MEDICINE,living_room,1
+현관으로 비타민 있는 서랍 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 비타민 있는 트레이 와줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 비타민 좀 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 비타민 준비해줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 비타민 트레이 불러줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 비타민 필요해,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 아침 약 보관함 호출해,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 안경 있는 서랍 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 안경 좀 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 안경 트레이 불러줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 안경 필요해,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 약 있는 서랍 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 약 좀 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 약 트레이 불러줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 약 필요해,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 어르신 당뇨약 가져와줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 어르신 돋보기 가져와줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 어르신 비타민 가져와줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 어르신 안경 가져와줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 어르신 약 가져와줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 어르신 영양제 가져와줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 어르신 통풍약 가져와줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 어르신 한약 가져와줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 어르신 혈압약 가져와줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 영양제 보관함 호출해,CALL_TRAY_MEDICINE,porch,1
+거실까지 영양제 있는 서랍 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 영양제 있는 트레이 와줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 영양제 좀 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 영양제 준비해줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 영양제 트레이 불러줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 영양제 필요해,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 오늘 먹을 약 준비해줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 저녁 약 있는 트레이 와줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 당뇨약 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 돋보기 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 비타민 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 안경 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 약 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 영양제 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 통풍약 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 한약 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 혈압약 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 통풍약 보관함 호출해,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 통풍약 있는 서랍 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 통풍약 있는 트레이 와줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 통풍약 좀 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 통풍약 준비해줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 통풍약 트레이 불러줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 통풍약 필요해,CALL_TRAY_MEDICINE,porch,1
+거실까지 한약 보관함 호출해,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 한약 있는 서랍 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 한약 있는 트레이 와줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 한약 좀 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 한약 준비해줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 한약 트레이 불러줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 한약 필요해,CALL_TRAY_MEDICINE,living_room,1
+현관으로 할머니 안경 있는 트레이 와줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 할머니 안경 준비해줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 할아버지 안경 보관함 호출해,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 혈압약 보관함 호출해,CALL_TRAY_MEDICINE,living_room,1
+현관으로 혈압약 있는 서랍 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 혈압약 있는 트레이 와줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 혈압약 좀 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 혈압약 준비해줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 혈압약 트레이 불러줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 혈압약 필요해,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 기저귀 여기로 갖다줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 기저귀 좀 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 기저기 가져와,CALL_TRAY_BABY,porch,1
+거실까지 기저기 좀 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 물 티슈 갖다줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 물 티슈 좀 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 물티수 빨리 갖다줘,CALL_TRAY_BABY,porch,1
+거실까지 물티수 지금 가져와,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 물티슈 지금 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 손 수건 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 손 수건 여기로 갖다줘,CALL_TRAY_BABY,porch,1
+거실까지 손수건 가져와,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 손수건 지금 갖다줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 장난 깜 좀 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 장난 깜 지금 갖다줘,CALL_TRAY_BABY,porch,1
+거실까지 장난감 빨리 가져와,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 장난감 여기로 갖다줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 젓병 좀 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 젓병 좀 갖다줘,CALL_TRAY_BABY,porch,1
+거실까지 젖병 가져와,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 젖병 갖다줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리야 기저귀 갖다줘,CALL_TRAY_BABY,living_room,1
+현관으로 캐리야 기저귀 트레이 가져와,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 기저귀 트레이 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 캐리야 기저기 갖다줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리야 기저기 좀 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 캐리야 기저기 트레이 가져와,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 기저기 트레이 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 캐리야 물 티슈 빨리 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리야 물 티슈 빨리 갖다줘,CALL_TRAY_BABY,living_room,1
+현관으로 캐리야 물 티슈 트레이 가져와,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 물 티슈 트레이 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 캐리야 물티수 빨리 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리야 물티수 지금 갖다줘,CALL_TRAY_BABY,living_room,1
+현관으로 캐리야 물티수 트레이 가져와,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 물티수 트레이 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 캐리야 물티슈 빨리 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리야 물티슈 빨리 갖다줘,CALL_TRAY_BABY,living_room,1
+현관으로 캐리야 물티슈 트레이 가져와,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 물티슈 트레이 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 캐리야 손 수건 빨리 갖다줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리야 손 수건 지금 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 캐리야 손 수건 트레이 가져와,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 손 수건 트레이 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 캐리야 손수건 갖다줘,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리야 손수건 여기로 가져와,CALL_TRAY_BABY,living_room,1
+현관으로 캐리야 손수건 트레이 가져와,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 손수건 트레이 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 캐리야 장난 깜 좀 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리야 장난 깜 좀 갖다줘,CALL_TRAY_BABY,living_room,1
+현관으로 캐리야 장난 깜 트레이 가져와,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 장난 깜 트레이 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 캐리야 장난감 빨리 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리야 장난감 좀 갖다줘,CALL_TRAY_BABY,living_room,1
+현관으로 캐리야 장난감 트레이 가져와,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 장난감 트레이 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 캐리야 젓병 좀 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리야 젓병 좀 갖다줘,CALL_TRAY_BABY,living_room,1
+현관으로 캐리야 젓병 트레이 가져와,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 젓병 트레이 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 캐리야 젖병 빨리 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 캐리야 젖병 빨리 갖다줘,CALL_TRAY_BABY,living_room,1
+현관으로 캐리야 젖병 트레이 가져와,CALL_TRAY_BABY,porch,1
+거실까지 캐리야 젖병 트레이 갖다줘,CALL_TRAY_BABY,living_room,1
+현관 쪽으로 당뇨 약 좀 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 당뇨약 좀 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 당뇨약이 빨리 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 돋보기 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 돋보기 안경 여기로 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 비타민 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 비타민제 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 안경 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 약 좀 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 영양재 여기로 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 영양제 빨리 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 당뇨 약 여기로 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 당뇨 약 좀 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 당뇨 약 트레이 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 당뇨 약 트레이 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 당뇨약 빨리 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 당뇨약 좀 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 당뇨약 트레이 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 당뇨약 트레이 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 당뇨약이 빨리 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 당뇨약이 좀 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 당뇨약이 트레이 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 당뇨약이 트레이 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 돋보기 안경 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 돋보기 안경 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 돋보기 안경 트레이 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 돋보기 안경 트레이 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 돋보기 좀 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 돋보기 지금 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 돋보기 트레이 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 돋보기 트레이 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 비타민 빨리 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 비타민 트레이 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 비타민 트레이 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 비타민제 좀 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 비타민제 지금 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 비타민제 트레이 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 비타민제 트레이 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 안경 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 안경 좀 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 안경 트레이 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 안경 트레이 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 약 좀 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 약 지금 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 약 트레이 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 약 트레이 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 영양재 좀 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 영양재 지금 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 영양재 트레이 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 영양재 트레이 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 영양제 빨리 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 영양제 지금 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 영양제 트레이 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 영양제 트레이 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 통풍 약 빨리 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 통풍 약 빨리 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 통풍 약 트레이 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 통풍 약 트레이 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 통풍약 빨리 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 통풍약 좀 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 통풍약 트레이 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 통풍약 트레이 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 한 약 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 한 약 지금 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 한 약 트레이 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 한 약 트레이 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 한약 좀 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 한약 트레이 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 한약 트레이 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 혈압 약 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 혈압 약 좀 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 혈압 약 트레이 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 혈압 약 트레이 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 캐리야 혈압약 갖다줘,CALL_TRAY_MEDICINE,living_room,1
+현관으로 캐리야 혈압약 좀 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 캐리야 혈압약 트레이 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 캐리야 혈압약 트레이 갖다줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 통풍 약 지금 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 통풍약 가져와,CALL_TRAY_MEDICINE,porch,1
+거실까지 한 약 좀 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 한약 가져와,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 혈압 약 여기로 가져와,CALL_TRAY_MEDICINE,living_room,1
+현관으로 혈압약 지금 가져와,CALL_TRAY_MEDICINE,porch,1
+현관 쪽으로 캐리아 기저기 가져와,CALL_TRAY_BABY,porch,1
+거실에 있는 나한테 케리야 물 티슈 갖다줘,CALL_TRAY_BABY,living_room,5
+현관으로 젓병 좀 챙겨줘,CALL_TRAY_BABY,porch,1
+거실까지 아이 장난감 불러줘,CALL_TRAY_BABY,living_room,1
+거실까지 혈압 약 챙겨줘,CALL_TRAY_MEDICINE,living_room,1
+현관 쪽으로 당뇨 약 불러줘,CALL_TRAY_MEDICINE,porch,1
+거실에 있는 나한테 비타민 챙겨줘,CALL_TRAY_MEDICINE,living_room,5
+현관으로 캐리야 사원증 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 워치 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 에어팟 가져와,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 출입카드 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리야 보안카드 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 노트북 충전기 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 출근 가방 가져와,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 교통카드 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리야 회사 카드 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 우산 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 사령중 가져와,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 개리야 언치 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관으로 케리야 애어팟 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리아 출입가드 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 노트붓 가져와,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리 노트북 가지고 와줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리 외장하드 가져다 줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 회사 갈 때 쓰는 텀블러 좀 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 캐리 출근용 USB 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리 출근용 노트북 충전기 트레이 불러줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 출근 준비로 캐리야 우산 좀 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 캐리 회사 갈 때 쓰는 휴대폰 충전기 꺼내줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 회사 노트북 챙겨줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 회사 가야 돼 캐리야 캐리 에어팟 챙겨줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리야 캐리 사무실 갈 때 우산 불러줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 사무실 갈 때 키보드 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 출근용 보조배터리 가져다 줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 캐리 회사 가야 돼 키보드 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리 내 사원증 트레이 불러줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 사무실 갈 때 캐리 지갑 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 회사 갈 때 쓰는 업무 노트 좀 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 출근해야 돼 캐리 필통 챙겨줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리야 캐리 출근용 에어팟 좀 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리 무선 이어폰 보관함 불러줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리 회사 갈 때 쓰는 사원증 챙겨줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 캐리 회사 갈 때 쓰는 안경 가져다 줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리 회사 갈 때 쓰는 출입카드 준비해줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 사무실 갈 때 캐리야 캐리 출근 키트 꺼내줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리 출근용 보안카드 가지고 와줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리 내 명함 지갑 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리야 사원증 가지고 와줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 회사 늦었어 캐리 사원증 가져다 줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 지갑 가지고 와줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 오늘 출근할 때 캐리야 캐리 노트북 트레이 불러줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리 회의 가야 돼 이어폰 좀 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 캐리 출근 키트 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 출근용 출입카드 준비해줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 캐리 텀블러 꺼내줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리 사무실 갈 때 보조배터리 트레이 불러줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 회사 갈 때 쓰는 워치 가지고 와줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 회의 자료 불러줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 출근해야 돼 캐리야 캐리 프레젠테이션 리모컨 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리 회사 갈 때 쓰는 텀블러 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리 회의 자료 가져다 줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 캐리 출근용 마스크 가져와,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 출근 준비로 캐리야 캐리 명함 지갑 좀 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리 회사 노트북 준비해줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리 출근용 출근 가방 보관함 불러줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 캐리 회사 갈 때 쓰는 회사 자료 가지고 와줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 캐리 사원증 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 아침 출근 전에 캐리야 캐리 에어팟 가져다 줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 출근용 무선 이어폰 좀 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리 아침 출근 전에 키보드 챙겨줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리 회사 카드 좀 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리야 내 출근 가방 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 출근용 보조배터리 좀 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리 도어 카드 준비해줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 회사 늦었어 캐리 회사 카드 가지고 와줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리 출근용 태블릿 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 회의 가야 돼 캐리 우산 트레이 불러줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리 회사 갈 때 쓰는 마스크 좀 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 출입카드 트레이 불러줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 회의 가야 돼 캐리야 출근 키트 가지고 와줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리 출근용 지갑 가지고 와줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리 회사 갈 때 쓰는 도어 카드 챙겨줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리 출근용 텀블러 챙겨줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리야 캐리 충전 케이블 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리 내 휴대폰 충전기 챙겨줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 회의 가야 돼 회사 노트북 가져와,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 휴대폰 충전기 좀 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리야 내 출근 가방 트레이 불러줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 캐리 보안카드 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 캐리 내 이어폰 준비해줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 출근용 USB 보관함 불러줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리 오늘 출근할 때 차 키 좀 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 출근용 안경 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리 출근용 키보드 가져와,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리 지금 나가야 해서 회사 카드 가지고 와줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리 프레젠테이션 리모컨 좀 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 회사 늦었어 캐리야 지갑 꺼내줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 캐리 내 아이패드 준비해줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 지금 나가야 해서 캐리 휴대폰 충전기 보관함 불러줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리야 사무실 갈 때 이어폰 불러줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 캐리 프레젠테이션 리모컨 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 캐리 아침 출근 전에 키보드 좀 가져와,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리 휴대폰 충전기 꺼내줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리야 출근용 자동차 키 준비해줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 내 USB 좀 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 캐리 출근용 안경 꺼내줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 캐리 아침 출근 전에 마스크 좀 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리야 출근용 프레젠테이션 리모컨 좀 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 보조배터리 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리 텀블러 챙겨줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 캐리 내 회사 자료 가지고 와줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리 회사 가야 돼 워치 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 캐리 회사 늦었어 도어 카드 가지고 와줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 캐리 출근용 에어팟 불러줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 출근용 마스크 좀 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리야 캐리 출근용 출근 가방 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 캐리 도시락 불러줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 개리야 외장하드드 좀 가져와,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐려야 사무실 갈 때 출근 키트트 좀 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 아침 출근 전에 케리야 지갑이 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리아 지금 나가야 해서 워취 꺼내줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리 출근용 충전기이블 보관함 불러줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 출근해야 돼 노트북 충전끼 준비해줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 개리야 업무노트 가지고 와줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리 회의 가야 돼 필통이 트레이 불러줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 개리야 출근용 유에스비 챙겨줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 회사 가야 돼 캐리 도시락이 좀 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 케리야 회사 늦었어 아이패드드 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 커리야 출근용 노트복 준비해줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 케리 아침 출근 전에 도시락이 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐려야 아침 출근 전에 에어팟트 챙겨줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐려야 출근용 사원전 좀 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리아 회사 가야 돼 업무노트 좀 갖다줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 커리야 출근용 사원전 트레이 불러줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 개리야 내 회의자룔 트레이 불러줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 케리 언치 좀 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 캐리야 내 이어폰트 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 회사 늦었어 캐리아 도시락이 좀 가져와,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 개리야 워취 챙겨줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 회사 늦었어 캐리 출입카트 챙겨줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 개리야 출입가드 준비해줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 개리야 출근용 노트붓 가져다 줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐려야 회사 갈 때 쓰는 마스크크 가져다 줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 커리야 회사 가야 돼 도시락이 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 아침 출근 전에 커리야 자동차끼 꺼내줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 케리야 지갑이 챙겨줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐려야 출근용 태블릿트 꺼내줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리아 출근용 충전기이블 트레이 불러줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 케리야 사무실 갈 때 에어팟츠 가지고 와줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 회사 늦었어 개리야 보안가드 꺼내줘,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 오늘 출근할 때 케리야 에어팟 가져와 줘 보관함 불러줘,CALL_TRAY_COMMUTE,living_room,1
+현관으로 커리야 안경이 좀 갖다줘,CALL_TRAY_COMMUTE,porch,1
+거실까지 개리야 리모콘 꺼내줘,CALL_TRAY_COMMUTE,living_room,1
+현관 쪽으로 캐리야 지금 나가야 해서 출입가드 좀 가져와,CALL_TRAY_COMMUTE,porch,1
+거실에 있는 나한테 캐리야 회사 갈 때 쓰는 출입가드 좀 가져와,CALL_TRAY_COMMUTE,living_room,1
+현관으로 캐리아 지금 나가야 해서 자동차끼 가져와,CALL_TRAY_COMMUTE,porch,1
+거실까지 케리야 지금 나가야 해서 사원쯩 가지고 와줘,CALL_TRAY_COMMUTE,living_room,1
+기저귀 가져와,CALL_TRAY_BABY,,5
+기저귀 갖다줘,CALL_TRAY_BABY,,2
+기저귀 챙겨줘,CALL_TRAY_BABY,,2
+기저귀 불러줘,CALL_TRAY_BABY,,2
+현관으로 기저귀 가져와,CALL_TRAY_BABY,porch,5
+현관으로 기저귀 갖다줘,CALL_TRAY_BABY,porch,2
+현관으로 기저귀 챙겨줘,CALL_TRAY_BABY,porch,2
+현관으로 기저귀 불러줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 기저귀 가져와,CALL_TRAY_BABY,porch,5
+현관 쪽으로 기저귀 갖다줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 기저귀 가져다 줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 기저귀 챙겨줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 기저귀 불러줘,CALL_TRAY_BABY,porch,2
+현관까지 기저귀 가져와,CALL_TRAY_BABY,porch,5
+현관까지 기저귀 갖다줘,CALL_TRAY_BABY,porch,2
+현관까지 기저귀 가져다 줘,CALL_TRAY_BABY,porch,2
+현관까지 기저귀 챙겨줘,CALL_TRAY_BABY,porch,2
+현관까지 기저귀 불러줘,CALL_TRAY_BABY,porch,2
+현관 앞에 기저귀 가져와,CALL_TRAY_BABY,porch,5
+현관 앞에 기저귀 갖다줘,CALL_TRAY_BABY,porch,2
+현관 앞에 기저귀 가져다 줘,CALL_TRAY_BABY,porch,2
+현관 앞에 기저귀 챙겨줘,CALL_TRAY_BABY,porch,2
+현관 앞에 기저귀 불러줘,CALL_TRAY_BABY,porch,2
+거실로 기저귀 가져와,CALL_TRAY_BABY,living_room,5
+거실로 기저귀 갖다줘,CALL_TRAY_BABY,living_room,2
+거실로 기저귀 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실로 기저귀 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실로 기저귀 불러줘,CALL_TRAY_BABY,living_room,2
+거실까지 기저귀 가져와,CALL_TRAY_BABY,living_room,5
+거실까지 기저귀 갖다줘,CALL_TRAY_BABY,living_room,2
+거실까지 기저귀 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실까지 기저귀 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실까지 기저귀 불러줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 기저귀 가져와,CALL_TRAY_BABY,living_room,5
+거실 쪽으로 기저귀 갖다줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 기저귀 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 기저귀 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 기저귀 불러줘,CALL_TRAY_BABY,living_room,2
+거실에 기저귀 가져와,CALL_TRAY_BABY,living_room,5
+거실에 기저귀 갖다줘,CALL_TRAY_BABY,living_room,2
+거실에 기저귀 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실에 기저귀 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실에 기저귀 불러줘,CALL_TRAY_BABY,living_room,2
+물티슈 가져와,CALL_TRAY_BABY,,5
+물티슈 갖다줘,CALL_TRAY_BABY,,2
+물티슈 챙겨줘,CALL_TRAY_BABY,,2
+물티슈 불러줘,CALL_TRAY_BABY,,2
+현관으로 물티슈 가져와,CALL_TRAY_BABY,porch,5
+현관으로 물티슈 갖다줘,CALL_TRAY_BABY,porch,2
+현관으로 물티슈 챙겨줘,CALL_TRAY_BABY,porch,2
+현관으로 물티슈 불러줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 물티슈 가져와,CALL_TRAY_BABY,porch,5
+현관 쪽으로 물티슈 갖다줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 물티슈 가져다 줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 물티슈 챙겨줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 물티슈 불러줘,CALL_TRAY_BABY,porch,2
+현관까지 물티슈 가져와,CALL_TRAY_BABY,porch,5
+현관까지 물티슈 갖다줘,CALL_TRAY_BABY,porch,2
+현관까지 물티슈 가져다 줘,CALL_TRAY_BABY,porch,2
+현관까지 물티슈 챙겨줘,CALL_TRAY_BABY,porch,2
+현관까지 물티슈 불러줘,CALL_TRAY_BABY,porch,2
+현관 앞에 물티슈 가져와,CALL_TRAY_BABY,porch,5
+현관 앞에 물티슈 갖다줘,CALL_TRAY_BABY,porch,2
+현관 앞에 물티슈 가져다 줘,CALL_TRAY_BABY,porch,2
+현관 앞에 물티슈 챙겨줘,CALL_TRAY_BABY,porch,2
+현관 앞에 물티슈 불러줘,CALL_TRAY_BABY,porch,2
+거실로 물티슈 가져와,CALL_TRAY_BABY,living_room,5
+거실로 물티슈 갖다줘,CALL_TRAY_BABY,living_room,2
+거실로 물티슈 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실로 물티슈 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실로 물티슈 불러줘,CALL_TRAY_BABY,living_room,2
+거실까지 물티슈 가져와,CALL_TRAY_BABY,living_room,5
+거실까지 물티슈 갖다줘,CALL_TRAY_BABY,living_room,2
+거실까지 물티슈 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실까지 물티슈 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실까지 물티슈 불러줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 물티슈 가져와,CALL_TRAY_BABY,living_room,5
+거실 쪽으로 물티슈 갖다줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 물티슈 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 물티슈 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 물티슈 불러줘,CALL_TRAY_BABY,living_room,2
+거실에 물티슈 가져와,CALL_TRAY_BABY,living_room,5
+거실에 물티슈 갖다줘,CALL_TRAY_BABY,living_room,2
+거실에 물티슈 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실에 물티슈 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실에 물티슈 불러줘,CALL_TRAY_BABY,living_room,2
+손수건 가져와,CALL_TRAY_BABY,,2
+손수건 갖다줘,CALL_TRAY_BABY,,2
+손수건 챙겨줘,CALL_TRAY_BABY,,2
+손수건 불러줘,CALL_TRAY_BABY,,2
+현관으로 손수건 가져와,CALL_TRAY_BABY,porch,2
+현관으로 손수건 갖다줘,CALL_TRAY_BABY,porch,2
+현관으로 손수건 가져다 줘,CALL_TRAY_BABY,porch,2
+현관으로 손수건 챙겨줘,CALL_TRAY_BABY,porch,2
+현관으로 손수건 불러줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 손수건 가져와,CALL_TRAY_BABY,porch,2
+현관 쪽으로 손수건 갖다줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 손수건 가져다 줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 손수건 불러줘,CALL_TRAY_BABY,porch,2
+현관까지 손수건 가져와,CALL_TRAY_BABY,porch,2
+현관까지 손수건 갖다줘,CALL_TRAY_BABY,porch,2
+현관까지 손수건 가져다 줘,CALL_TRAY_BABY,porch,2
+현관까지 손수건 챙겨줘,CALL_TRAY_BABY,porch,2
+현관까지 손수건 불러줘,CALL_TRAY_BABY,porch,2
+현관 앞에 손수건 가져와,CALL_TRAY_BABY,porch,2
+현관 앞에 손수건 갖다줘,CALL_TRAY_BABY,porch,2
+현관 앞에 손수건 가져다 줘,CALL_TRAY_BABY,porch,2
+현관 앞에 손수건 챙겨줘,CALL_TRAY_BABY,porch,2
+현관 앞에 손수건 불러줘,CALL_TRAY_BABY,porch,2
+거실로 손수건 가져와,CALL_TRAY_BABY,living_room,2
+거실로 손수건 갖다줘,CALL_TRAY_BABY,living_room,2
+거실로 손수건 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실로 손수건 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실로 손수건 불러줘,CALL_TRAY_BABY,living_room,2
+거실까지 손수건 갖다줘,CALL_TRAY_BABY,living_room,2
+거실까지 손수건 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실까지 손수건 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실까지 손수건 불러줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 손수건 가져와,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 손수건 갖다줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 손수건 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 손수건 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 손수건 불러줘,CALL_TRAY_BABY,living_room,2
+거실에 손수건 가져와,CALL_TRAY_BABY,living_room,2
+거실에 손수건 갖다줘,CALL_TRAY_BABY,living_room,2
+거실에 손수건 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실에 손수건 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실에 손수건 불러줘,CALL_TRAY_BABY,living_room,2
+젖병 가져와,CALL_TRAY_BABY,,2
+젖병 갖다줘,CALL_TRAY_BABY,,2
+젖병 챙겨줘,CALL_TRAY_BABY,,2
+젖병 불러줘,CALL_TRAY_BABY,,2
+현관으로 젖병 가져와,CALL_TRAY_BABY,porch,2
+현관으로 젖병 갖다줘,CALL_TRAY_BABY,porch,2
+현관으로 젖병 가져다 줘,CALL_TRAY_BABY,porch,2
+현관으로 젖병 불러줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 젖병 가져와,CALL_TRAY_BABY,porch,2
+현관 쪽으로 젖병 가져다 줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 젖병 챙겨줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 젖병 불러줘,CALL_TRAY_BABY,porch,2
+현관까지 젖병 가져와,CALL_TRAY_BABY,porch,2
+현관까지 젖병 갖다줘,CALL_TRAY_BABY,porch,2
+현관까지 젖병 가져다 줘,CALL_TRAY_BABY,porch,2
+현관까지 젖병 챙겨줘,CALL_TRAY_BABY,porch,2
+현관까지 젖병 불러줘,CALL_TRAY_BABY,porch,2
+현관 앞에 젖병 가져와,CALL_TRAY_BABY,porch,2
+현관 앞에 젖병 갖다줘,CALL_TRAY_BABY,porch,2
+현관 앞에 젖병 가져다 줘,CALL_TRAY_BABY,porch,2
+현관 앞에 젖병 챙겨줘,CALL_TRAY_BABY,porch,2
+현관 앞에 젖병 불러줘,CALL_TRAY_BABY,porch,2
+거실로 젖병 가져와,CALL_TRAY_BABY,living_room,2
+거실로 젖병 갖다줘,CALL_TRAY_BABY,living_room,2
+거실로 젖병 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실로 젖병 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실로 젖병 불러줘,CALL_TRAY_BABY,living_room,2
+거실까지 젖병 갖다줘,CALL_TRAY_BABY,living_room,2
+거실까지 젖병 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실까지 젖병 불러줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 젖병 가져와,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 젖병 갖다줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 젖병 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 젖병 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 젖병 불러줘,CALL_TRAY_BABY,living_room,2
+거실에 젖병 가져와,CALL_TRAY_BABY,living_room,2
+거실에 젖병 갖다줘,CALL_TRAY_BABY,living_room,2
+거실에 젖병 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실에 젖병 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실에 젖병 불러줘,CALL_TRAY_BABY,living_room,2
+장난감 가져와,CALL_TRAY_BABY,,2
+장난감 갖다줘,CALL_TRAY_BABY,,2
+장난감 챙겨줘,CALL_TRAY_BABY,,2
+장난감 불러줘,CALL_TRAY_BABY,,2
+현관으로 장난감 가져와,CALL_TRAY_BABY,porch,2
+현관으로 장난감 갖다줘,CALL_TRAY_BABY,porch,2
+현관으로 장난감 가져다 줘,CALL_TRAY_BABY,porch,2
+현관으로 장난감 챙겨줘,CALL_TRAY_BABY,porch,2
+현관으로 장난감 불러줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 장난감 가져와,CALL_TRAY_BABY,porch,2
+현관 쪽으로 장난감 갖다줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 장난감 챙겨줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 장난감 불러줘,CALL_TRAY_BABY,porch,2
+현관까지 장난감 가져와,CALL_TRAY_BABY,porch,2
+현관까지 장난감 갖다줘,CALL_TRAY_BABY,porch,2
+현관까지 장난감 가져다 줘,CALL_TRAY_BABY,porch,2
+현관까지 장난감 챙겨줘,CALL_TRAY_BABY,porch,2
+현관까지 장난감 불러줘,CALL_TRAY_BABY,porch,2
+현관 앞에 장난감 가져와,CALL_TRAY_BABY,porch,2
+현관 앞에 장난감 갖다줘,CALL_TRAY_BABY,porch,2
+현관 앞에 장난감 가져다 줘,CALL_TRAY_BABY,porch,2
+현관 앞에 장난감 챙겨줘,CALL_TRAY_BABY,porch,2
+현관 앞에 장난감 불러줘,CALL_TRAY_BABY,porch,2
+거실로 장난감 가져와,CALL_TRAY_BABY,living_room,2
+거실로 장난감 갖다줘,CALL_TRAY_BABY,living_room,2
+거실로 장난감 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실로 장난감 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실로 장난감 불러줘,CALL_TRAY_BABY,living_room,2
+거실까지 장난감 가져와,CALL_TRAY_BABY,living_room,2
+거실까지 장난감 갖다줘,CALL_TRAY_BABY,living_room,2
+거실까지 장난감 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실까지 장난감 불러줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 장난감 가져와,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 장난감 갖다줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 장난감 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 장난감 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 장난감 불러줘,CALL_TRAY_BABY,living_room,2
+거실에 장난감 가져와,CALL_TRAY_BABY,living_room,2
+거실에 장난감 갖다줘,CALL_TRAY_BABY,living_room,2
+거실에 장난감 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실에 장난감 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실에 장난감 불러줘,CALL_TRAY_BABY,living_room,2
+아기 로션 가져와,CALL_TRAY_BABY,,2
+아기 로션 갖다줘,CALL_TRAY_BABY,,2
+아기 로션 챙겨줘,CALL_TRAY_BABY,,2
+아기 로션 불러줘,CALL_TRAY_BABY,,2
+현관으로 아기 로션 가져와,CALL_TRAY_BABY,porch,2
+현관으로 아기 로션 갖다줘,CALL_TRAY_BABY,porch,2
+현관으로 아기 로션 가져다 줘,CALL_TRAY_BABY,porch,2
+현관으로 아기 로션 챙겨줘,CALL_TRAY_BABY,porch,2
+현관으로 아기 로션 불러줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 아기 로션 가져와,CALL_TRAY_BABY,porch,2
+현관 쪽으로 아기 로션 갖다줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 아기 로션 가져다 줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 아기 로션 챙겨줘,CALL_TRAY_BABY,porch,2
+현관 쪽으로 아기 로션 불러줘,CALL_TRAY_BABY,porch,2
+현관까지 아기 로션 가져와,CALL_TRAY_BABY,porch,2
+현관까지 아기 로션 갖다줘,CALL_TRAY_BABY,porch,2
+현관까지 아기 로션 가져다 줘,CALL_TRAY_BABY,porch,2
+현관까지 아기 로션 챙겨줘,CALL_TRAY_BABY,porch,2
+현관까지 아기 로션 불러줘,CALL_TRAY_BABY,porch,2
+현관 앞에 아기 로션 가져와,CALL_TRAY_BABY,porch,2
+현관 앞에 아기 로션 갖다줘,CALL_TRAY_BABY,porch,2
+현관 앞에 아기 로션 가져다 줘,CALL_TRAY_BABY,porch,2
+현관 앞에 아기 로션 챙겨줘,CALL_TRAY_BABY,porch,2
+현관 앞에 아기 로션 불러줘,CALL_TRAY_BABY,porch,2
+거실로 아기 로션 가져와,CALL_TRAY_BABY,living_room,2
+거실로 아기 로션 갖다줘,CALL_TRAY_BABY,living_room,2
+거실로 아기 로션 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실로 아기 로션 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실로 아기 로션 불러줘,CALL_TRAY_BABY,living_room,2
+거실까지 아기 로션 가져와,CALL_TRAY_BABY,living_room,2
+거실까지 아기 로션 갖다줘,CALL_TRAY_BABY,living_room,2
+거실까지 아기 로션 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실까지 아기 로션 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실까지 아기 로션 불러줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 아기 로션 가져와,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 아기 로션 갖다줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 아기 로션 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 아기 로션 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실 쪽으로 아기 로션 불러줘,CALL_TRAY_BABY,living_room,2
+거실에 아기 로션 가져와,CALL_TRAY_BABY,living_room,2
+거실에 아기 로션 갖다줘,CALL_TRAY_BABY,living_room,2
+거실에 아기 로션 가져다 줘,CALL_TRAY_BABY,living_room,2
+거실에 아기 로션 챙겨줘,CALL_TRAY_BABY,living_room,2
+거실에 아기 로션 불러줘,CALL_TRAY_BABY,living_room,2
+약 가져와,CALL_TRAY_MEDICINE,,5
+약 갖다줘,CALL_TRAY_MEDICINE,,2
+약 챙겨줘,CALL_TRAY_MEDICINE,,2
+약 불러줘,CALL_TRAY_MEDICINE,,2
+현관으로 약 가져와,CALL_TRAY_MEDICINE,porch,5
+현관으로 약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 약 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 약 가져와,CALL_TRAY_MEDICINE,porch,5
+현관 쪽으로 약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 약 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 약 가져와,CALL_TRAY_MEDICINE,porch,5
+현관까지 약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 약 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 약 가져와,CALL_TRAY_MEDICINE,porch,5
+현관 앞에 약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 약 불러줘,CALL_TRAY_MEDICINE,porch,2
+거실로 약 가져와,CALL_TRAY_MEDICINE,living_room,5
+거실로 약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 약 가져와,CALL_TRAY_MEDICINE,living_room,5
+거실까지 약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 약 가져와,CALL_TRAY_MEDICINE,living_room,5
+거실 쪽으로 약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 약 가져와,CALL_TRAY_MEDICINE,living_room,5
+거실에 약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+혈압약 가져와,CALL_TRAY_MEDICINE,,2
+혈압약 갖다줘,CALL_TRAY_MEDICINE,,2
+혈압약 챙겨줘,CALL_TRAY_MEDICINE,,2
+혈압약 불러줘,CALL_TRAY_MEDICINE,,2
+현관으로 혈압약 가져와,CALL_TRAY_MEDICINE,porch,2
+현관으로 혈압약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 혈압약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 혈압약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 혈압약 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 혈압약 가져와,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 혈압약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 혈압약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 혈압약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 혈압약 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 혈압약 가져와,CALL_TRAY_MEDICINE,porch,2
+현관까지 혈압약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 혈압약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 혈압약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 혈압약 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 혈압약 가져와,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 혈압약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 혈압약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 혈압약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 혈압약 불러줘,CALL_TRAY_MEDICINE,porch,2
+거실로 혈압약 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실로 혈압약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 혈압약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 혈압약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 혈압약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 혈압약 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실까지 혈압약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 혈압약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 혈압약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 혈압약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 혈압약 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 혈압약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 혈압약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 혈압약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 혈압약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 혈압약 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실에 혈압약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 혈압약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 혈압약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 혈압약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+당뇨약 가져와,CALL_TRAY_MEDICINE,,2
+당뇨약 갖다줘,CALL_TRAY_MEDICINE,,2
+당뇨약 챙겨줘,CALL_TRAY_MEDICINE,,2
+당뇨약 불러줘,CALL_TRAY_MEDICINE,,2
+현관으로 당뇨약 가져와,CALL_TRAY_MEDICINE,porch,2
+현관으로 당뇨약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 당뇨약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 당뇨약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 당뇨약 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 당뇨약 가져와,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 당뇨약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 당뇨약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 당뇨약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 당뇨약 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 당뇨약 가져와,CALL_TRAY_MEDICINE,porch,2
+현관까지 당뇨약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 당뇨약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 당뇨약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 당뇨약 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 당뇨약 가져와,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 당뇨약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 당뇨약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 당뇨약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 당뇨약 불러줘,CALL_TRAY_MEDICINE,porch,2
+거실로 당뇨약 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실로 당뇨약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 당뇨약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 당뇨약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 당뇨약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 당뇨약 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실까지 당뇨약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 당뇨약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 당뇨약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 당뇨약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 당뇨약 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 당뇨약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 당뇨약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 당뇨약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 당뇨약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 당뇨약 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실에 당뇨약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 당뇨약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 당뇨약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 당뇨약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+비타민 가져와,CALL_TRAY_MEDICINE,,5
+비타민 갖다줘,CALL_TRAY_MEDICINE,,2
+비타민 챙겨줘,CALL_TRAY_MEDICINE,,2
+비타민 불러줘,CALL_TRAY_MEDICINE,,2
+현관으로 비타민 가져와,CALL_TRAY_MEDICINE,porch,5
+현관으로 비타민 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 비타민 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 비타민 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 비타민 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 비타민 가져와,CALL_TRAY_MEDICINE,porch,5
+현관 쪽으로 비타민 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 비타민 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 비타민 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 비타민 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 비타민 가져와,CALL_TRAY_MEDICINE,porch,5
+현관까지 비타민 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 비타민 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 비타민 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 비타민 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 비타민 가져와,CALL_TRAY_MEDICINE,porch,5
+현관 앞에 비타민 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 비타민 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 비타민 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 비타민 불러줘,CALL_TRAY_MEDICINE,porch,2
+거실로 비타민 가져와,CALL_TRAY_MEDICINE,living_room,5
+거실로 비타민 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 비타민 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 비타민 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 비타민 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 비타민 가져와,CALL_TRAY_MEDICINE,living_room,5
+거실까지 비타민 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 비타민 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 비타민 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 비타민 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 비타민 가져와,CALL_TRAY_MEDICINE,living_room,5
+거실 쪽으로 비타민 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 비타민 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 비타민 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 비타민 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 비타민 가져와,CALL_TRAY_MEDICINE,living_room,5
+거실에 비타민 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 비타민 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 비타민 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 비타민 불러줘,CALL_TRAY_MEDICINE,living_room,2
+영양제 가져와,CALL_TRAY_MEDICINE,,2
+영양제 갖다줘,CALL_TRAY_MEDICINE,,2
+영양제 챙겨줘,CALL_TRAY_MEDICINE,,2
+영양제 불러줘,CALL_TRAY_MEDICINE,,2
+현관으로 영양제 가져와,CALL_TRAY_MEDICINE,porch,2
+현관으로 영양제 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 영양제 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 영양제 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 영양제 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 영양제 가져와,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 영양제 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 영양제 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 영양제 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 영양제 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 영양제 가져와,CALL_TRAY_MEDICINE,porch,2
+현관까지 영양제 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 영양제 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 영양제 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 영양제 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 영양제 가져와,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 영양제 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 영양제 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 영양제 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 영양제 불러줘,CALL_TRAY_MEDICINE,porch,2
+거실로 영양제 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실로 영양제 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 영양제 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 영양제 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 영양제 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 영양제 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실까지 영양제 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 영양제 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 영양제 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 영양제 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 영양제 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 영양제 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 영양제 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 영양제 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 영양제 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 영양제 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실에 영양제 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 영양제 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 영양제 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 영양제 불러줘,CALL_TRAY_MEDICINE,living_room,2
+한약 가져와,CALL_TRAY_MEDICINE,,2
+한약 갖다줘,CALL_TRAY_MEDICINE,,2
+한약 챙겨줘,CALL_TRAY_MEDICINE,,2
+한약 불러줘,CALL_TRAY_MEDICINE,,2
+현관으로 한약 가져와,CALL_TRAY_MEDICINE,porch,2
+현관으로 한약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 한약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 한약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 한약 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 한약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 한약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 한약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 한약 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 한약 가져와,CALL_TRAY_MEDICINE,porch,2
+현관까지 한약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 한약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 한약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 한약 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 한약 가져와,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 한약 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 한약 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 한약 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 한약 불러줘,CALL_TRAY_MEDICINE,porch,2
+거실로 한약 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실로 한약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 한약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 한약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 한약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 한약 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실까지 한약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 한약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 한약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 한약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 한약 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 한약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 한약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 한약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 한약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 한약 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실에 한약 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 한약 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 한약 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 한약 불러줘,CALL_TRAY_MEDICINE,living_room,2
+안경 가져와,CALL_TRAY_MEDICINE,,2
+안경 갖다줘,CALL_TRAY_MEDICINE,,2
+안경 챙겨줘,CALL_TRAY_MEDICINE,,2
+안경 불러줘,CALL_TRAY_MEDICINE,,2
+현관으로 안경 가져와,CALL_TRAY_MEDICINE,porch,2
+현관으로 안경 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 안경 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 안경 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 안경 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 안경 가져와,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 안경 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 안경 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 안경 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 안경 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 안경 가져와,CALL_TRAY_MEDICINE,porch,2
+현관까지 안경 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 안경 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 안경 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 안경 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 안경 가져와,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 안경 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 안경 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 안경 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 안경 불러줘,CALL_TRAY_MEDICINE,porch,2
+거실로 안경 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실로 안경 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 안경 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 안경 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 안경 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 안경 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 안경 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 안경 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 안경 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 안경 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 안경 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 안경 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 안경 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 안경 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 안경 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실에 안경 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 안경 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 안경 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 안경 불러줘,CALL_TRAY_MEDICINE,living_room,2
+돋보기 가져와,CALL_TRAY_MEDICINE,,2
+돋보기 갖다줘,CALL_TRAY_MEDICINE,,2
+돋보기 챙겨줘,CALL_TRAY_MEDICINE,,2
+돋보기 불러줘,CALL_TRAY_MEDICINE,,2
+현관으로 돋보기 가져와,CALL_TRAY_MEDICINE,porch,2
+현관으로 돋보기 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 돋보기 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 돋보기 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관으로 돋보기 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 돋보기 가져와,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 돋보기 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 돋보기 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 돋보기 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 쪽으로 돋보기 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 돋보기 가져와,CALL_TRAY_MEDICINE,porch,2
+현관까지 돋보기 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 돋보기 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 돋보기 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관까지 돋보기 불러줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 돋보기 가져와,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 돋보기 갖다줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 돋보기 가져다 줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 돋보기 챙겨줘,CALL_TRAY_MEDICINE,porch,2
+현관 앞에 돋보기 불러줘,CALL_TRAY_MEDICINE,porch,2
+거실로 돋보기 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실로 돋보기 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 돋보기 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 돋보기 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실로 돋보기 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 돋보기 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 돋보기 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 돋보기 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실까지 돋보기 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 돋보기 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 돋보기 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 돋보기 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 돋보기 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실 쪽으로 돋보기 불러줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 돋보기 가져와,CALL_TRAY_MEDICINE,living_room,2
+거실에 돋보기 갖다줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 돋보기 가져다 줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 돋보기 챙겨줘,CALL_TRAY_MEDICINE,living_room,2
+거실에 돋보기 불러줘,CALL_TRAY_MEDICINE,living_room,2
+사원증 가져와,CALL_TRAY_COMMUTE,,5
+사원증 갖다줘,CALL_TRAY_COMMUTE,,2
+사원증 챙겨줘,CALL_TRAY_COMMUTE,,2
+사원증 불러줘,CALL_TRAY_COMMUTE,,2
+현관으로 사원증 가져와,CALL_TRAY_COMMUTE,porch,5
+현관으로 사원증 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 사원증 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 사원증 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 사원증 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 사원증 가져와,CALL_TRAY_COMMUTE,porch,5
+현관 쪽으로 사원증 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 사원증 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 사원증 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 사원증 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 사원증 가져와,CALL_TRAY_COMMUTE,porch,5
+현관까지 사원증 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 사원증 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 사원증 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 사원증 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 사원증 가져와,CALL_TRAY_COMMUTE,porch,5
+현관 앞에 사원증 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 사원증 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 사원증 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 사원증 불러줘,CALL_TRAY_COMMUTE,porch,2
+거실로 사원증 가져와,CALL_TRAY_COMMUTE,living_room,5
+거실로 사원증 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 사원증 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 사원증 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 사원증 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 사원증 가져와,CALL_TRAY_COMMUTE,living_room,5
+거실까지 사원증 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 사원증 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 사원증 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 사원증 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 사원증 가져와,CALL_TRAY_COMMUTE,living_room,5
+거실 쪽으로 사원증 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 사원증 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 사원증 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 사원증 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 사원증 가져와,CALL_TRAY_COMMUTE,living_room,5
+거실에 사원증 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 사원증 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 사원증 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 사원증 불러줘,CALL_TRAY_COMMUTE,living_room,2
+워치 가져와,CALL_TRAY_COMMUTE,,5
+워치 갖다줘,CALL_TRAY_COMMUTE,,2
+워치 챙겨줘,CALL_TRAY_COMMUTE,,2
+워치 불러줘,CALL_TRAY_COMMUTE,,2
+현관으로 워치 가져와,CALL_TRAY_COMMUTE,porch,5
+현관으로 워치 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 워치 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 워치 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 워치 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 워치 가져와,CALL_TRAY_COMMUTE,porch,5
+현관 쪽으로 워치 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 워치 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 워치 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 워치 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 워치 가져와,CALL_TRAY_COMMUTE,porch,5
+현관까지 워치 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 워치 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 워치 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 워치 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 워치 가져와,CALL_TRAY_COMMUTE,porch,5
+현관 앞에 워치 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 워치 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 워치 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 워치 불러줘,CALL_TRAY_COMMUTE,porch,2
+거실로 워치 가져와,CALL_TRAY_COMMUTE,living_room,5
+거실로 워치 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 워치 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 워치 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 워치 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 워치 가져와,CALL_TRAY_COMMUTE,living_room,5
+거실까지 워치 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 워치 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 워치 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 워치 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 워치 가져와,CALL_TRAY_COMMUTE,living_room,5
+거실 쪽으로 워치 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 워치 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 워치 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 워치 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 워치 가져와,CALL_TRAY_COMMUTE,living_room,5
+거실에 워치 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 워치 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 워치 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 워치 불러줘,CALL_TRAY_COMMUTE,living_room,2
+에어팟 가져와,CALL_TRAY_COMMUTE,,5
+에어팟 갖다줘,CALL_TRAY_COMMUTE,,2
+에어팟 챙겨줘,CALL_TRAY_COMMUTE,,2
+에어팟 불러줘,CALL_TRAY_COMMUTE,,2
+현관으로 에어팟 가져와,CALL_TRAY_COMMUTE,porch,5
+현관으로 에어팟 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 에어팟 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 에어팟 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 에어팟 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 에어팟 가져와,CALL_TRAY_COMMUTE,porch,5
+현관 쪽으로 에어팟 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 에어팟 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 에어팟 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 에어팟 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 에어팟 가져와,CALL_TRAY_COMMUTE,porch,5
+현관까지 에어팟 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 에어팟 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 에어팟 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 에어팟 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 에어팟 가져와,CALL_TRAY_COMMUTE,porch,5
+현관 앞에 에어팟 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 에어팟 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 에어팟 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 에어팟 불러줘,CALL_TRAY_COMMUTE,porch,2
+거실로 에어팟 가져와,CALL_TRAY_COMMUTE,living_room,5
+거실로 에어팟 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 에어팟 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 에어팟 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 에어팟 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 에어팟 가져와,CALL_TRAY_COMMUTE,living_room,5
+거실까지 에어팟 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 에어팟 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 에어팟 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 에어팟 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 에어팟 가져와,CALL_TRAY_COMMUTE,living_room,5
+거실 쪽으로 에어팟 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 에어팟 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 에어팟 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 에어팟 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 에어팟 가져와,CALL_TRAY_COMMUTE,living_room,5
+거실에 에어팟 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 에어팟 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 에어팟 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 에어팟 불러줘,CALL_TRAY_COMMUTE,living_room,2
+출입카드 가져와,CALL_TRAY_COMMUTE,,2
+출입카드 갖다줘,CALL_TRAY_COMMUTE,,2
+출입카드 챙겨줘,CALL_TRAY_COMMUTE,,2
+출입카드 불러줘,CALL_TRAY_COMMUTE,,2
+현관으로 출입카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관으로 출입카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 출입카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 출입카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 출입카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 출입카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 출입카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 출입카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 출입카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 출입카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 출입카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관까지 출입카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 출입카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 출입카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 출입카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 출입카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 출입카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 출입카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 출입카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 출입카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+거실로 출입카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실로 출입카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 출입카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 출입카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 출입카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 출입카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실까지 출입카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 출입카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 출입카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 출입카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 출입카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 출입카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 출입카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 출입카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 출입카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 출입카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실에 출입카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 출입카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 출입카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 출입카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+보안카드 가져와,CALL_TRAY_COMMUTE,,2
+보안카드 갖다줘,CALL_TRAY_COMMUTE,,2
+보안카드 챙겨줘,CALL_TRAY_COMMUTE,,2
+보안카드 불러줘,CALL_TRAY_COMMUTE,,2
+현관으로 보안카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관으로 보안카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 보안카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 보안카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 보안카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 보안카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 보안카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 보안카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 보안카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 보안카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 보안카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관까지 보안카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 보안카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 보안카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 보안카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 보안카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 보안카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 보안카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 보안카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 보안카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+거실로 보안카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실로 보안카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 보안카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 보안카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 보안카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 보안카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실까지 보안카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 보안카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 보안카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 보안카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 보안카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 보안카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 보안카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 보안카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 보안카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 보안카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실에 보안카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 보안카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 보안카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 보안카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+노트북 충전기 가져와,CALL_TRAY_COMMUTE,,2
+노트북 충전기 갖다줘,CALL_TRAY_COMMUTE,,2
+노트북 충전기 챙겨줘,CALL_TRAY_COMMUTE,,2
+노트북 충전기 불러줘,CALL_TRAY_COMMUTE,,2
+현관으로 노트북 충전기 가져와,CALL_TRAY_COMMUTE,porch,2
+현관으로 노트북 충전기 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 노트북 충전기 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 노트북 충전기 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 노트북 충전기 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 노트북 충전기 가져와,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 노트북 충전기 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 노트북 충전기 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 노트북 충전기 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 노트북 충전기 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 노트북 충전기 가져와,CALL_TRAY_COMMUTE,porch,2
+현관까지 노트북 충전기 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 노트북 충전기 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 노트북 충전기 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 노트북 충전기 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 노트북 충전기 가져와,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 노트북 충전기 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 노트북 충전기 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 노트북 충전기 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 노트북 충전기 불러줘,CALL_TRAY_COMMUTE,porch,2
+거실로 노트북 충전기 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실로 노트북 충전기 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 노트북 충전기 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 노트북 충전기 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 노트북 충전기 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 노트북 충전기 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실까지 노트북 충전기 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 노트북 충전기 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 노트북 충전기 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 노트북 충전기 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 노트북 충전기 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 노트북 충전기 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 노트북 충전기 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 노트북 충전기 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 노트북 충전기 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 노트북 충전기 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실에 노트북 충전기 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 노트북 충전기 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 노트북 충전기 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 노트북 충전기 불러줘,CALL_TRAY_COMMUTE,living_room,2
+회사 카드 가져와,CALL_TRAY_COMMUTE,,2
+회사 카드 갖다줘,CALL_TRAY_COMMUTE,,2
+회사 카드 챙겨줘,CALL_TRAY_COMMUTE,,2
+회사 카드 불러줘,CALL_TRAY_COMMUTE,,2
+현관으로 회사 카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관으로 회사 카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 회사 카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 회사 카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 회사 카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 회사 카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 회사 카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 회사 카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 회사 카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 회사 카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 회사 카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관까지 회사 카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 회사 카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 회사 카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 회사 카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 회사 카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 회사 카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 회사 카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 회사 카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 회사 카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+거실로 회사 카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실로 회사 카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 회사 카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 회사 카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 회사 카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 회사 카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실까지 회사 카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 회사 카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 회사 카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 회사 카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 회사 카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 회사 카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 회사 카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 회사 카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 회사 카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 회사 카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실에 회사 카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 회사 카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 회사 카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 회사 카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+교통카드 가져와,CALL_TRAY_COMMUTE,,2
+교통카드 갖다줘,CALL_TRAY_COMMUTE,,2
+교통카드 챙겨줘,CALL_TRAY_COMMUTE,,2
+교통카드 불러줘,CALL_TRAY_COMMUTE,,2
+현관으로 교통카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관으로 교통카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 교통카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 교통카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 교통카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 교통카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 교통카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 교통카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 교통카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 교통카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 교통카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관까지 교통카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 교통카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 교통카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 교통카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 교통카드 가져와,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 교통카드 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 교통카드 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 교통카드 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 교통카드 불러줘,CALL_TRAY_COMMUTE,porch,2
+거실로 교통카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실로 교통카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 교통카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 교통카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 교통카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 교통카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실까지 교통카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 교통카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 교통카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 교통카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 교통카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 교통카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 교통카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 교통카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 교통카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 교통카드 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실에 교통카드 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 교통카드 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 교통카드 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 교통카드 불러줘,CALL_TRAY_COMMUTE,living_room,2
+차 키 가져와,CALL_TRAY_COMMUTE,,2
+차 키 갖다줘,CALL_TRAY_COMMUTE,,2
+차 키 챙겨줘,CALL_TRAY_COMMUTE,,2
+차 키 불러줘,CALL_TRAY_COMMUTE,,2
+현관으로 차 키 가져와,CALL_TRAY_COMMUTE,porch,2
+현관으로 차 키 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 차 키 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 차 키 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관으로 차 키 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 차 키 가져와,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 차 키 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 차 키 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 차 키 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 쪽으로 차 키 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 차 키 가져와,CALL_TRAY_COMMUTE,porch,2
+현관까지 차 키 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 차 키 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 차 키 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관까지 차 키 불러줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 차 키 가져와,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 차 키 갖다줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 차 키 가져다 줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 차 키 챙겨줘,CALL_TRAY_COMMUTE,porch,2
+현관 앞에 차 키 불러줘,CALL_TRAY_COMMUTE,porch,2
+거실로 차 키 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실로 차 키 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 차 키 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 차 키 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실로 차 키 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 차 키 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실까지 차 키 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 차 키 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 차 키 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실까지 차 키 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 차 키 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 차 키 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 차 키 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 차 키 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실 쪽으로 차 키 불러줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 차 키 가져와,CALL_TRAY_COMMUTE,living_room,2
+거실에 차 키 갖다줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 차 키 가져다 줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 차 키 챙겨줘,CALL_TRAY_COMMUTE,living_room,2
+거실에 차 키 불러줘,CALL_TRAY_COMMUTE,living_room,2

@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/notificationCanvas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9F9">
+
+    <FrameLayout
+        android:id="@+id/notificationBackButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_chevron_left" />
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="28dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="72dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="알림 설정"
+        android:textColor="#14191B"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="86dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="알림"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/notificationToggleCard"
+        android:layout_width="match_parent"
+        android:layout_height="372dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="112dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_card"
+        android:elevation="2dp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/notificationPushRow"
+            android:layout_width="match_parent"
+            android:layout_height="124dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <FrameLayout
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/bg_module_icon_circle">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_bell"
+                    app:tint="#14191B" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="76dp"
+                android:layout_marginEnd="78dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="푸시 알림"
+                    android:textColor="#14191B"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="앱 알림을 받습니다"
+                    android:textColor="#798385"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/notificationPushToggleTrack"
+                android:layout_width="54dp"
+                android:layout_height="30dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_toggle_on">
+
+                <View
+                    android:id="@+id/notificationPushToggleKnob"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/bg_toggle_knob" />
+            </FrameLayout>
+        </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E2E7E7" />
+
+        <FrameLayout
+            android:id="@+id/notificationMoveRow"
+            android:layout_width="match_parent"
+            android:layout_height="123dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <FrameLayout
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/bg_module_icon_circle">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_bottom_box"
+                    app:tint="#14191B" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="76dp"
+                android:layout_marginEnd="78dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="모듈 이동 완료"
+                    android:textColor="#14191B"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="CARRY 이동 완료 시 알림"
+                    android:textColor="#798385"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/notificationMoveToggleTrack"
+                android:layout_width="54dp"
+                android:layout_height="30dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_toggle_on">
+
+                <View
+                    android:id="@+id/notificationMoveToggleKnob"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/bg_toggle_knob" />
+            </FrameLayout>
+        </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E2E7E7" />
+
+        <FrameLayout
+            android:id="@+id/notificationBatteryRow"
+            android:layout_width="match_parent"
+            android:layout_height="123dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <FrameLayout
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/bg_module_icon_circle">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_battery"
+                    app:tint="#14191B" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="76dp"
+                android:layout_marginEnd="78dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="배터리 부족"
+                    android:textColor="#14191B"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="배터리가 부족하면 알림"
+                    android:textColor="#798385"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/notificationBatteryToggleTrack"
+                android:layout_width="54dp"
+                android:layout_height="30dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_toggle_on">
+
+                <View
+                    android:id="@+id/notificationBatteryToggleKnob"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/bg_toggle_knob" />
+            </FrameLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="500dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="기록"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:id="@+id/notificationLogRow"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="526dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_card"
+        android:clickable="true"
+        android:elevation="2dp"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_info"
+            app:tint="#14191B" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="48dp"
+            android:includeFontPadding="false"
+            android:text="로그 기록"
+            android:textColor="#14191B"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@null"
+            android:rotation="180"
+            android:src="@drawable/ic_chevron_left"
+            app:tint="#798385" />
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="596dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="알림음"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:id="@+id/notificationSoundRow"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="622dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_card"
+        android:clickable="true"
+        android:elevation="2dp"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_bell"
+            app:tint="#14191B" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="48dp"
+            android:includeFontPadding="false"
+            android:text="알림음 선택"
+            android:textColor="#14191B"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/notificationSoundValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="38dp"
+            android:includeFontPadding="false"
+            android:textColor="#798385"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@null"
+            android:rotation="180"
+            android:src="@drawable/ic_chevron_left"
+            app:tint="#798385" />
+    </FrameLayout>
+</FrameLayout>

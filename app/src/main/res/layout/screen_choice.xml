@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/choiceScroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9F9"
+    android:clipToPadding="false"
+    android:fillViewport="false">
+
+    <FrameLayout
+        android:id="@+id/choiceCanvas"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F7F9F9">
+
+    <FrameLayout
+        android:id="@+id/choiceBackButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="18dp"
+        android:clickable="true"
+        android:focusable="true" >
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_chevron_left"
+            android:layout_gravity="center"
+            android:contentDescription="@null" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/choiceTitle"
+        android:layout_width="262dp"
+        android:layout_height="23dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:textColor="#14191B"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/choiceSection"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="78dp"
+        android:includeFontPadding="false"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:id="@+id/choiceCard"
+        android:layout_width="match_parent"
+        android:layout_height="144dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="108dp"
+        android:background="@drawable/bg_card"
+        android:elevation="3dp">
+
+        <LinearLayout
+            android:id="@+id/choiceList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </FrameLayout>
+    </FrameLayout>
+</ScrollView>

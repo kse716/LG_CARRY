@@ -1,0 +1,3152 @@
+package com.example.dx_carry;
+
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.text.InputType;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.NumberPicker;
+import android.widget.PopupWindow;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.LinearLayout;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private static final int APP_BACKGROUND = 0xFFF7F9F9;
+    private static final int REQUEST_RECORD_AUDIO = 1001;
+    private static final int REQUEST_POST_NOTIFICATIONS = 1002;
+    private static final String NOTIFICATION_CHANNEL_ID = "carry_notifications";
+    private static final String[] VOICE_INTENT_API_URLS = {
+            "http://10.0.2.2:5000/api/ai/voice-intent",
+            "http://10.50.137.25:5000/api/ai/voice-intent",
+            "http://127.0.0.1:5000/api/ai/voice-intent"
+    };
+
+    private LinearLayout appRoot;
+    private FrameLayout contentContainer;
+    private FrameLayout bottomNavContainer;
+    private String screen = "login";
+    private String selectedModule = "1번 트레이";
+    private String selectedTrayId = "tray1";
+    private final List<TrayData> trays = new ArrayList<>();
+    private final List<RoutineData> routines = new ArrayList<>();
+    private final List<String> places = new ArrayList<>();
+    private String representativeTrayId = "";
+    private String selectedRoutineId = "routine1";
+    private String logFilter = "today";
+    private final boolean[] routineEnabled = {true, true, false};
+    private final boolean[] routineVisible = {true, true, true};
+    private int selectedRoutineHour = 7;
+    private int selectedRoutineMinute = 30;
+    private int selectedReserveHour = 10;
+    private int selectedReserveMinute = 0;
+    private int selectedRoutinePlaceIndex = 0;
+    private int selectedModuleAddPlaceIndex = 0;
+    private boolean loadedPlacesFromDb = false;
+    private boolean moduleAddPlaceDropdownOpen = false;
+    private int[] moduleAddPlaceDropdownOrder = new int[0];
+    private boolean routinePlaceExpanded = false;
+    private int voiceState = 0;
+    private String recognizedCommand = "거실에 있는 트레이 가져와줘";
+    private String recognizedModule = "1번 트레이";
+    private String recognizedLocation = "거실";
+    private String recognizedIntent = "";
+    private String recognizedLabel = "";
+    private String recognizedMessage = "";
+    private double recognizedConfidence = 0.0;
+    private boolean voiceIntentAccepted = false;
+    private SpeechRecognizer speechRecognizer;
+    private DatabaseReference db;
+    private boolean pushNotificationsEnabled = true;
+    private boolean moveNotificationsEnabled = true;
+    private boolean batteryNotificationsEnabled = true;
+    private boolean batteryLowNotified = false;
+    private int selectedNotificationSoundIndex = 0;
+    private String notificationLogFilter = "today";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
+
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+
+        appRoot = findViewById(R.id.appRoot);
+        contentContainer = findViewById(R.id.contentContainer);
+        bottomNavContainer = findViewById(R.id.bottomNavContainer);
+
+        db = FirebaseDatabase.getInstance().getReference();
+        addFallbackPlaces();
+        listenToPlaces();
+        listenToTrays();
+        listenToRoutines();
+        createNotificationChannel();
+        listenToBatteryLevel();
+
+        ViewCompat.setOnApplyWindowInsetsListener(appRoot, (v, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            contentContainer.setPadding(0, bars.top, 0, 0);
+            bottomNavContainer.setPadding(0, 0, 0, bars.bottom);
+            return insets;
+        });
+
+        render();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        if (speechRecognizer != null) {
+            speechRecognizer.destroy();
+            speechRecognizer = null;
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_RECORD_AUDIO) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                setScreen("voiceListening");
+            } else {
+                Toast.makeText(this, "마이크 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == REQUEST_POST_NOTIFICATIONS) {
+            if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "알림 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
+        NotificationChannel channel = new NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                "CARRY 알림",
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+        channel.setDescription("CARRY 이동, 호출, 배터리 알림");
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        if (manager != null) {
+            manager.createNotificationChannel(channel);
+        }
+    }
+
+    private void requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                    REQUEST_POST_NOTIFICATIONS
+            );
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void sendLocalNotification(String title, String message) {
+        if (!pushNotificationsEnabled) return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestNotificationPermissionIfNeeded();
+            return;
+        }
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_bell)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+        NotificationManagerCompat.from(this).notify((int) (System.currentTimeMillis() % 100000), builder.build());
+    }
+
+    private void listenToBatteryLevel() {
+        db.child("carry").child("battery").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Integer battery = snapshot.getValue(Integer.class);
+                if (battery == null) return;
+                if (battery < 10 && batteryNotificationsEnabled && !batteryLowNotified) {
+                    batteryLowNotified = true;
+                    sendLocalNotification("배터리 부족", "CARRY 배터리가 10% 미만입니다.");
+                    saveNotificationLog("배터리 부족", "CARRY", "", "배터리 부족", "battery", System.currentTimeMillis());
+                } else if (battery >= 10) {
+                    batteryLowNotified = false;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    private void setScreen(String nextScreen) {
+        screen = nextScreen;
+        render();
+    }
+
+    private void listenToPlaces() {
+        listenToPlacePath("locations");
+        listenToPlacePath("places");
+        listenToPlacePath("bases");
+    }
+
+    private void listenToPlacePath(String path) {
+        db.child(path).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean changed = false;
+                for (DataSnapshot placeSnapshot : snapshot.getChildren()) {
+                    String place = parsePlaceName(placeSnapshot);
+                    if (!place.isEmpty() && !containsPlace(place)) {
+                        if (!loadedPlacesFromDb) {
+                            places.clear();
+                            loadedPlacesFromDb = true;
+                        }
+                        places.add(place);
+                        changed = true;
+                    }
+                }
+                if (places.isEmpty() && !loadedPlacesFromDb) {
+                    addFallbackPlaces();
+                    changed = true;
+                }
+                selectedRoutinePlaceIndex = clampPlaceIndex(selectedRoutinePlaceIndex);
+                selectedModuleAddPlaceIndex = clampPlaceIndex(selectedModuleAddPlaceIndex);
+                if (changed && ("moduleAdd".equals(screen) || "moduleRename".equals(screen) || "routineEdit".equals(screen) || "location".equals(screen))) {
+                    render();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                if (places.isEmpty() && !loadedPlacesFromDb) {
+                    addFallbackPlaces();
+                }
+            }
+        });
+    }
+
+    private String parsePlaceName(DataSnapshot snapshot) {
+        String value = snapshot.hasChildren() ? null : snapshot.getValue(String.class);
+        if (value == null || value.trim().isEmpty()) value = snapshot.child("name").getValue(String.class);
+        if (value == null || value.trim().isEmpty()) value = snapshot.child("label").getValue(String.class);
+        if (value == null || value.trim().isEmpty()) value = snapshot.child("title").getValue(String.class);
+        if (value == null || value.trim().isEmpty()) value = snapshot.child("location").getValue(String.class);
+        return value == null ? "" : value.trim();
+    }
+
+    private boolean containsPlace(String place) {
+        for (String existing : places) {
+            if (existing.equals(place)) return true;
+        }
+        return false;
+    }
+
+    private void addFallbackPlaces() {
+        places.clear();
+        places.add("거실");
+        places.add("현관");
+        places.add("침실");
+    }
+
+    private String[] placeChoices() {
+        if (places.isEmpty()) addFallbackPlaces();
+        String[] choices = new String[places.size()];
+        for (int i = 0; i < places.size(); i++) {
+            choices[i] = places.get(i);
+        }
+        return choices;
+    }
+
+    private int clampPlaceIndex(int index) {
+        if (places.isEmpty()) addFallbackPlaces();
+        if (index < 0) return 0;
+        if (index >= places.size()) return places.size() - 1;
+        return index;
+    }
+
+    private void listenToTrays() {
+        db.child("trays").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                trays.clear();
+                representativeTrayId = "";
+                for (DataSnapshot traySnapshot : snapshot.getChildren()) {
+                    trays.add(parseTray(traySnapshot));
+                }
+                if (trays.isEmpty()) {
+                    addFallbackTrays();
+                }
+                if (findTray(selectedTrayId) == null) {
+                    selectedTrayId = trays.get(0).id;
+                    selectedModule = trays.get(0).name;
+                }
+                if ("home".equals(screen) || "modules".equals(screen) || "moduleDetail".equals(screen) || "moduleRename".equals(screen) || "itemSearch".equals(screen) || "routine".equals(screen) || "routineEdit".equals(screen)) {
+                    render();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                if (trays.isEmpty()) {
+                    addFallbackTrays();
+                }
+            }
+        });
+    }
+
+    private TrayData parseTray(DataSnapshot snapshot) {
+        String id = snapshot.getKey() == null ? "tray1" : snapshot.getKey();
+        String name = snapshot.child("name").getValue(String.class);
+        String location = snapshot.child("location").getValue(String.class);
+        if (location == null || location.trim().isEmpty()) {
+            location = snapshot.child("label_location").getValue(String.class);
+        }
+        Boolean representative = snapshot.child("representative").getValue(Boolean.class);
+        TrayData tray = new TrayData(id, emptyToFallback(name, defaultTrayName(id)), emptyToFallback(location, defaultTrayLocation(id)), representative != null && representative);
+        if (tray.representative) {
+            representativeTrayId = tray.id;
+        }
+        for (DataSnapshot itemSnapshot : snapshot.child("items").getChildren()) {
+            String itemName = itemSnapshot.child("itemName").getValue(String.class);
+            if (itemName == null || itemName.trim().isEmpty()) {
+                itemName = itemSnapshot.child("name").getValue(String.class);
+            }
+            if (itemName != null && !itemName.trim().isEmpty()) {
+                tray.items.add(itemName.trim());
+            }
+        }
+        return tray;
+    }
+
+    private List<TrayData> currentTrays() {
+        if (trays.isEmpty()) {
+            addFallbackTrays();
+        }
+        return trays;
+    }
+
+    private TrayData selectedTray() {
+        TrayData tray = findTray(selectedTrayId);
+        if (tray != null) return tray;
+        if (currentTrays().isEmpty()) {
+            addFallbackTrays();
+        }
+        selectedTrayId = trays.get(0).id;
+        selectedModule = trays.get(0).name;
+        return trays.get(0);
+    }
+
+    private TrayData findTray(String trayId) {
+        for (TrayData tray : trays) {
+            if (tray.id.equals(trayId)) return tray;
+        }
+        return null;
+    }
+
+    private void addFallbackTrays() {
+        trays.clear();
+        TrayData tray1 = new TrayData("tray1", "1번 트레이", "거실", true);
+        tray1.items.add("리모컨");
+        tray1.items.add("안경");
+        tray1.items.add("상비약");
+        TrayData tray2 = new TrayData("tray2", "2번 트레이", "현관");
+        tray2.items.add("차키");
+        tray2.items.add("마스크");
+        tray2.items.add("소독제");
+        TrayData tray3 = new TrayData("tray3", "3번 트레이", "침실");
+        tray3.items.add("휴지");
+        tray3.items.add("손소독제");
+        tray3.items.add("간식");
+        trays.add(tray1);
+        trays.add(tray2);
+        trays.add(tray3);
+        representativeTrayId = tray1.id;
+    }
+
+    private void saveTray(String trayName, String location) {
+        if (trayName.isEmpty()) {
+            Toast.makeText(this, "트레이 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        DatabaseReference trayRef = db.child("trays").push();
+        trayRef.child("name").setValue(trayName);
+        trayRef.child("location").setValue(location).addOnSuccessListener(unused -> {
+            selectedTrayId = trayRef.getKey();
+            selectedModule = trayName;
+            setScreen("modules");
+        });
+    }
+
+    private void renameSelectedTray(String trayName, String location) {
+        if (trayName.isEmpty()) {
+            Toast.makeText(this, "트레이 이름을 입력하세요. ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        db.child("trays").child(selectedTrayId).child("name").setValue(trayName)
+                .addOnSuccessListener(unused -> {
+                    db.child("trays").child(selectedTrayId).child("location").setValue(location);
+                    selectedModule = trayName;
+                    setScreen("moduleDetail");
+                });
+    }
+
+    private void addItemToSelectedTray(String itemName) {
+        if (itemName.isEmpty()) {
+            Toast.makeText(this, "물건명을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        DatabaseReference itemRef = db.child("trays").child(selectedTrayId).child("items").push();
+        itemRef.child("itemName").setValue(itemName);
+        itemRef.child("trayId").setValue(selectedTrayId);
+        itemRef.child("createdAt").setValue(System.currentTimeMillis())
+                .addOnSuccessListener(unused -> setScreen("moduleDetail"));
+    }
+
+    private String emptyToFallback(String value, String fallback) {
+        return value == null || value.trim().isEmpty() ? fallback : value.trim();
+    }
+
+    private String defaultTrayName(String trayId) {
+        if ("tray2".equals(trayId)) return "2번 트레이";
+        if ("tray3".equals(trayId)) return "3번 트레이";
+        return "1번 트레이";
+    }
+
+    private String defaultTrayLocation(String trayId) {
+        if ("tray2".equals(trayId)) return "현관";
+        if ("tray3".equals(trayId)) return "침실";
+        return "거실";
+    }
+
+    private void render() {
+        contentContainer.removeAllViews();
+        bottomNavContainer.removeAllViews();
+
+        switch (screen) {
+            case "signup":
+                renderSignup();
+                break;
+            case "voice":
+                voiceState = 0;
+                renderVoice();
+                break;
+            case "voiceListening":
+                voiceState = 1;
+                renderVoice();
+                startSpeechRecognition();
+                break;
+            case "voiceResult":
+                voiceState = 2;
+                renderVoice();
+                break;
+            case "modules":
+                renderModules();
+                break;
+            case "moduleDetail":
+                renderModuleDetail();
+                break;
+            case "moduleAdd":
+                renderModuleAdd();
+                break;
+            case "moduleRename":
+                renderModuleRename();
+                break;
+            case "itemSearch":
+                renderItemSearch();
+                break;
+            case "itemAdd":
+                renderItemAdd();
+                break;
+            case "routine":
+                renderRoutine();
+                break;
+            case "routineEdit":
+                renderRoutineEdit();
+                break;
+            case "moduleSelect":
+                renderModuleSelect();
+                break;
+            case "routineTime":
+                renderTimeSelect("루틴 시간 설정", "routineEdit");
+                break;
+            case "reserveTime":
+                renderTimeSelect("예약 시간 설정", "moduleDetail");
+                break;
+            case "location":
+                renderLocation();
+                break;
+            case "menu":
+                renderMenu();
+                break;
+            case "map":
+                renderMap();
+                break;
+            case "alarm":
+                renderAlarm();
+                break;
+            case "notification":
+                renderNotification();
+                break;
+            case "notificationLogs":
+                renderNotificationLogs();
+                break;
+            case "logs":
+                renderLogs();
+                break;
+            case "home":
+                renderHome();
+                break;
+            case "login":
+            default:
+                renderLogin();
+                break;
+        }
+    }
+
+
+    private void renderLogin() {
+        FrameLayout c = inflateFixedCanvas(R.layout.screen_login);
+        EditText password = c.findViewById(R.id.loginPasswordInputXml);
+        password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        c.findViewById(R.id.loginSubmitButton).setOnClickListener(v -> setScreen("home"));
+        c.findViewById(R.id.loginSignupButton).setOnClickListener(v -> setScreen("signup"));
+    }
+
+    private void renderSignup() {
+        FrameLayout c = inflateFixedCanvas(R.layout.screen_signup);
+        c.findViewById(R.id.signupBackButton).setOnClickListener(v -> setScreen("login"));
+        c.findViewById(R.id.signupSubmitButton).setOnClickListener(v -> setScreen("home"));
+    }
+
+    private void renderHome() {
+        renderHomeXml();
+    }
+
+    private void renderHomeXml() {
+        View homeView = LayoutInflater.from(this).inflate(R.layout.screen_home, contentContainer, false);
+        contentContainer.addView(homeView);
+        centerScreen(homeView);
+        addBottomNav();
+
+        bindHomeQuickRoutines(homeView);
+        bindHomeRepresentativeTray(homeView);
+        loadHomeRecentLogs(homeView);
+
+        homeView.findViewById(R.id.homeBellIcon).setOnClickListener(v -> setScreen("notification"));
+        homeView.findViewById(R.id.homeSettingsIcon).setOnClickListener(v -> setScreen("menu"));
+        homeView.findViewById(R.id.homeAllLogsButton).setOnClickListener(v -> setScreen("logs"));
+        homeView.findViewById(R.id.homeLogsChevron).setOnClickListener(v -> setScreen("logs"));
+        homeView.findViewById(R.id.homeVoiceButton).setOnClickListener(v -> setScreen("voice"));
+        homeView.findViewById(R.id.homeRoutineManageButton).setOnClickListener(v -> setScreen("routine"));
+        homeView.findViewById(R.id.homeModuleCard).setOnClickListener(v -> setScreen("modules"));
+    }
+
+    private void bindHomeQuickRoutines(View homeView) {
+        List<RoutineData> quickRoutines = new ArrayList<>();
+        for (RoutineData routine : routines) {
+            if (routine.quickSlot > 0) {
+                int insertIndex = 0;
+                while (insertIndex < quickRoutines.size() && quickRoutines.get(insertIndex).quickSlot < routine.quickSlot) {
+                    insertIndex++;
+                }
+                quickRoutines.add(insertIndex, routine);
+            }
+        }
+        if (quickRoutines.isEmpty()) {
+            for (int i = 0; i < Math.min(2, routines.size()); i++) {
+                quickRoutines.add(routines.get(i));
+            }
+        }
+        bindHomeRoutineRow(homeView, 0, quickRoutines.size() > 0 ? quickRoutines.get(0) : null);
+        bindHomeRoutineRow(homeView, 1, quickRoutines.size() > 1 ? quickRoutines.get(1) : null);
+    }
+
+    private void bindHomeRoutineRow(View homeView, int index, RoutineData routine) {
+        TextView title = homeView.findViewById(index == 0 ? R.id.homeQuickRoutineFirstTitle : R.id.homeQuickRoutineSecondTitle);
+        TextView sub = homeView.findViewById(index == 0 ? R.id.homeRoutineFirstSub : R.id.homeRoutineSecondSub);
+        View track = homeView.findViewById(index == 0 ? R.id.homeQuickRoutineFirstToggleTrack : R.id.homeQuickRoutineSecondToggleTrack);
+        View knob = homeView.findViewById(index == 0 ? R.id.homeQuickRoutineFirstToggleKnob : R.id.homeQuickRoutineSecondToggleKnob);
+        if (routine == null) {
+            title.setText("루틴 없음");
+            sub.setText("루틴에서 빠른 루틴을 설정");
+            applyRoutineToggleState(track, knob, false);
+            track.setOnClickListener(v -> setScreen("routine"));
+            return;
+        }
+        title.setText(routine.title);
+        sub.setText(routine.place + " · " + formatDialTime(routine.hour, routine.minute));
+        applyRoutineToggleState(track, knob, routine.enabled);
+        track.setOnClickListener(v -> {
+            boolean enabled = !routine.enabled;
+            routine.enabled = enabled;
+            applyRoutineToggleState(track, knob, enabled);
+            db.child("routines").child(routine.id).child("enabled").setValue(enabled);
+        });
+    }
+
+    private void bindHomeRepresentativeTray(View homeView) {
+        TrayData tray = representativeTray();
+        ((TextView) homeView.findViewById(R.id.homeModuleName)).setText(tray.name);
+        ((TextView) homeView.findViewById(R.id.homeModuleLocation)).setText("현재 " + tray.location);
+        ((TextView) homeView.findViewById(R.id.homeModuleItemCount)).setText("보관 물품 " + tray.items.size() + "개");
+        bindHomeItemText((TextView) homeView.findViewById(R.id.homeModuleItemFirst), tray, 0);
+        bindHomeItemText((TextView) homeView.findViewById(R.id.homeModuleItemSecond), tray, 1);
+        bindHomeItemText((TextView) homeView.findViewById(R.id.homeModuleItemThird), tray, 2);
+    }
+
+    private TrayData representativeTray() {
+        for (TrayData tray : currentTrays()) {
+            if (tray.representative || tray.id.equals(representativeTrayId)) {
+                return tray;
+            }
+        }
+        return currentTrays().get(0);
+    }
+
+    private void bindHomeItemText(TextView textView, TrayData tray, int index) {
+        if (index >= tray.items.size()) {
+            textView.setText("•  -");
+            textView.setTextColor(0xFF798385);
+            return;
+        }
+        textView.setText("•  " + tray.items.get(index));
+        textView.setTextColor(0xFF14191B);
+    }
+
+    private void loadHomeRecentLogs(View homeView) {
+        db.child("logs").orderByChild("createdAt").limitToLast(2).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<LogEntry> entries = new ArrayList<>();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    LogEntry entry = parseGenericLogEntry(child);
+                    if (entry != null) {
+                        insertLogEntryDesc(entries, entry);
+                    }
+                }
+                bindHomeRecentLogRow(homeView, 0, entries.size() > 0 ? entries.get(0) : null);
+                bindHomeRecentLogRow(homeView, 1, entries.size() > 1 ? entries.get(1) : null);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                bindHomeRecentLogRow(homeView, 0, null);
+                bindHomeRecentLogRow(homeView, 1, null);
+            }
+        });
+    }
+
+    private void bindHomeRecentLogRow(View homeView, int index, LogEntry entry) {
+        TextView title = homeView.findViewById(index == 0 ? R.id.homeRecentFirstTitle : R.id.homeRecentSecondTitle);
+        TextView sub = homeView.findViewById(index == 0 ? R.id.homeRecentFirstSub : R.id.homeRecentSecondSub);
+        TextView time = homeView.findViewById(index == 0 ? R.id.homeRecentFirstTime : R.id.homeRecentSecondTime);
+        if (entry == null) {
+            title.setText("사용 기록 없음");
+            sub.setText("호출/루틴 실행 후 표시");
+            time.setText("-");
+            return;
+        }
+        title.setText(entry.title);
+        sub.setText("→ " + entry.place);
+        time.setText(formatHomeLogTime(entry.createdAt));
+    }
+
+    private String formatHomeLogTime(long createdAt) {
+        Calendar log = Calendar.getInstance(Locale.KOREA);
+        log.setTimeInMillis(createdAt);
+        Calendar today = Calendar.getInstance(Locale.KOREA);
+        if (sameDay(log, today)) {
+            return new SimpleDateFormat("HH:mm", Locale.KOREA).format(new Date(createdAt));
+        }
+        today.add(Calendar.DAY_OF_MONTH, -1);
+        if (sameDay(log, today)) {
+            return "어제 " + new SimpleDateFormat("HH:mm", Locale.KOREA).format(new Date(createdAt));
+        }
+        return new SimpleDateFormat("MM.dd HH:mm", Locale.KOREA).format(new Date(createdAt));
+    }
+
+    private boolean sameDay(Calendar first, Calendar second) {
+        return first.get(Calendar.YEAR) == second.get(Calendar.YEAR)
+                && first.get(Calendar.DAY_OF_YEAR) == second.get(Calendar.DAY_OF_YEAR);
+    }
+
+
+    private void renderVoice() {
+        View voiceView = LayoutInflater.from(this).inflate(R.layout.screen_voice, contentContainer, false);
+        contentContainer.addView(voiceView);
+        centerScreen(voiceView);
+
+        View.OnClickListener startOrFinishClick = v -> {
+            if (voiceState == 1) {
+                stopSpeechRecognition();
+                setSampleVoiceResult();
+                setScreen("voiceResult");
+            } else {
+                requestOrStartVoice();
+            }
+        };
+
+        voiceView.findViewById(R.id.voiceBackIcon).setOnClickListener(v -> setScreen("home"));
+        voiceView.findViewById(R.id.voiceIdleMic).setOnClickListener(startOrFinishClick);
+        voiceView.findViewById(R.id.voiceListeningMic).setOnClickListener(startOrFinishClick);
+        voiceView.findViewById(R.id.voiceStopButton).setOnClickListener(v -> {
+            stopSpeechRecognition();
+            setSampleVoiceResult();
+            setScreen("voiceResult");
+        });
+        voiceView.findViewById(R.id.voiceRetryButton).setOnClickListener(v -> setScreen("voice"));
+        voiceView.findViewById(R.id.voiceExecuteButton).setOnClickListener(v -> {
+            if (!voiceIntentAccepted) {
+                Toast.makeText(this, emptyToFallback(recognizedMessage, "명령을 다시 말해주세요."), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            saveVoiceRecord(recognizedCommand, "sent", "CARRY 실행 명령 전송");
+            Toast.makeText(this, "CARRY 실행 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
+        });
+
+        voiceView.findViewById(R.id.voiceIdleGroup).setVisibility(voiceState == 0 ? View.VISIBLE : View.GONE);
+        voiceView.findViewById(R.id.voiceListeningGroup).setVisibility(voiceState == 1 ? View.VISIBLE : View.GONE);
+        voiceView.findViewById(R.id.voiceResultGroup).setVisibility(voiceState == 2 ? View.VISIBLE : View.GONE);
+
+        if (voiceState == 2) {
+            ((TextView) voiceView.findViewById(R.id.voiceResultCommand)).setText(recognizedCommand);
+            ((TextView) voiceView.findViewById(R.id.voiceResultModule)).setText(recognizedModule);
+            ((TextView) voiceView.findViewById(R.id.voiceResultLocation)).setText(recognizedLocation);
+        }
+    }
+
+
+
+    private void bindItemChip(View rootView, int chipId, EditText input, String value) {
+        rootView.findViewById(chipId).setOnClickListener(v -> input.setText(value));
+    }
+
+    private void bindRoutinePlace(View rootView) {
+        View placeRow = rootView.findViewById(R.id.routinePlaceRow);
+        TextView placeValue = rootView.findViewById(R.id.routinePlaceValue);
+        if (placeRow != null && placeValue != null) {
+            selectedRoutinePlaceIndex = clampPlaceIndex(selectedRoutinePlaceIndex);
+            final int[] selectedPlace = {selectedRoutinePlaceIndex};
+            placeValue.setText(routinePlaceName(selectedPlace[0]));
+            placeRow.setOnClickListener(v -> showPlacePopup(placeRow, selectedPlace, placeValue));
+            return;
+        }
+    }
+
+    private void renderRoutinePlaceSelector(LinearLayout list) {
+        list.removeAllViews();
+        int[] orderedIndexes = orderedRoutinePlaceIndexes();
+        for (int i = 0; i < orderedIndexes.length; i++) {
+            if (i > 0) {
+                View divider = new View(this);
+                divider.setBackgroundColor(0xFFE2E7E7);
+                list.addView(divider, new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        dp(1)
+                ));
+            }
+            list.addView(createRoutinePlaceRow(list, orderedIndexes[i]));
+        }
+        setHeight(list, dp(128));
+    }
+
+    private void updateRoutinePlaceLayout(LinearLayout list) {
+        int listHeight = routinePlaceExpanded ? dp(166) : dp(56);
+        int cardHeight = routinePlaceExpanded ? dp(212) : dp(102);
+        setHeight(list, listHeight);
+
+        View placeCard = (View) list.getParent();
+        if (placeCard != null) {
+            setHeight(placeCard, cardHeight);
+        }
+
+        View canvas = placeCard == null ? null : (View) placeCard.getParent();
+        if (canvas == null) return;
+
+        View helpText = canvas.findViewById(R.id.routineEditHelpText);
+        View saveButton = canvas.findViewById(R.id.routineEditSaveButton);
+        int helpTop = dp(235) + cardHeight + dp(12);
+        if (helpText != null) setTopMargin(helpText, helpTop);
+        if (saveButton != null) setTopMargin(saveButton, helpTop + dp(41));
+        setHeight(canvas, helpTop + dp(120));
+    }
+
+    private String routinePlaceName(int index) {
+        if (places.isEmpty()) addFallbackPlaces();
+        return places.get(clampPlaceIndex(index));
+    }
+
+    private int[] orderedRoutinePlaceIndexes() {
+        if (places.isEmpty()) addFallbackPlaces();
+        selectedRoutinePlaceIndex = clampPlaceIndex(selectedRoutinePlaceIndex);
+        int[] result = new int[places.size()];
+        result[0] = selectedRoutinePlaceIndex;
+        int cursor = 1;
+        for (int i = 0; i < places.size(); i++) {
+            if (i != selectedRoutinePlaceIndex) {
+                result[cursor++] = i;
+            }
+        }
+        return result;
+    }
+
+    private View createRoutinePlaceRow(LinearLayout list, int index) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setClickable(true);
+        row.setFocusable(true);
+        row.setPadding(dp(16), 0, dp(16), 0);
+        row.setOnClickListener(v -> {
+            selectedRoutinePlaceIndex = index;
+            routinePlaceExpanded = false;
+            renderRoutinePlaceSelector(list);
+        });
+
+        TextView label = new TextView(this);
+        label.setText(routinePlaceName(index));
+        label.setTextColor(0xFF14191B);
+        label.setTextSize(15);
+        label.setTypeface(null, android.graphics.Typeface.BOLD);
+        label.setIncludeFontPadding(false);
+        label.setGravity(Gravity.CENTER_VERTICAL);
+        row.addView(label, new LinearLayout.LayoutParams(0, dp(42), 1f));
+
+        TextView marker = new TextView(this);
+        marker.setGravity(Gravity.CENTER);
+        marker.setIncludeFontPadding(false);
+        marker.setTextColor(0xFF14191B);
+        marker.setTextSize(22);
+        marker.setTypeface(null, android.graphics.Typeface.BOLD);
+        marker.setText(index == selectedRoutinePlaceIndex ? "✓" : "");
+        row.addView(marker, new LinearLayout.LayoutParams(dp(32), dp(42)));
+        return row;
+    }
+
+    private int placeIndex(String place) {
+        if (place != null) {
+            for (int i = 0; i < places.size(); i++) {
+                if (place.equals(places.get(i))) return i;
+            }
+        }
+        return 0;
+    }
+
+    private void showPlacePopup(View anchor, int[] selectedIndex, TextView valueView) {
+        showPlacePopup(anchor, selectedIndex, valueView, null);
+    }
+
+    private void showPlacePopup(View anchor, int[] selectedIndex, TextView valueView, PlaceSelectionHandler selectionHandler) {
+        ScrollView popupScroll = new ScrollView(this);
+        LinearLayout popupList = new LinearLayout(this);
+        popupList.setOrientation(LinearLayout.VERTICAL);
+        popupList.setBackgroundResource(R.drawable.bg_card);
+        popupScroll.setBackgroundResource(R.drawable.bg_card);
+        popupScroll.addView(popupList, new ScrollView.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        int[] orderedIndexes = orderedPlaceIndexes(selectedIndex[0]);
+        PopupWindow popup = new PopupWindow(
+                popupScroll,
+                anchor.getWidth(),
+                Math.min(dp(236), Math.max(dp(56), orderedIndexes.length * dp(47))),
+                true
+        );
+        List<TextView> checks = new ArrayList<>();
+        for (int i = 0; i < orderedIndexes.length; i++) {
+            final int placeIndex = orderedIndexes[i];
+            if (i > 0) {
+                View divider = new View(this);
+                divider.setBackgroundColor(0xFFE2E7E7);
+                popupList.addView(divider, new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        dp(1)
+                ));
+            }
+            View row = createPopupPlaceRow(placeIndex, placeIndex == selectedIndex[0], () -> {
+                selectedIndex[0] = placeIndex;
+                if (valueView.getId() == R.id.routinePlaceValue) {
+                    selectedRoutinePlaceIndex = placeIndex;
+                }
+                if (selectionHandler != null) {
+                    selectionHandler.onPlaceSelected(placeIndex);
+                }
+                valueView.setText(routinePlaceName(placeIndex));
+                for (int checkIndex = 0; checkIndex < checks.size(); checkIndex++) {
+                    checks.get(checkIndex).setText(orderedIndexes[checkIndex] == selectedIndex[0] ? "✓" : "");
+                }
+            });
+            checks.add((TextView) row.getTag());
+            popupList.addView(row);
+        }
+        popup.setOutsideTouchable(true);
+        popup.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        popup.showAsDropDown(anchor, 0, dp(6));
+    }
+
+    private int[] orderedPlaceIndexes(int selectedIndex) {
+        if (places.isEmpty()) addFallbackPlaces();
+        selectedIndex = clampPlaceIndex(selectedIndex);
+        int[] result = new int[places.size()];
+        result[0] = selectedIndex;
+        int cursor = 1;
+        for (int i = 0; i < places.size(); i++) {
+            if (i != selectedIndex) result[cursor++] = i;
+        }
+        return result;
+    }
+
+    private View createPopupPlaceRow(int index, boolean selected, Runnable onClick) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setPadding(dp(16), 0, dp(14), 0);
+        row.setClickable(true);
+        row.setFocusable(true);
+        row.setOnClickListener(v -> onClick.run());
+
+        TextView label = new TextView(this);
+        label.setText(routinePlaceName(index));
+        label.setTextColor(0xFF14191B);
+        label.setTextSize(14);
+        label.setTypeface(null, android.graphics.Typeface.BOLD);
+        label.setIncludeFontPadding(false);
+        label.setGravity(Gravity.CENTER_VERTICAL);
+        row.addView(label, new LinearLayout.LayoutParams(0, dp(46), 1f));
+
+        TextView check = new TextView(this);
+        check.setGravity(Gravity.CENTER);
+        check.setIncludeFontPadding(false);
+        check.setTextColor(0xFF14191B);
+        check.setTextSize(18);
+        check.setTypeface(null, android.graphics.Typeface.BOLD);
+        check.setText(selected ? "✓" : "");
+        row.addView(check, new LinearLayout.LayoutParams(dp(30), dp(46)));
+        row.setTag(check);
+        return row;
+    }
+
+    private void handleChoiceSelection(String title, int index, String back) {
+        if (title.contains("트레이")) {
+            List<TrayData> visibleTrays = currentTrays();
+            if (index >= 0 && index < visibleTrays.size()) {
+                selectedTrayId = visibleTrays.get(index).id;
+                selectedModule = visibleTrays.get(index).name;
+            }
+        } else if (title.contains("위치") || title.contains("거점")) {
+            selectedRoutinePlaceIndex = clampPlaceIndex(index);
+        }
+        setScreen(back);
+    }
+
+    private void renderModules() {
+        List<TrayData> visibleTrays = currentTrays();
+        View modulesView = LayoutInflater.from(this).inflate(R.layout.screen_modules, contentContainer, false);
+        contentContainer.addView(modulesView);
+        centerScreen(modulesView);
+        addBottomNav();
+
+        modulesView.findViewById(R.id.modulesAddButton).setOnClickListener(v -> setScreen("moduleAdd"));
+        modulesView.findViewById(R.id.modulesAddBottomButton).setOnClickListener(v -> setScreen("moduleAdd"));
+        modulesView.findViewById(R.id.modulesSearchButton).setOnClickListener(v -> setScreen("itemSearch"));
+
+        FrameLayout list = modulesView.findViewById(R.id.modulesList);
+        list.removeAllViews();
+        int cardHeight = dp(204);
+        int gap = dp(16);
+        for (int i = 0; i < visibleTrays.size(); i++) {
+            TrayData tray = visibleTrays.get(i);
+            View card = LayoutInflater.from(this).inflate(R.layout.item_tray_card, list, false);
+            bindTrayCard(card, tray);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    cardHeight
+            );
+            params.topMargin = i * (cardHeight + gap);
+            list.addView(card, params);
+        }
+        int listHeight = visibleTrays.isEmpty() ? 0 : visibleTrays.size() * cardHeight + Math.max(0, visibleTrays.size() - 1) * gap;
+        setHeight(list, listHeight);
+        setTopMargin(modulesView.findViewById(R.id.modulesAddBottomButton), dp(110) + listHeight + dp(16));
+        setHeight(modulesView.findViewById(R.id.modulesCanvas), dp(110) + listHeight + dp(110));
+    }
+
+    private void bindTrayCard(View card, TrayData tray) {
+        ((TextView) card.findViewById(R.id.trayNameText)).setText(tray.name);
+        ((TextView) card.findViewById(R.id.trayLocationText)).setText(tray.location + " 보관 중");
+        ((TextView) card.findViewById(R.id.trayItemCountText)).setText("보관 물품 " + tray.items.size() + "개");
+        bindTrayItemChips((LinearLayout) card.findViewById(R.id.trayItemsChipGroup), tray.items);
+        View representativeButton = card.findViewById(R.id.trayRepresentativeButton);
+        ImageView representativeIcon = card.findViewById(R.id.trayRepresentativeIcon);
+        representativeIcon.setColorFilter(tray.representative ? 0xFF008E84 : 0xFF798385);
+        representativeButton.setOnClickListener(v -> setRepresentativeTray(tray));
+        card.setOnClickListener(v -> {
+            selectedTrayId = tray.id;
+            selectedModule = tray.name;
+            setScreen("moduleDetail");
+        });
+    }
+
+    private void setRepresentativeTray(TrayData selected) {
+        representativeTrayId = selected.id;
+        for (TrayData tray : trays) {
+            tray.representative = tray.id.equals(selected.id);
+            db.child("trays").child(tray.id).child("representative").setValue(tray.representative);
+        }
+        Toast.makeText(this, selected.name + "을(를) 대표 트레이로 설정했습니다.", Toast.LENGTH_SHORT).show();
+        render();
+    }
+
+    private void bindTrayItemChips(LinearLayout chipGroup, List<String> items) {
+        chipGroup.removeAllViews();
+        int visibleCount = Math.min(items.size(), 3);
+        for (int i = 0; i < visibleCount; i++) {
+            TextView chip = new TextView(this);
+            chip.setText(items.get(i));
+            chip.setGravity(Gravity.CENTER);
+            chip.setIncludeFontPadding(false);
+            chip.setTextColor(0xFF303B3D);
+            chip.setTextSize(12);
+            chip.setTypeface(null, android.graphics.Typeface.BOLD);
+            chip.setBackgroundResource(R.drawable.bg_chip_soft);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    dp(30)
+            );
+            if (i > 0) params.leftMargin = dp(8);
+            chip.setPadding(dp(12), 0, dp(12), 0);
+            chipGroup.addView(chip, params);
+        }
+    }
+
+    private void renderModuleDetail() {
+        TrayData tray = selectedTray();
+
+        View detailView = LayoutInflater.from(this).inflate(R.layout.screen_module_detail, contentContainer, false);
+        contentContainer.addView(detailView);
+        centerScreen(detailView);
+        detailView.findViewById(R.id.moduleDetailBackButton).setOnClickListener(v -> setScreen("modules"));
+        ((TextView) detailView.findViewById(R.id.moduleDetailTitle)).setText(tray.name);
+        ((TextView) detailView.findViewById(R.id.moduleDetailTrayName)).setText(tray.name);
+        ((TextView) detailView.findViewById(R.id.moduleDetailTrayLocation)).setText("현재 위치 · " + tray.location);
+        ((TextView) detailView.findViewById(R.id.moduleDetailItemCount)).setText("보관 물품 " + tray.items.size() + "개");
+        bindModuleDetailItems(detailView, tray);
+        EditText itemInput = detailView.findViewById(R.id.moduleDetailItemInput);
+        bindItemChip(detailView, R.id.moduleDetailChipRemote, itemInput, "리모컨");
+        bindItemChip(detailView, R.id.moduleDetailChipMedicine, itemInput, "상비약");
+        bindItemChip(detailView, R.id.moduleDetailChipGlasses, itemInput, "안경");
+        bindItemChip(detailView, R.id.moduleDetailChipKey, itemInput, "열쇠");
+        bindItemChip(detailView, R.id.moduleDetailChipCharger, itemInput, "충전기");
+        bindItemChip(detailView, R.id.moduleDetailChipMask, itemInput, "마스크");
+        bindItemChip(detailView, R.id.moduleDetailChipVitamin, itemInput, "영양제");
+        bindItemChip(detailView, R.id.moduleDetailChipTumbler, itemInput, "텀블러");
+        detailView.findViewById(R.id.moduleDetailEditButton).setOnClickListener(v -> setScreen("moduleRename"));
+        detailView.findViewById(R.id.moduleDetailAddItemButton).setOnClickListener(v -> addItemToSelectedTray(itemInput.getText().toString().trim()));
+        View reserveButton = findOptionalView(detailView, "moduleDetailReserveButton");
+        if (reserveButton != null) {
+            reserveButton.setOnClickListener(v -> showTimePickerSheet("예약 시간 설정", "moduleDetail"));
+        }
+    }
+
+    private void bindModuleDetailItems(View root, TrayData tray) {
+        FrameLayout card = root.findViewById(R.id.moduleDetailItemsCard);
+        card.removeAllViews();
+        updateModuleDetailLayout(root, tray.items.size());
+
+        LinearLayout list = new LinearLayout(this);
+        list.setOrientation(LinearLayout.VERTICAL);
+        list.setPadding(0, dp(8), 0, dp(8));
+        card.addView(list, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        if (tray.items.isEmpty()) {
+            TextView emptyText = new TextView(this);
+            emptyText.setText("보관 중인 물품이 없습니다.");
+            emptyText.setTextColor(0xFF798385);
+            emptyText.setTextSize(14);
+            emptyText.setGravity(Gravity.CENTER);
+            emptyText.setIncludeFontPadding(false);
+            emptyText.setPadding(0, dp(18), 0, dp(18));
+            list.addView(emptyText, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
+            return;
+        }
+
+        for (int i = 0; i < tray.items.size(); i++) {
+            list.addView(createModuleDetailItemRow(tray.items.get(i)));
+            if (i < tray.items.size() - 1) {
+                View divider = new View(this);
+                divider.setBackgroundColor(0xFFE2E7E7);
+                list.addView(divider, new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        dp(1)
+                ));
+            }
+        }
+    }
+
+    private void updateModuleDetailLayout(View root, int itemCount) {
+        int rowCount = Math.max(itemCount, 1);
+        int contentHeight = dp(16) + rowCount * dp(56) + Math.max(0, rowCount - 1) * dp(1);
+        int cardHeight = Math.max(dp(142), contentHeight);
+        int cardTop = dp(225);
+        int addLabelTop = cardTop + cardHeight + dp(16);
+
+        setHeight(root.findViewById(R.id.moduleDetailItemsCard), cardHeight);
+        setTopMargin(root.findViewById(R.id.moduleDetailAddLabel), addLabelTop);
+        setTopMargin(root.findViewById(R.id.moduleDetailItemInput), addLabelTop + dp(28));
+        setTopMargin(root.findViewById(R.id.moduleDetailFrequentLabel), addLabelTop + dp(96));
+        setTopMargin(root.findViewById(R.id.moduleDetailChipRows), addLabelTop + dp(123));
+        setTopMargin(root.findViewById(R.id.moduleDetailAddItemButton), addLabelTop + dp(219));
+        setHeight(root.findViewById(R.id.moduleDetailCanvas), addLabelTop + dp(377));
+    }
+
+    private View createModuleDetailItemRow(String itemName) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setPadding(dp(18), 0, dp(14), 0);
+
+        View dot = new View(this);
+        dot.setBackgroundResource(R.drawable.bg_voice_circle_teal_dark);
+        LinearLayout.LayoutParams dotParams = new LinearLayout.LayoutParams(dp(7), dp(7));
+        row.addView(dot, dotParams);
+
+        TextView name = new TextView(this);
+        name.setText(itemName);
+        name.setTextColor(0xFF14191B);
+        name.setTextSize(15);
+        name.setTypeface(null, android.graphics.Typeface.BOLD);
+        name.setIncludeFontPadding(false);
+        LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(0, dp(56), 1f);
+        nameParams.setMargins(dp(14), 0, 0, 0);
+        name.setGravity(Gravity.CENTER_VERTICAL);
+        row.addView(name, nameParams);
+
+        TextView remove = new TextView(this);
+        remove.setText("×");
+        remove.setTextColor(0xFFFF5C5C);
+        remove.setTextSize(20);
+        remove.setGravity(Gravity.CENTER);
+        remove.setIncludeFontPadding(false);
+        remove.setBackgroundResource(R.drawable.bg_module_icon_circle);
+        remove.setOnClickListener(v -> confirmRemoveItem(itemName));
+        row.addView(remove, new LinearLayout.LayoutParams(dp(34), dp(34)));
+        return row;
+    }
+
+    private void confirmRemoveItem(String itemName) {
+        String message = itemName + "을/를 " + selectedTray().name + "에서 삭제 하시겠습니까?";
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton("예", (dialog, which) -> removeItemFromSelectedTray(itemName))
+                .setNegativeButton("아니오", null)
+                .show();
+    }
+
+    private void removeItemFromSelectedTray(String itemName) {
+        db.child("trays").child(selectedTrayId).child("items").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot itemSnapshot : snapshot.getChildren()) {
+                    String storedName = itemSnapshot.child("itemName").getValue(String.class);
+                    if (storedName == null || storedName.trim().isEmpty()) {
+                        storedName = itemSnapshot.child("name").getValue(String.class);
+                    }
+                    if (itemName.equals(storedName)) {
+                        itemSnapshot.getRef().removeValue().addOnSuccessListener(unused -> setScreen("moduleDetail"));
+                        return;
+                    }
+                }
+                Toast.makeText(MainActivity.this, "삭제할 물품을 찾지 못했습니다.", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(MainActivity.this, "물품 삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void listenToRoutines() {
+        db.child("routines").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                routines.clear();
+                for (DataSnapshot routineSnapshot : snapshot.getChildren()) {
+                    routines.add(parseRoutine(routineSnapshot));
+                }
+                if (!routines.isEmpty() && findRoutine(selectedRoutineId) == null) {
+                    selectedRoutineId = routines.get(0).id;
+                }
+                if ("home".equals(screen) || "routine".equals(screen) || "routineEdit".equals(screen)) {
+                    render();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(MainActivity.this, "루틴 정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private RoutineData parseRoutine(DataSnapshot snapshot) {
+        String id = snapshot.getKey() == null ? "routine1" : snapshot.getKey();
+        String title = snapshot.child("title").getValue(String.class);
+        if (title == null || title.trim().isEmpty()) {
+            title = snapshot.child("name").getValue(String.class);
+        }
+        String trayId = snapshot.child("trayId").getValue(String.class);
+        String trayName = snapshot.child("trayName").getValue(String.class);
+        if (trayName == null || trayName.trim().isEmpty()) {
+            trayName = snapshot.child("module").getValue(String.class);
+        }
+        String place = snapshot.child("place").getValue(String.class);
+        if (place == null || place.trim().isEmpty()) {
+            place = snapshot.child("location").getValue(String.class);
+        }
+        if (place == null || place.trim().isEmpty()) {
+            place = snapshot.child("destination").getValue(String.class);
+        }
+        Integer hour = snapshot.child("hour").getValue(Integer.class);
+        Integer minute = snapshot.child("minute").getValue(Integer.class);
+        if (hour == null || minute == null) {
+            int[] parsedTime = parseRoutineTime(snapshot.child("time").getValue(String.class));
+            hour = parsedTime[0];
+            minute = parsedTime[1];
+        }
+        Boolean enabled = snapshot.child("enabled").getValue(Boolean.class);
+        Integer quickSlot = snapshot.child("quickSlot").getValue(Integer.class);
+        return new RoutineData(
+                id,
+                emptyToFallback(title, defaultRoutineTitle(id)),
+                emptyToFallback(trayId, selectedTrayId),
+                emptyToFallback(trayName, selectedTray().name),
+                hour == null ? 7 : hour,
+                minute == null ? 30 : minute,
+                emptyToFallback(place, "거실"),
+                enabled == null || enabled,
+                quickSlot == null ? 0 : quickSlot
+        );
+    }
+
+    private int[] parseRoutineTime(String time) {
+        if (time == null) return new int[]{7, 30};
+        try {
+            String[] parts = time.replace("오전", "").replace("오후", "").trim().split(":");
+            int hour = Integer.parseInt(parts[0].trim());
+            int minute = Integer.parseInt(parts[1].trim());
+            if (time.contains("오후") && hour < 12) hour += 12;
+            return new int[]{hour, minute};
+        } catch (Exception ignored) {
+            return new int[]{7, 30};
+        }
+    }
+
+    private void addFallbackRoutines() {
+        routines.clear();
+        List<TrayData> visibleTrays = currentTrays();
+        TrayData first = visibleTrays.get(0);
+        TrayData second = visibleTrays.size() > 1 ? visibleTrays.get(1) : first;
+        routines.add(new RoutineData("routine1", "아침 거실 세팅", first.id, first.name, 7, 30, "거실", true, 1));
+        routines.add(new RoutineData("routine2", "출근 준비", second.id, second.name, 8, 0, "현관", true, 2));
+        routines.add(new RoutineData("routine3", "취침 정리", first.id, first.name, 23, 0, "침실", false));
+    }
+
+    private RoutineData selectedRoutine() {
+        RoutineData routine = findRoutine(selectedRoutineId);
+        if (routine != null) return routine;
+        return new RoutineData(selectedRoutineId, "새 루틴", selectedTrayId, selectedTray().name, selectedRoutineHour, selectedRoutineMinute, routinePlaceName(selectedRoutinePlaceIndex), true);
+    }
+
+    private RoutineData findRoutine(String routineId) {
+        for (RoutineData routine : routines) {
+            if (routine.id.equals(routineId)) return routine;
+        }
+        return null;
+    }
+
+    private String defaultRoutineTitle(String routineId) {
+        if ("routine2".equals(routineId)) return "출근 준비";
+        if ("routine3".equals(routineId)) return "취침 정리";
+        return "아침 거실 세팅";
+    }
+
+    private void prepareNewRoutine() {
+        String newRoutineId = db.child("routines").push().getKey();
+        selectedRoutineId = newRoutineId == null ? "routine" + System.currentTimeMillis() : newRoutineId;
+        TrayData tray = selectedTray();
+        selectedTrayId = tray.id;
+        selectedModule = tray.name;
+        selectedRoutineHour = 7;
+        selectedRoutineMinute = 30;
+        selectedRoutinePlaceIndex = 0;
+        routinePlaceExpanded = false;
+        setScreen("routineEdit");
+    }
+
+    private void renderModuleAdd() {
+        View addView = LayoutInflater.from(this).inflate(R.layout.screen_module_add, contentContainer, false);
+        contentContainer.addView(addView);
+        centerScreen(addView);
+        addView.findViewById(R.id.moduleAddBackButton).setOnClickListener(v -> setScreen("modules"));
+        EditText nameInput = addView.findViewById(R.id.moduleAddNameInput);
+        bindModuleAddPlace(addView);
+        addView.findViewById(R.id.moduleAddSaveButton).setOnClickListener(v ->
+                saveTray(nameInput.getText().toString().trim(), routinePlaceName(selectedModuleAddPlaceIndex)));
+    }
+
+    private void bindModuleAddPlace(View rootView) {
+        LinearLayout selector = rootView.findViewById(R.id.moduleAddLocationSelector);
+        selector.removeAllViews();
+        selector.setGravity(Gravity.CENTER_VERTICAL);
+        selector.setPadding(dp(16), 0, dp(14), 0);
+        selector.setClickable(true);
+        selector.setFocusable(true);
+        selectedModuleAddPlaceIndex = clampPlaceIndex(selectedModuleAddPlaceIndex);
+
+        TextView value = new TextView(this);
+        value.setGravity(Gravity.CENTER_VERTICAL);
+        value.setIncludeFontPadding(false);
+        value.setText(routinePlaceName(selectedModuleAddPlaceIndex));
+        value.setTextColor(0xFF14191B);
+        value.setTextSize(14);
+        value.setTypeface(null, android.graphics.Typeface.BOLD);
+        selector.addView(value, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+
+        TextView selectedCheck = new TextView(this);
+        selectedCheck.setGravity(Gravity.CENTER);
+        selectedCheck.setIncludeFontPadding(false);
+        selectedCheck.setText("✓");
+        selectedCheck.setTextColor(0xFF14191B);
+        selectedCheck.setTextSize(16);
+        selectedCheck.setTypeface(null, android.graphics.Typeface.BOLD);
+        selector.addView(selectedCheck, new LinearLayout.LayoutParams(dp(28), ViewGroup.LayoutParams.MATCH_PARENT));
+
+        ImageView chevron = new ImageView(this);
+        chevron.setImageResource(R.drawable.ic_chevron_left);
+        chevron.setRotation(270);
+        chevron.setContentDescription(null);
+        selector.addView(chevron, new LinearLayout.LayoutParams(dp(18), dp(18)));
+
+        selector.setOnClickListener(v -> {
+            moduleAddPlaceDropdownOpen = !moduleAddPlaceDropdownOpen;
+            if (moduleAddPlaceDropdownOpen) {
+                moduleAddPlaceDropdownOrder = orderedPlaceIndexes(selectedModuleAddPlaceIndex);
+            }
+            bindModuleAddPlace(rootView);
+        });
+        bindModuleAddPlaceDropdown(rootView, value);
+    }
+
+    private void bindModuleAddPlaceDropdown(View rootView, TextView valueView) {
+        FrameLayout dropdown = rootView.findViewById(R.id.moduleAddLocationDropdown);
+        dropdown.removeAllViews();
+        int dropdownHeight = moduleAddPlaceDropdownOpen
+                ? Math.min(dp(188), Math.max(dp(43), places.size() * dp(42) + dp(1)))
+                : 0;
+        setHeight(dropdown, dropdownHeight);
+        dropdown.setVisibility(moduleAddPlaceDropdownOpen ? View.VISIBLE : View.GONE);
+
+        int helpTop = moduleAddPlaceDropdownOpen ? dp(260) + dropdownHeight + dp(18) : dp(270);
+        setTopMargin(rootView.findViewById(R.id.moduleAddHelpText), helpTop);
+        setTopMargin(rootView.findViewById(R.id.moduleAddSaveButton), helpTop + dp(42));
+
+        if (!moduleAddPlaceDropdownOpen) return;
+
+        ScrollView scroll = new ScrollView(this);
+        LinearLayout list = new LinearLayout(this);
+        list.setOrientation(LinearLayout.VERTICAL);
+        scroll.addView(list, new ScrollView.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        dropdown.addView(scroll, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        ));
+
+        View divider = new View(this);
+        divider.setBackgroundColor(0xFFE2E7E7);
+        list.addView(divider, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                dp(1)
+        ));
+
+        int[] displayOrder = moduleAddPlaceDropdownOrder.length == places.size()
+                ? moduleAddPlaceDropdownOrder
+                : orderedPlaceIndexes(selectedModuleAddPlaceIndex);
+        moduleAddPlaceDropdownOrder = displayOrder;
+        List<TextView> checks = new ArrayList<>();
+        for (int i = 0; i < displayOrder.length; i++) {
+            final int index = displayOrder[i];
+            LinearLayout row = new LinearLayout(this);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            row.setGravity(Gravity.CENTER_VERTICAL);
+            row.setPadding(dp(16), 0, dp(16), 0);
+            row.setBackgroundColor(index == selectedModuleAddPlaceIndex ? 0xFFF2F4F8 : 0xFFFFFFFF);
+
+            TextView label = new TextView(this);
+            label.setGravity(Gravity.CENTER_VERTICAL);
+            label.setIncludeFontPadding(false);
+            label.setText(routinePlaceName(index));
+            label.setTextColor(0xFF14191B);
+            label.setTextSize(14);
+            label.setTypeface(null, android.graphics.Typeface.BOLD);
+            row.addView(label, new LinearLayout.LayoutParams(0, dp(42), 1f));
+
+            TextView check = new TextView(this);
+            check.setGravity(Gravity.CENTER);
+            check.setIncludeFontPadding(false);
+            check.setText(index == selectedModuleAddPlaceIndex ? "✓" : "");
+            check.setTextColor(0xFF14191B);
+            check.setTextSize(16);
+            check.setTypeface(null, android.graphics.Typeface.BOLD);
+            checks.add(check);
+            row.addView(check, new LinearLayout.LayoutParams(dp(28), dp(42)));
+
+            row.setOnClickListener(v -> {
+                selectedModuleAddPlaceIndex = index;
+                valueView.setText(routinePlaceName(index));
+                for (int checkIndex = 0; checkIndex < checks.size(); checkIndex++) {
+                    checks.get(checkIndex).setText(displayOrder[checkIndex] == selectedModuleAddPlaceIndex ? "✓" : "");
+                }
+            });
+            list.addView(row, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    dp(42)
+            ));
+        }
+    }
+
+    private void renderModuleRename() {
+        TrayData tray = selectedTray();
+        View renameView = LayoutInflater.from(this).inflate(R.layout.screen_module_rename, contentContainer, false);
+        contentContainer.addView(renameView);
+        centerScreen(renameView);
+        renameView.findViewById(R.id.moduleRenameBackButton).setOnClickListener(v -> setScreen("moduleDetail"));
+        EditText edit = renameView.findViewById(R.id.moduleRenameNameInput);
+        edit.setText(tray.name);
+        TextView locationValue = renameView.findViewById(R.id.moduleRenameLocationValue);
+        final int[] selectedLocationIndex = {placeIndex(tray.location)};
+        locationValue.setText(routinePlaceName(selectedLocationIndex[0]));
+        renameView.findViewById(R.id.moduleRenameLocationRow).setOnClickListener(v ->
+                showPlacePopup(renameView.findViewById(R.id.moduleRenameLocationRow), selectedLocationIndex, locationValue));
+        renameView.findViewById(R.id.moduleRenameSaveButton).setOnClickListener(v ->
+                renameSelectedTray(edit.getText().toString().trim(), routinePlaceName(selectedLocationIndex[0])));
+    }
+
+    private void renderItemSearch() {
+        View searchView = LayoutInflater.from(this).inflate(R.layout.screen_item_search, contentContainer, false);
+        contentContainer.addView(searchView);
+        centerScreen(searchView);
+        searchView.findViewById(R.id.itemSearchBackButton).setOnClickListener(v -> setScreen("modules"));
+        EditText searchInput = searchView.findViewById(R.id.itemSearchInput);
+        bindItemSearchResults(searchView, "");
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                bindItemSearchResults(searchView, s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    private void bindItemSearchResults(View root, String query) {
+        String normalizedQuery = query == null ? "" : query.trim().toLowerCase(Locale.KOREA);
+        LinearLayout list = root.findViewById(R.id.itemSearchResultsList);
+        TextView resultCount = root.findViewById(R.id.itemSearchResultCount);
+        TextView emptyText = root.findViewById(R.id.itemSearchEmptyText);
+        list.removeAllViews();
+
+        if (normalizedQuery.isEmpty()) {
+            resultCount.setText("물품명을 입력하세요");
+            emptyText.setVisibility(View.GONE);
+            return;
+        }
+
+        List<ItemSearchResult> results = findItemSearchResults(normalizedQuery);
+        resultCount.setText("검색 결과 " + results.size() + "건");
+        emptyText.setVisibility(results.isEmpty() ? View.VISIBLE : View.GONE);
+        for (int i = 0; i < results.size(); i++) {
+            View card = createItemSearchResultCard(results.get(i));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    dp(130)
+            );
+            if (i > 0) params.topMargin = dp(12);
+            list.addView(card, params);
+        }
+    }
+
+    private List<ItemSearchResult> findItemSearchResults(String normalizedQuery) {
+        List<ItemSearchResult> results = new ArrayList<>();
+        for (TrayData tray : currentTrays()) {
+            for (String item : tray.items) {
+                if (item.toLowerCase(Locale.KOREA).contains(normalizedQuery)) {
+                    results.add(new ItemSearchResult(item, tray.id, tray.name, tray.location));
+                }
+            }
+        }
+        return results;
+    }
+
+    private View createItemSearchResultCard(ItemSearchResult result) {
+        FrameLayout card = new FrameLayout(this);
+        card.setBackgroundResource(R.drawable.bg_card);
+        card.setClickable(true);
+        card.setFocusable(true);
+        card.setOnClickListener(v -> {
+            selectedTrayId = result.trayId;
+            selectedModule = result.trayName;
+            setScreen("moduleDetail");
+        });
+
+        FrameLayout iconCircle = new FrameLayout(this);
+        iconCircle.setBackgroundResource(R.drawable.bg_module_icon_circle);
+        FrameLayout.LayoutParams iconCircleParams = new FrameLayout.LayoutParams(dp(56), dp(56));
+        iconCircleParams.gravity = Gravity.START | Gravity.CENTER_VERTICAL;
+        iconCircleParams.leftMargin = dp(16);
+        card.addView(iconCircle, iconCircleParams);
+
+        ImageView trayIcon = new ImageView(this);
+        trayIcon.setImageResource(R.drawable.ic_tray);
+        trayIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        trayIcon.setContentDescription(null);
+        FrameLayout.LayoutParams trayIconParams = new FrameLayout.LayoutParams(dp(42), dp(42), Gravity.CENTER);
+        iconCircle.addView(trayIcon, trayIconParams);
+
+        LinearLayout textGroup = new LinearLayout(this);
+        textGroup.setOrientation(LinearLayout.VERTICAL);
+        FrameLayout.LayoutParams textParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        textParams.gravity = Gravity.CENTER_VERTICAL;
+        textParams.leftMargin = dp(86);
+        textParams.rightMargin = dp(42);
+        card.addView(textGroup, textParams);
+
+        TextView itemName = new TextView(this);
+        itemName.setText(result.itemName);
+        itemName.setTextColor(0xFF14191B);
+        itemName.setTextSize(17);
+        itemName.setTypeface(null, android.graphics.Typeface.BOLD);
+        itemName.setIncludeFontPadding(false);
+        textGroup.addView(itemName);
+
+        LinearLayout metaRow = new LinearLayout(this);
+        metaRow.setGravity(Gravity.CENTER_VERTICAL);
+        metaRow.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams metaParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        metaParams.setMargins(0, dp(7), 0, 0);
+        textGroup.addView(metaRow, metaParams);
+
+        ImageView boxIcon = new ImageView(this);
+        boxIcon.setImageResource(R.drawable.ic_box);
+        boxIcon.setColorFilter(0xFF14191B);
+        metaRow.addView(boxIcon, new LinearLayout.LayoutParams(dp(14), dp(14)));
+
+        TextView trayName = new TextView(this);
+        trayName.setText(result.trayName);
+        trayName.setTextColor(0xFF14191B);
+        trayName.setTextSize(12);
+        trayName.setTypeface(null, android.graphics.Typeface.BOLD);
+        trayName.setIncludeFontPadding(false);
+        LinearLayout.LayoutParams trayNameParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        trayNameParams.setMargins(dp(4), 0, dp(8), 0);
+        metaRow.addView(trayName, trayNameParams);
+
+        ImageView pinIcon = new ImageView(this);
+        pinIcon.setImageResource(R.drawable.ic_pin);
+        pinIcon.setColorFilter(0xFF798385);
+        metaRow.addView(pinIcon, new LinearLayout.LayoutParams(dp(14), dp(14)));
+
+        TextView location = new TextView(this);
+        location.setText(result.location);
+        location.setTextColor(0xFF798385);
+        location.setTextSize(12);
+        location.setIncludeFontPadding(false);
+        LinearLayout.LayoutParams locationParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        locationParams.setMargins(dp(4), 0, 0, 0);
+        metaRow.addView(location, locationParams);
+
+        ImageView chevron = new ImageView(this);
+        chevron.setImageResource(R.drawable.ic_chevron_left);
+        chevron.setRotation(180f);
+        chevron.setColorFilter(0xFF7C878A);
+        chevron.setContentDescription(null);
+        FrameLayout.LayoutParams chevronParams = new FrameLayout.LayoutParams(dp(22), dp(22));
+        chevronParams.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
+        chevronParams.rightMargin = dp(14);
+        card.addView(chevron, chevronParams);
+        return card;
+    }
+
+    private void renderItemAdd() {
+        View addView = LayoutInflater.from(this).inflate(R.layout.screen_item_add, contentContainer, false);
+        contentContainer.addView(addView);
+        centerScreen(addView);
+        addView.findViewById(R.id.itemAddBackButton).setOnClickListener(v -> setScreen("moduleDetail"));
+        EditText itemInput = addView.findViewById(R.id.itemAddNameInput);
+        bindItemChip(addView, R.id.itemChipRemote, itemInput, "리모컨");
+        bindItemChip(addView, R.id.itemChipMedicine, itemInput, "상비약");
+        bindItemChip(addView, R.id.itemChipGlasses, itemInput, "안경");
+        bindItemChip(addView, R.id.itemChipKey, itemInput, "열쇠");
+        bindItemChip(addView, R.id.itemChipCharger, itemInput, "충전기");
+        bindItemChip(addView, R.id.itemChipMask, itemInput, "마스크");
+        bindItemChip(addView, R.id.itemChipVitamin, itemInput, "영양제");
+        bindItemChip(addView, R.id.itemChipTumbler, itemInput, "텀블러");
+        addView.findViewById(R.id.itemAddSaveButton).setOnClickListener(v -> addItemToSelectedTray(itemInput.getText().toString().trim()));
+    }
+
+    private void renderRoutine() {
+        View routineView = LayoutInflater.from(this).inflate(R.layout.screen_routine, contentContainer, false);
+        contentContainer.addView(routineView);
+        centerScreen(routineView);
+        addBottomNav();
+        routineView.findViewById(R.id.routineAddTopButton).setOnClickListener(v -> prepareNewRoutine());
+        View addBottomButton = findOptionalView(routineView, "routineAddBottomButton");
+        if (addBottomButton != null) {
+            addBottomButton.setOnClickListener(v -> prepareNewRoutine());
+        }
+        FrameLayout list = routineView.findViewById(R.id.routineList);
+        list.removeAllViews();
+        for (int i = 0; i < routines.size(); i++) {
+            addRoutineCard(list, i, routines.get(i));
+        }
+        int cardStep = dp(278);
+        int listHeight = routines.isEmpty() ? 0 : routines.size() * cardStep;
+        setHeight(list, listHeight);
+        if (addBottomButton != null) {
+            setTopMargin(addBottomButton, dp(108) + listHeight + dp(18));
+        }
+        setHeight(routineView.findViewById(R.id.routineCanvas), dp(108) + listHeight + dp(120));
+    }
+
+    private void addRoutineCard(FrameLayout list, int index, RoutineData routine) {
+        View card = LayoutInflater.from(this).inflate(R.layout.item_routine_card, list, false);
+        ((TextView) card.findViewById(R.id.routineTitleText)).setText(routine.title);
+        ((TextView) card.findViewById(R.id.routineTrayText)).setText(routine.trayName);
+        ((TextView) card.findViewById(R.id.routineTimeText)).setText(formatDialTime(routine.hour, routine.minute));
+        ((TextView) card.findViewById(R.id.routinePlaceText)).setText(routine.place);
+        View track = card.findViewById(R.id.routineToggleTrack);
+        View knob = card.findViewById(R.id.routineToggleKnob);
+        applyRoutineToggleState(track, knob, routine.enabled);
+        TextView quickButton = card.findViewById(R.id.routineQuickButton);
+        quickButton.setText(routine.quickSlot > 0 ? "빠른 루틴 " + routine.quickSlot : "빠른 루틴으로 설정");
+        quickButton.setOnClickListener(v -> toggleQuickRoutine(routine));
+        track.setOnClickListener(v -> {
+            boolean enabled = !routine.enabled;
+            routine.enabled = enabled;
+            applyRoutineToggleState(track, knob, enabled);
+            db.child("routines").child(routine.id).child("enabled").setValue(enabled);
+        });
+        card.setOnClickListener(v -> {
+            selectedRoutineId = routine.id;
+            selectedTrayId = routine.trayId;
+            selectedModule = routine.trayName;
+            selectedRoutineHour = routine.hour;
+            selectedRoutineMinute = routine.minute;
+            selectedRoutinePlaceIndex = placeIndex(routine.place);
+            routinePlaceExpanded = false;
+            setScreen("routineEdit");
+        });
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.topMargin = index * dp(278);
+        list.addView(card, params);
+    }
+
+    private void toggleQuickRoutine(RoutineData selected) {
+        if (selected.quickSlot > 0) {
+            selected.quickSlot = 0;
+            db.child("routines").child(selected.id).child("quickSlot").setValue(0);
+            render();
+            return;
+        }
+        boolean slotOneUsed = false;
+        boolean slotTwoUsed = false;
+        for (RoutineData routine : routines) {
+            if (routine.quickSlot == 1) slotOneUsed = true;
+            if (routine.quickSlot == 2) slotTwoUsed = true;
+        }
+        int targetSlot = !slotOneUsed ? 1 : (!slotTwoUsed ? 2 : 2);
+        if (slotOneUsed && slotTwoUsed) {
+            for (RoutineData routine : routines) {
+                if (routine.quickSlot == targetSlot) {
+                    routine.quickSlot = 0;
+                    db.child("routines").child(routine.id).child("quickSlot").setValue(0);
+                    break;
+                }
+            }
+        }
+        selected.quickSlot = targetSlot;
+        db.child("routines").child(selected.id).child("quickSlot").setValue(targetSlot);
+        render();
+    }
+
+    private void applyRoutineToggleState(View track, View knob, boolean enabled) {
+        track.setBackgroundResource(enabled ? R.drawable.bg_toggle_on : R.drawable.bg_toggle_off);
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) knob.getLayoutParams();
+        params.gravity = (enabled ? Gravity.END : Gravity.START) | Gravity.CENTER_VERTICAL;
+        knob.setLayoutParams(params);
+    }
+
+    private void renderRoutineEdit() {
+        RoutineData routine = selectedRoutine();
+        View editView = LayoutInflater.from(this).inflate(R.layout.screen_routine_edit, contentContainer, false);
+        contentContainer.addView(editView);
+        centerScreen(editView);
+
+        ((TextView) editView.findViewById(R.id.routineEditTrayValue)).setText(selectedTray().name);
+        ((TextView) editView.findViewById(R.id.routineEditTimeValue)).setText("매일 " + formatDialTime(selectedRoutineHour, selectedRoutineMinute));
+        bindRoutinePlace(editView);
+
+        editView.findViewById(R.id.routineEditBackButton).setOnClickListener(v -> setScreen("routine"));
+        editView.findViewById(R.id.routineEditTrayRow).setOnClickListener(v -> setScreen("moduleSelect"));
+        editView.findViewById(R.id.routineEditTimeRow).setOnClickListener(v -> showTimePickerSheet("루틴 시간 설정", "routineEdit"));
+        editView.findViewById(R.id.routineEditSaveButton).setOnClickListener(v -> saveRoutineEdit());
+    }
+
+    private void saveRoutineEdit() {
+        RoutineData routine = selectedRoutine();
+        TrayData tray = selectedTray();
+        String place = routinePlaceName(selectedRoutinePlaceIndex);
+        DatabaseReference ref = db.child("routines").child(routine.id);
+        ref.child("title").setValue(routine.title);
+        ref.child("trayId").setValue(tray.id);
+        ref.child("trayName").setValue(tray.name);
+        ref.child("hour").setValue(selectedRoutineHour);
+        ref.child("minute").setValue(selectedRoutineMinute);
+        ref.child("time").setValue(formatDialTime(selectedRoutineHour, selectedRoutineMinute));
+        ref.child("place").setValue(place);
+        ref.child("location").setValue(place);
+        ref.child("destination").setValue(place);
+        ref.child("quickSlot").setValue(routine.quickSlot);
+        ref.child("enabled").setValue(routine.enabled)
+                .addOnSuccessListener(unused -> {
+                    routinePlaceExpanded = false;
+                    setScreen("routine");
+                });
+    }
+
+    private void renderModuleSelect() {
+        List<TrayData> visibleTrays = currentTrays();
+        String[] choices = new String[visibleTrays.size()];
+        for (int i = 0; i < visibleTrays.size(); i++) {
+            choices[i] = visibleTrays.get(i).name;
+        }
+        choiceScreen("트레이 선택", "트레이 선택", choices, "routineEdit");
+    }
+
+    private void renderTimeSelect(String title, String back) {
+        screen = back;
+        if ("moduleDetail".equals(back)) {
+            renderModuleDetail();
+        } else {
+            renderRoutineEdit();
+        }
+        contentContainer.post(() -> showTimePickerSheet(title, back));
+    }
+
+    private void renderLocation() {
+        choiceScreen("이동 위치", "위치 선택", placeChoices(), "routineEdit");
+    }
+
+    private void showTimePickerSheet(String title, String back) {
+        boolean reserve = "moduleDetail".equals(back);
+        BottomSheetDialog sheet = new BottomSheetDialog(this);
+        View sheetView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_time_picker, null, false);
+        ((TextView) sheetView.findViewById(R.id.timePickerTitle)).setText(title);
+
+        NumberPicker hourPicker = sheetView.findViewById(R.id.timePickerHour);
+        hourPicker.setMinValue(0);
+        hourPicker.setMaxValue(23);
+        hourPicker.setFormatter(value -> String.format(Locale.KOREA, "%02d", value));
+        hourPicker.setValue(reserve ? selectedReserveHour : selectedRoutineHour);
+
+        NumberPicker minutePicker = sheetView.findViewById(R.id.timePickerMinute);
+        minutePicker.setMinValue(0);
+        minutePicker.setMaxValue(59);
+        minutePicker.setFormatter(value -> String.format(Locale.KOREA, "%02d", value));
+        minutePicker.setValue(reserve ? selectedReserveMinute : selectedRoutineMinute);
+
+        sheetView.findViewById(R.id.timePickerCancelButton).setOnClickListener(v -> sheet.dismiss());
+        sheetView.findViewById(R.id.timePickerSaveButton).setOnClickListener(v -> {
+            if (reserve) {
+                selectedReserveHour = hourPicker.getValue();
+                selectedReserveMinute = minutePicker.getValue();
+            } else {
+                selectedRoutineHour = hourPicker.getValue();
+                selectedRoutineMinute = minutePicker.getValue();
+            }
+            sheet.dismiss();
+            setScreen(back);
+        });
+
+        sheet.setContentView(sheetView);
+        sheet.show();
+    }
+
+
+    private String formatDialTime(int hour, int minute) {
+        String period = hour < 12 ? "오전" : "오후";
+        int displayHour = hour % 12;
+        if (displayHour == 0) displayHour = 12;
+        return String.format(Locale.KOREA, "%s %d:%02d", period, displayHour, minute);
+    }
+
+    private void renderMenu() {
+        View menuView = LayoutInflater.from(this).inflate(R.layout.screen_menu, contentContainer, false);
+        contentContainer.addView(menuView);
+        centerScreen(menuView);
+        addBottomNav();
+        menuView.findViewById(R.id.menuNotificationRow).setOnClickListener(v -> setScreen("notification"));
+        menuView.findViewById(R.id.menuMapRow).setOnClickListener(v -> setScreen("map"));
+    }
+
+
+    private void renderNotification() {
+        View notificationView = LayoutInflater.from(this).inflate(R.layout.screen_notification, contentContainer, false);
+        contentContainer.addView(notificationView);
+        centerScreen(notificationView);
+        notificationView.findViewById(R.id.notificationBackButton).setOnClickListener(v -> setScreen("menu"));
+        bindNotificationToggle(notificationView, R.id.notificationPushRow, R.id.notificationPushToggleTrack, R.id.notificationPushToggleKnob, "push");
+        bindNotificationToggle(notificationView, R.id.notificationMoveRow, R.id.notificationMoveToggleTrack, R.id.notificationMoveToggleKnob, "move");
+        bindNotificationToggle(notificationView, R.id.notificationBatteryRow, R.id.notificationBatteryToggleTrack, R.id.notificationBatteryToggleKnob, "battery");
+        notificationView.findViewById(R.id.notificationLogRow).setOnClickListener(v -> setScreen("notificationLogs"));
+        notificationView.findViewById(R.id.notificationSoundRow).setOnClickListener(v -> setScreen("alarm"));
+        ((TextView) notificationView.findViewById(R.id.notificationSoundValue)).setText(notificationSoundName());
+    }
+
+    private void renderAlarm() {
+        View alarmView = LayoutInflater.from(this).inflate(R.layout.screen_alarm, contentContainer, false);
+        contentContainer.addView(alarmView);
+        centerScreen(alarmView);
+        alarmView.findViewById(R.id.alarmBackButton).setOnClickListener(v -> setScreen("notification"));
+        bindAlarmRow(alarmView, R.id.alarmDefaultRow, 0);
+        bindAlarmRow(alarmView, R.id.alarmSoftRow, 1);
+        bindAlarmRow(alarmView, R.id.alarmSilentRow, 2);
+        updateAlarmChecks(alarmView);
+    }
+
+    private void bindNotificationToggle(View root, int rowId, int trackId, int knobId, String type) {
+        View row = root.findViewById(rowId);
+        View track = root.findViewById(trackId);
+        View knob = root.findViewById(knobId);
+        applyRoutineToggleState(track, knob, notificationToggleValue(type));
+        View.OnClickListener listener = v -> {
+            boolean enabled = !notificationToggleValue(type);
+            setNotificationToggleValue(type, enabled);
+            applyRoutineToggleState(track, knob, enabled);
+            if (enabled) {
+                requestNotificationPermissionIfNeeded();
+            }
+            if ("push".equals(type) && enabled) {
+                sendLocalNotification("푸시 알림", "앱 알림이 활성화되었습니다.");
+                saveNotificationLog("푸시 알림", "", "", "알림 활성화", "push", System.currentTimeMillis());
+            }
+        };
+        row.setOnClickListener(listener);
+        track.setOnClickListener(listener);
+    }
+
+    private boolean notificationToggleValue(String type) {
+        if ("move".equals(type)) return moveNotificationsEnabled;
+        if ("battery".equals(type)) return batteryNotificationsEnabled;
+        return pushNotificationsEnabled;
+    }
+
+    private void setNotificationToggleValue(String type, boolean enabled) {
+        if ("move".equals(type)) {
+            moveNotificationsEnabled = enabled;
+        } else if ("battery".equals(type)) {
+            batteryNotificationsEnabled = enabled;
+            if (enabled) batteryLowNotified = false;
+        } else {
+            pushNotificationsEnabled = enabled;
+        }
+    }
+
+    private void bindAlarmRow(View root, int rowId, int index) {
+        root.findViewById(rowId).setOnClickListener(v -> {
+            selectedNotificationSoundIndex = index;
+            updateAlarmChecks(root);
+        });
+    }
+
+    private void updateAlarmChecks(View root) {
+        setAlarmCheck(root, R.id.alarmDefaultCheck, selectedNotificationSoundIndex == 0);
+        setAlarmCheck(root, R.id.alarmSoftCheck, selectedNotificationSoundIndex == 1);
+        setAlarmCheck(root, R.id.alarmSilentCheck, selectedNotificationSoundIndex == 2);
+    }
+
+    private void setAlarmCheck(View root, int id, boolean selected) {
+        TextView check = root.findViewById(id);
+        check.setVisibility(selected ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private String notificationSoundName() {
+        if (selectedNotificationSoundIndex == 1) return "부드러운 알림음";
+        if (selectedNotificationSoundIndex == 2) return "무음";
+        return "기본 알림음";
+    }
+
+    private void renderNotificationLogs() {
+        View logsView = LayoutInflater.from(this).inflate(R.layout.screen_notification_logs, contentContainer, false);
+        contentContainer.addView(logsView);
+        centerScreen(logsView);
+        logsView.findViewById(R.id.notificationLogsBackButton).setOnClickListener(v -> setScreen("notification"));
+        bindNotificationLogFilter(logsView, R.id.notificationLogsFilterToday, "today");
+        bindNotificationLogFilter(logsView, R.id.notificationLogsFilterWeek, "week");
+        bindNotificationLogFilter(logsView, R.id.notificationLogsFilterMonth, "month");
+        bindNotificationLogFilter(logsView, R.id.notificationLogsFilterAll, "all");
+        ((TextView) logsView.findViewById(R.id.notificationLogsDateLabel)).setText(notificationLogDateLabel());
+        loadNotificationLogs(logsView);
+    }
+
+    private void bindNotificationLogFilter(View root, int chipId, String filter) {
+        TextView chip = root.findViewById(chipId);
+        boolean selected = filter.equals(notificationLogFilter);
+        chip.setBackgroundResource(selected ? R.drawable.bg_toggle_on : R.drawable.bg_pill);
+        chip.setTextColor(selected ? 0xFFFFFFFF : 0xFF7C878A);
+        chip.setOnClickListener(v -> {
+            notificationLogFilter = filter;
+            renderNotificationLogs();
+        });
+    }
+
+    private String notificationLogDateLabel() {
+        if ("all".equals(notificationLogFilter)) return "전체 기간";
+        Calendar start = Calendar.getInstance(Locale.KOREA);
+        Calendar end = Calendar.getInstance(Locale.KOREA);
+        clearTime(start);
+        clearTime(end);
+        if ("week".equals(notificationLogFilter)) {
+            int day = start.get(Calendar.DAY_OF_WEEK);
+            int daysFromMonday = day == Calendar.SUNDAY ? 6 : day - Calendar.MONDAY;
+            start.add(Calendar.DAY_OF_MONTH, -daysFromMonday);
+            end.setTimeInMillis(start.getTimeInMillis());
+            end.add(Calendar.DAY_OF_MONTH, 6);
+            return formatLogDateRange(start, end);
+        }
+        if ("month".equals(notificationLogFilter)) {
+            start.set(Calendar.DAY_OF_MONTH, 1);
+            end.setTimeInMillis(start.getTimeInMillis());
+            end.set(Calendar.DAY_OF_MONTH, end.getActualMaximum(Calendar.DAY_OF_MONTH));
+            return formatLogDateRange(start, end);
+        }
+        return new SimpleDateFormat("yyyy.MM.dd(E)", Locale.KOREA).format(new Date());
+    }
+
+    private void loadNotificationLogs(View root) {
+        db.child("notificationLogs").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<NotificationLogEntry> entries = new ArrayList<>();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    NotificationLogEntry entry = parseNotificationLogEntry(child);
+                    if (entry != null && isNotificationLogInSelectedRange(entry.createdAt)) {
+                        insertNotificationLogEntryDesc(entries, entry);
+                    }
+                }
+                bindNotificationLogList(root, entries);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                bindNotificationLogList(root, new ArrayList<>());
+            }
+        });
+    }
+
+    private NotificationLogEntry parseNotificationLogEntry(DataSnapshot snapshot) {
+        Long createdAt = snapshot.child("createdAt").getValue(Long.class);
+        if (createdAt == null) return null;
+        String title = stringValue(snapshot.child("title"), "알림");
+        String trayName = stringValue(snapshot.child("trayName"), "");
+        String destination = stringValue(snapshot.child("destination"), "");
+        String status = stringValue(snapshot.child("status"), "");
+        String source = stringValue(snapshot.child("source"), "call");
+        String time = new SimpleDateFormat("HH:mm", Locale.KOREA).format(new Date(createdAt));
+        return new NotificationLogEntry(createdAt, title, trayName, destination, status, source, time);
+    }
+
+    private void bindNotificationLogList(View root, List<NotificationLogEntry> entries) {
+        LinearLayout list = root.findViewById(R.id.notificationLogsList);
+        TextView emptyText = root.findViewById(R.id.notificationLogsEmptyText);
+        list.removeAllViews();
+        emptyText.setVisibility(entries.isEmpty() ? View.VISIBLE : View.GONE);
+        if (entries.isEmpty()) return;
+
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setBackgroundResource(R.drawable.bg_card);
+        card.setPadding(dp(14), dp(10), dp(14), dp(10));
+        list.addView(card, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        for (int i = 0; i < entries.size(); i++) {
+            card.addView(createNotificationLogRow(entries.get(i)));
+            if (i < entries.size() - 1) {
+                View divider = new View(this);
+                divider.setBackgroundColor(0xFFE2E7E7);
+                LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        dp(1)
+                );
+                dividerParams.setMargins(dp(52), 0, 0, 0);
+                card.addView(divider, dividerParams);
+            }
+        }
+    }
+
+    private View createNotificationLogRow(NotificationLogEntry entry) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setPadding(0, dp(10), 0, dp(10));
+
+        FrameLayout iconCircle = new FrameLayout(this);
+        iconCircle.setBackgroundResource(R.drawable.bg_module_icon_circle);
+        LinearLayout.LayoutParams iconCircleParams = new LinearLayout.LayoutParams(dp(38), dp(38));
+        row.addView(iconCircle, iconCircleParams);
+
+        ImageView icon = new ImageView(this);
+        icon.setImageResource("routine".equals(entry.source) ? R.drawable.ic_share : R.drawable.ic_bottom_box);
+        icon.setColorFilter(0xFF14191B);
+        FrameLayout.LayoutParams iconParams = new FrameLayout.LayoutParams(dp(20), dp(20), Gravity.CENTER);
+        iconCircle.addView(icon, iconParams);
+
+        LinearLayout textGroup = new LinearLayout(this);
+        textGroup.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        textParams.setMargins(dp(14), 0, dp(8), 0);
+        row.addView(textGroup, textParams);
+
+        TextView title = new TextView(this);
+        title.setText(notificationLogTitle(entry));
+        title.setTextColor(0xFF14191B);
+        title.setTextSize(15);
+        title.setTypeface(null, android.graphics.Typeface.BOLD);
+        title.setIncludeFontPadding(false);
+        textGroup.addView(title);
+
+        TextView item = new TextView(this);
+        item.setText(notificationLogSubtitle(entry));
+        item.setTextColor(0xFF798385);
+        item.setTextSize(12);
+        item.setTypeface(null, android.graphics.Typeface.BOLD);
+        item.setIncludeFontPadding(false);
+        LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        itemParams.setMargins(0, dp(4), 0, 0);
+        textGroup.addView(item, itemParams);
+
+        TextView meta = new TextView(this);
+        meta.setText(notificationLogMeta(entry));
+        meta.setTextColor(0xFF798385);
+        meta.setTextSize(12);
+        meta.setIncludeFontPadding(false);
+        LinearLayout.LayoutParams metaParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        metaParams.setMargins(0, dp(5), 0, 0);
+        textGroup.addView(meta, metaParams);
+
+        TextView time = new TextView(this);
+        time.setText(entry.time);
+        time.setTextColor(0xFF798385);
+        time.setTextSize(13);
+        time.setIncludeFontPadding(false);
+        row.addView(time);
+        return row;
+    }
+
+    private String notificationLogTitle(NotificationLogEntry entry) {
+        if ("routine".equals(entry.source)) {
+            return entry.title.isEmpty() ? "루틴 실행" : entry.title;
+        }
+        if (!entry.trayName.isEmpty()) return entry.trayName;
+        return entry.title;
+    }
+
+    private String notificationLogSubtitle(NotificationLogEntry entry) {
+        if ("routine".equals(entry.source)) {
+            return notificationLogIsFailure(entry) ? "루틴 실행 실패" : "루틴 실행";
+        }
+        if ("battery".equals(entry.source)) return "배터리 부족 알림";
+        if ("call".equals(entry.source)) {
+            return notificationLogIsFailure(entry) ? "호출 실패" : "호출 완료 알림";
+        }
+        return entry.title.isEmpty() ? "알림" : entry.title;
+    }
+
+    private String notificationLogMeta(NotificationLogEntry entry) {
+        String status = notificationLogSubtitle(entry);
+        String destination = entry.destination.isEmpty() ? "목적지 미상" : entry.destination;
+        if ("battery".equals(entry.source) || "push".equals(entry.source)) {
+            return status;
+        }
+        return status + "  ·  " + destination;
+    }
+
+    private boolean notificationLogIsFailure(NotificationLogEntry entry) {
+        String value = (entry.title + " " + entry.status).toLowerCase(Locale.ROOT);
+        return value.contains("실패") || value.contains("fail") || value.contains("fallback");
+    }
+
+    private boolean isNotificationLogInSelectedRange(long createdAt) {
+        if ("all".equals(notificationLogFilter)) return true;
+        Calendar start = Calendar.getInstance(Locale.KOREA);
+        Calendar end = Calendar.getInstance(Locale.KOREA);
+        clearTime(start);
+        clearTime(end);
+        if ("week".equals(notificationLogFilter)) {
+            int day = start.get(Calendar.DAY_OF_WEEK);
+            int daysFromMonday = day == Calendar.SUNDAY ? 6 : day - Calendar.MONDAY;
+            start.add(Calendar.DAY_OF_MONTH, -daysFromMonday);
+            end.setTimeInMillis(start.getTimeInMillis());
+            end.add(Calendar.DAY_OF_MONTH, 7);
+        } else if ("month".equals(notificationLogFilter)) {
+            start.set(Calendar.DAY_OF_MONTH, 1);
+            end.setTimeInMillis(start.getTimeInMillis());
+            end.add(Calendar.MONTH, 1);
+        } else {
+            end.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return createdAt >= start.getTimeInMillis() && createdAt < end.getTimeInMillis();
+    }
+
+    private void insertNotificationLogEntryDesc(List<NotificationLogEntry> entries, NotificationLogEntry entry) {
+        int index = 0;
+        while (index < entries.size() && entries.get(index).createdAt > entry.createdAt) {
+            index++;
+        }
+        entries.add(index, entry);
+    }
+
+    private void renderLogs() {
+        View logsView = LayoutInflater.from(this).inflate(R.layout.screen_logs, contentContainer, false);
+        contentContainer.addView(logsView);
+        centerScreen(logsView);
+        logsView.findViewById(R.id.logsBackButton).setOnClickListener(v -> setScreen("home"));
+        bindLogFilterChip(logsView, R.id.logsChipToday, "today");
+        bindLogFilterChip(logsView, R.id.logsChipWeek, "week");
+        bindLogFilterChip(logsView, R.id.logsChipMonth, "month");
+        bindLogFilterChip(logsView, R.id.logsChipAll, "all");
+        ((TextView) logsView.findViewById(R.id.logsFilterTitle)).setText(logDateRangeTitle());
+        loadLogs(logsView);
+    }
+
+    private void renderMap() {
+        FrameLayout c = inflateFixedCanvas(R.layout.screen_map);
+        addBottomNav();
+        c.findViewById(R.id.mapBackButton).setOnClickListener(v -> setScreen("menu"));
+    }
+
+    private void bindLogFilterChip(View c, int chipId, String filter) {
+        TextView chip = c.findViewById(chipId);
+        boolean selected = filter.equals(logFilter);
+        chip.setBackgroundResource(selected ? R.drawable.bg_toggle_on : R.drawable.bg_pill);
+        chip.setTextColor(selected ? 0xFFFFFFFF : 0xFF7C878A);
+        chip.setOnClickListener(v -> {
+            logFilter = filter;
+            render();
+        });
+    }
+
+
+    private String logFilterLabel() {
+        switch (logFilter) {
+            case "week":
+                return "이번 주";
+            case "month":
+                return "이번 달";
+            case "all":
+                return "전체";
+            case "today":
+            default:
+                return "오늘";
+        }
+    }
+
+    private String logFilterTitle() {
+        if ("all".equals(logFilter)) {
+            return "모든 기록";
+        }
+        if ("week".equals(logFilter)) {
+            Calendar start = Calendar.getInstance(Locale.KOREA);
+            clearTime(start);
+            int day = start.get(Calendar.DAY_OF_WEEK);
+            int daysFromMonday = day == Calendar.SUNDAY ? 6 : day - Calendar.MONDAY;
+            start.add(Calendar.DAY_OF_MONTH, -daysFromMonday);
+            Calendar end = Calendar.getInstance(Locale.KOREA);
+            end.setTimeInMillis(start.getTimeInMillis());
+            end.add(Calendar.DAY_OF_MONTH, 6);
+            return formatLogDateRange(start, end);
+        }
+        if ("month".equals(logFilter)) {
+            Calendar start = Calendar.getInstance(Locale.KOREA);
+            clearTime(start);
+            start.set(Calendar.DAY_OF_MONTH, 1);
+            Calendar end = Calendar.getInstance(Locale.KOREA);
+            end.setTimeInMillis(start.getTimeInMillis());
+            end.set(Calendar.DAY_OF_MONTH, end.getActualMaximum(Calendar.DAY_OF_MONTH));
+            return formatLogDateRange(start, end);
+        }
+        return new SimpleDateFormat("yyyy.MM.dd (E)", Locale.KOREA).format(new Date());
+    }
+
+    private String formatLogDateRange(Calendar start, Calendar end) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd(E)", Locale.KOREA);
+        return formatter.format(start.getTime()) + " ~ " + formatter.format(end.getTime());
+    }
+
+    private String logDateRangeTitle() {
+        if ("all".equals(logFilter)) {
+            return "전체 기간";
+        }
+        Calendar start = Calendar.getInstance(Locale.KOREA);
+        Calendar end = Calendar.getInstance(Locale.KOREA);
+        clearTime(start);
+        clearTime(end);
+        if ("week".equals(logFilter)) {
+            int day = start.get(Calendar.DAY_OF_WEEK);
+            int daysFromMonday = day == Calendar.SUNDAY ? 6 : day - Calendar.MONDAY;
+            start.add(Calendar.DAY_OF_MONTH, -daysFromMonday);
+            end.setTimeInMillis(start.getTimeInMillis());
+            end.add(Calendar.DAY_OF_MONTH, 6);
+            return formatLogDateRange(start, end);
+        }
+        if ("month".equals(logFilter)) {
+            start.set(Calendar.DAY_OF_MONTH, 1);
+            end.setTimeInMillis(start.getTimeInMillis());
+            end.set(Calendar.DAY_OF_MONTH, end.getActualMaximum(Calendar.DAY_OF_MONTH));
+            return formatLogDateRange(start, end);
+        }
+        return new SimpleDateFormat("yyyy.MM.dd(E)", Locale.KOREA).format(new Date());
+    }
+
+    private LogEntry parseNotificationDisplayLogEntry(DataSnapshot snapshot) {
+        Long createdAt = snapshot.child("createdAt").getValue(Long.class);
+        if (createdAt == null) return null;
+        String title = stringValue(snapshot.child("trayName"), stringValue(snapshot.child("title"), "알림"));
+        String status = stringValue(snapshot.child("status"), stringValue(snapshot.child("title"), "알림"));
+        String destination = stringValue(snapshot.child("destination"), "");
+        String source = stringValue(snapshot.child("source"), "");
+        String action = "routine".equals(source) ? "루틴 실행" : status;
+        String time = new SimpleDateFormat("HH:mm", Locale.KOREA).format(new Date(createdAt));
+        return new LogEntry(createdAt, title, "", action, emptyToFallback(destination, "목적지 미상"), time);
+    }
+
+    private LogEntry parseDisplayLogEntry(DataSnapshot snapshot) {
+        Long createdAt = snapshot.child("createdAt").getValue(Long.class);
+        if (createdAt == null) {
+            createdAt = parseVoiceRecordKeyTime(snapshot.getKey());
+        }
+        if (createdAt == null) return null;
+        String command = snapshot.child("command").getValue(String.class);
+        String status = emptyToFallback(snapshot.child("status").getValue(String.class), "");
+        String module = snapshot.child("module").getValue(String.class);
+        String location = snapshot.child("location").getValue(String.class);
+        boolean routineLog = isDisplayRoutineLog(command, status);
+        boolean failed = "fallback".equals(status) || status.toLowerCase(Locale.ROOT).contains("fail");
+        String action = failed
+                ? (routineLog ? "루틴 실행 실패" : "호출 실패")
+                : (routineLog ? "루틴 실행" : "호출 완료");
+        String title = routineLog ? emptyToFallback(command, "루틴 실행") : emptyToFallback(module, "트레이 호출");
+        String item = routineLog ? "" : emptyToFallback(command, "");
+        String place = emptyToFallback(location, "목적지 미상");
+        String time = new SimpleDateFormat("HH:mm", Locale.KOREA).format(new Date(createdAt));
+        return new LogEntry(createdAt, title, item, action, place, time);
+    }
+
+    private boolean isDisplayRoutineLog(String command, String status) {
+        String value = (emptyToFallback(command, "") + " " + emptyToFallback(status, "")).toLowerCase(Locale.ROOT);
+        return value.contains("루틴") || value.contains("routine");
+    }
+
+    private void loadLogs(View root) {
+        db.child("logs").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot logsSnapshot) {
+                List<LogEntry> entries = new ArrayList<>();
+                for (DataSnapshot child : logsSnapshot.getChildren()) {
+                    LogEntry entry = parseGenericLogEntry(child);
+                    if (entry != null && isLogInSelectedRange(entry.createdAt)) {
+                        insertLogEntryDesc(entries, entry);
+                    }
+                }
+                bindLogsList(root, entries);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                bindLogsList(root, new ArrayList<>());
+            }
+        });
+    }
+
+    private LogEntry parseNotificationAsLogEntry(DataSnapshot snapshot) {
+        Long createdAt = snapshot.child("createdAt").getValue(Long.class);
+        if (createdAt == null) return null;
+        String title = stringValue(snapshot.child("trayName"), stringValue(snapshot.child("title"), "알림"));
+        String status = stringValue(snapshot.child("status"), stringValue(snapshot.child("title"), "알림"));
+        String destination = stringValue(snapshot.child("destination"), "");
+        String source = stringValue(snapshot.child("source"), "");
+        String action = "routine".equals(source) ? "루틴 실행" : status;
+        String time = new SimpleDateFormat("HH:mm", Locale.KOREA).format(new Date(createdAt));
+        return new LogEntry(createdAt, title, "", action, emptyToFallback(destination, "목적지 미상"), time);
+    }
+
+    private LogEntry parseGenericLogEntry(DataSnapshot snapshot) {
+        Long createdAt = snapshot.child("createdAt").getValue(Long.class);
+        if (createdAt == null) createdAt = snapshot.child("timestamp").getValue(Long.class);
+        if (createdAt == null) createdAt = snapshot.child("timeMillis").getValue(Long.class);
+        if (createdAt == null) createdAt = parseVoiceRecordKeyTime(snapshot.getKey());
+        if (createdAt == null) return null;
+
+        String source = stringValue(snapshot.child("source"), stringValue(snapshot.child("type"), ""));
+        String status = stringValue(snapshot.child("status"), stringValue(snapshot.child("action"), ""));
+        String title = stringValue(snapshot.child("title"), "");
+        String trayName = stringValue(snapshot.child("trayName"), stringValue(snapshot.child("module"), ""));
+        String routineName = stringValue(snapshot.child("routineName"), stringValue(snapshot.child("routine"), ""));
+        String command = stringValue(snapshot.child("command"), "");
+        String destination = stringValue(snapshot.child("destination"), stringValue(snapshot.child("location"), stringValue(snapshot.child("place"), "")));
+
+        boolean routineLog = "routine".equals(source) || !routineName.isEmpty() || isDisplayRoutineLog(command, status);
+        String displayTime = new SimpleDateFormat("HH:mm", Locale.KOREA).format(new Date(createdAt));
+        if (status.contains("호출") || status.contains("루틴")) {
+            String displayTitle = routineLog
+                    ? emptyToFallback(routineName, emptyToFallback(title, "루틴 실행"))
+                    : emptyToFallback(trayName, emptyToFallback(title, "트레이 호출"));
+            String item = routineLog ? "" : command;
+            return new LogEntry(createdAt, displayTitle, item, status, emptyToFallback(destination, "목적지 미상"), displayTime);
+        }
+        String lowerStatus = status.toLowerCase(Locale.ROOT);
+        boolean failed = status.contains("실패") || lowerStatus.contains("fail") || lowerStatus.contains("fallback");
+        String action = failed
+                ? (routineLog ? "루틴 실행 실패" : "호출 실패")
+                : (routineLog ? "루틴 실행" : "호출 완료");
+        String displayTitle = routineLog
+                ? emptyToFallback(routineName, emptyToFallback(title, "루틴 실행"))
+                : emptyToFallback(trayName, emptyToFallback(title, "트레이 호출"));
+        String item = routineLog ? "" : command;
+        return new LogEntry(createdAt, displayTitle, item, action, emptyToFallback(destination, "목적지 미상"), displayTime);
+    }
+
+    private void bindLogsList(View root, List<LogEntry> entries) {
+        LinearLayout list = root.findViewById(R.id.logsList);
+        TextView emptyText = root.findViewById(R.id.logsEmptyText);
+        list.removeAllViews();
+        emptyText.setVisibility(entries.isEmpty() ? View.VISIBLE : View.GONE);
+        for (int i = 0; i < entries.size(); i++) {
+            View row = createLogEntryCard(entries.get(i));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            if (i > 0) params.topMargin = dp(12);
+            list.addView(row, params);
+        }
+    }
+
+    private View createLogEntryCard(LogEntry entry) {
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.HORIZONTAL);
+        card.setGravity(Gravity.CENTER_VERTICAL);
+        card.setPadding(dp(16), dp(14), dp(16), dp(14));
+        card.setBackgroundResource(R.drawable.bg_card);
+
+        FrameLayout iconCircle = new FrameLayout(this);
+        iconCircle.setBackgroundResource(R.drawable.bg_module_icon_circle);
+        card.addView(iconCircle, new LinearLayout.LayoutParams(dp(42), dp(42)));
+
+        ImageView icon = new ImageView(this);
+        icon.setImageResource(entry.action.contains("루틴") ? R.drawable.ic_share : R.drawable.ic_bottom_box);
+        icon.setColorFilter(0xFF14191B);
+        iconCircle.addView(icon, new FrameLayout.LayoutParams(dp(22), dp(22), Gravity.CENTER));
+
+        LinearLayout textGroup = new LinearLayout(this);
+        textGroup.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        textParams.setMargins(dp(14), 0, dp(8), 0);
+        card.addView(textGroup, textParams);
+
+        TextView title = new TextView(this);
+        title.setText(entry.title);
+        title.setTextColor(0xFF14191B);
+        title.setTextSize(15);
+        title.setTypeface(null, android.graphics.Typeface.BOLD);
+        title.setIncludeFontPadding(false);
+        textGroup.addView(title);
+
+        TextView action = new TextView(this);
+        action.setText(entry.action + "  ·  " + entry.place);
+        action.setTextColor(0xFF4D585B);
+        action.setTextSize(12);
+        action.setIncludeFontPadding(false);
+        LinearLayout.LayoutParams actionParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        actionParams.setMargins(0, dp(6), 0, 0);
+        textGroup.addView(action, actionParams);
+
+        if (!entry.item.isEmpty()) {
+            TextView item = new TextView(this);
+            item.setText(entry.item);
+            item.setTextColor(0xFF798385);
+            item.setTextSize(12);
+            item.setIncludeFontPadding(false);
+            LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            itemParams.setMargins(0, dp(4), 0, 0);
+            textGroup.addView(item, itemParams);
+        }
+
+        TextView time = new TextView(this);
+        time.setText(entry.time);
+        time.setTextColor(0xFF798385);
+        time.setTextSize(13);
+        time.setIncludeFontPadding(false);
+        card.addView(time);
+        return card;
+    }
+
+    private List<LogEntry> collectFilteredLogs(DataSnapshot snapshot) {
+        List<LogEntry> entries = new ArrayList<>();
+        for (DataSnapshot child : snapshot.getChildren()) {
+            LogEntry entry = parseDisplayLogEntry(child);
+            if (entry != null && isLogInSelectedRange(entry.createdAt)) {
+                insertLogEntryDesc(entries, entry);
+            }
+        }
+        return entries;
+    }
+
+    private LogEntry parseLogEntry(DataSnapshot snapshot) {
+        Long createdAt = snapshot.child("createdAt").getValue(Long.class);
+        if (createdAt == null) {
+            createdAt = parseVoiceRecordKeyTime(snapshot.getKey());
+        }
+        if (createdAt == null) return null;
+        String command = snapshot.child("command").getValue(String.class);
+        String status = emptyToFallback(snapshot.child("status").getValue(String.class), "");
+        String module = snapshot.child("module").getValue(String.class);
+        String location = snapshot.child("location").getValue(String.class);
+        String action = isRoutineLog(command, status) ? "루틴 실행" : "호출 완료";
+        String title = isRoutineLog(command, status) ? emptyToFallback(command, "루틴 실행") : emptyToFallback(module, "트레이 호출");
+        String item = isRoutineLog(command, status) ? "" : emptyToFallback(command, "");
+        String place = emptyToFallback(location, "목적지 미상");
+        String time = new SimpleDateFormat("HH:mm", Locale.KOREA).format(new Date(createdAt));
+        return new LogEntry(createdAt, title, item, action, place, time);
+    }
+
+    private Long parseVoiceRecordKeyTime(String key) {
+        if (key == null) return null;
+        try {
+            return new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.KOREA).parse(key).getTime();
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private boolean isRoutineLog(String command, String status) {
+        String value = (emptyToFallback(command, "") + " " + emptyToFallback(status, "")).toLowerCase(Locale.ROOT);
+        return value.contains("루틴") || value.contains("routine");
+    }
+
+    private boolean isLogInSelectedRange(long createdAt) {
+        if ("all".equals(logFilter)) return true;
+        Calendar log = Calendar.getInstance(Locale.KOREA);
+        log.setTimeInMillis(createdAt);
+        Calendar start = Calendar.getInstance(Locale.KOREA);
+        Calendar end = Calendar.getInstance(Locale.KOREA);
+        clearTime(start);
+        clearTime(end);
+        if ("week".equals(logFilter)) {
+            int day = start.get(Calendar.DAY_OF_WEEK);
+            int daysFromMonday = day == Calendar.SUNDAY ? 6 : day - Calendar.MONDAY;
+            start.add(Calendar.DAY_OF_MONTH, -daysFromMonday);
+            end.setTimeInMillis(start.getTimeInMillis());
+            end.add(Calendar.DAY_OF_MONTH, 7);
+        } else if ("month".equals(logFilter)) {
+            start.set(Calendar.DAY_OF_MONTH, 1);
+            end.setTimeInMillis(start.getTimeInMillis());
+            end.add(Calendar.MONTH, 1);
+        } else {
+            end.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return createdAt >= start.getTimeInMillis() && createdAt < end.getTimeInMillis();
+    }
+
+    private void clearTime(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
+    private void insertLogEntryDesc(List<LogEntry> entries, LogEntry entry) {
+        int index = 0;
+        while (index < entries.size() && entries.get(index).createdAt > entry.createdAt) {
+            index++;
+        }
+        entries.add(index, entry);
+    }
+
+
+    private void choiceScreen(String title, String section, String[] choices, String back) {
+        View choiceView = LayoutInflater.from(this).inflate(R.layout.screen_choice, contentContainer, false);
+        contentContainer.addView(choiceView);
+        centerScreen(choiceView);
+        choiceView.findViewById(R.id.choiceBackButton).setOnClickListener(v -> setScreen(back));
+        ((TextView) choiceView.findViewById(R.id.choiceTitle)).setText(title);
+        ((TextView) choiceView.findViewById(R.id.choiceSection)).setText(section);
+        LinearLayout list = choiceView.findViewById(R.id.choiceList);
+        list.removeAllViews();
+        for (int i = 0; i < choices.length; i++) {
+            final int index = i;
+            View row = createChoiceRow(title, choices[i]);
+            row.setOnClickListener(v -> handleChoiceSelection(title, index, back));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    dp(72)
+            );
+            if (i > 0) params.topMargin = dp(10);
+            list.addView(row, params);
+        }
+        int listHeight = choices.length == 0 ? 0 : choices.length * dp(72) + Math.max(0, choices.length - 1) * dp(10);
+        setHeight(choiceView.findViewById(R.id.choiceCard), listHeight);
+        setHeight(choiceView.findViewById(R.id.choiceCanvas), dp(108) + listHeight + dp(32));
+    }
+
+    private View createChoiceRow(String title, String label) {
+        FrameLayout row = new FrameLayout(this);
+        row.setBackgroundResource(R.drawable.bg_card);
+        row.setClickable(true);
+        row.setFocusable(true);
+        row.setElevation(dp(2));
+        row.setPadding(dp(16), 0, dp(14), 0);
+
+        ImageView icon = new ImageView(this);
+        icon.setImageResource(title.contains("트레이") ? R.drawable.ic_box : R.drawable.ic_pin);
+        icon.setColorFilter(0xFF008E84);
+        FrameLayout.LayoutParams iconParams = new FrameLayout.LayoutParams(dp(22), dp(22));
+        iconParams.gravity = Gravity.START | Gravity.CENTER_VERTICAL;
+        row.addView(icon, iconParams);
+
+        TextView text = new TextView(this);
+        text.setGravity(Gravity.CENTER_VERTICAL);
+        text.setIncludeFontPadding(false);
+        text.setText(label);
+        text.setTextColor(0xFF14191B);
+        text.setTextSize(15);
+        text.setTypeface(null, android.graphics.Typeface.BOLD);
+        FrameLayout.LayoutParams textParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        textParams.leftMargin = dp(34);
+        textParams.rightMargin = dp(32);
+        row.addView(text, textParams);
+
+        ImageView chevron = new ImageView(this);
+        chevron.setImageResource(R.drawable.ic_chevron_left);
+        chevron.setRotation(180);
+        chevron.setColorFilter(0xFF7C878A);
+        FrameLayout.LayoutParams chevronParams = new FrameLayout.LayoutParams(dp(22), dp(22));
+        chevronParams.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
+        row.addView(chevron, chevronParams);
+
+        return row;
+    }
+
+    private FrameLayout inflateFixedCanvas(int layoutRes) {
+        FrameLayout c = (FrameLayout) LayoutInflater.from(this).inflate(layoutRes, contentContainer, false);
+        contentContainer.addView(c);
+        centerScreen(c);
+        return c;
+    }
+
+
+    private void centerScreen(View screenView) {
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        screenView.setLayoutParams(params);
+    }
+
+    private View findOptionalView(View rootView, String idName) {
+        int id = getResources().getIdentifier(idName, "id", getPackageName());
+        return id == 0 ? null : rootView.findViewById(id);
+    }
+
+    private int dp(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+
+    private void setHeight(View view, int height) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.height = height;
+        view.setLayoutParams(params);
+    }
+
+    private void setTopMargin(View view, int topMargin) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        if (params instanceof FrameLayout.LayoutParams) {
+            ((FrameLayout.LayoutParams) params).topMargin = topMargin;
+            view.setLayoutParams(params);
+        }
+    }
+
+    private void addBottomNav() {
+        bottomNavContainer.removeAllViews();
+
+        View nav = LayoutInflater.from(this).inflate(R.layout.view_bottom_nav, bottomNavContainer, false);
+        bottomNavContainer.addView(nav);
+
+        bindBottomNavItem(nav, R.id.bottomNavHome, "home");
+        bindBottomNavItem(nav, R.id.bottomNavModules, "modules");
+        bindBottomNavItem(nav, R.id.bottomNavRoutine, "routine");
+        bindBottomNavItem(nav, R.id.bottomNavMenu, "menu");
+    }
+
+    private void bindBottomNavItem(View nav, int itemId, String target) {
+        View item = nav.findViewById(itemId);
+        item.setSelected(isBottomNavSelected(target));
+        item.setOnClickListener(v -> setScreen(target));
+    }
+
+    private boolean isBottomNavSelected(String target) {
+        if ("home".equals(target)) {
+            return "home".equals(screen);
+        }
+        if ("modules".equals(target)) {
+            return screen.startsWith("module") || screen.startsWith("item");
+        }
+        if ("routine".equals(target)) {
+            return screen.startsWith("routine");
+        }
+        if ("menu".equals(target)) {
+            return "menu".equals(screen) || "map".equals(screen);
+        }
+        return false;
+    }
+
+    private void requestOrStartVoice() {
+        if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+            Toast.makeText(this, "음성 인식을 사용할 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO);
+            return;
+        }
+        setScreen("voiceListening");
+    }
+
+    private void startSpeechRecognition() {
+        stopSpeechRecognition();
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        speechRecognizer.setRecognitionListener(new RecognitionListener() {
+            @Override public void onReadyForSpeech(Bundle params) {}
+            @Override public void onBeginningOfSpeech() {}
+            @Override public void onRmsChanged(float rmsdB) {}
+            @Override public void onBufferReceived(byte[] buffer) {}
+            @Override public void onEndOfSpeech() {}
+            @Override public void onError(int error) {
+                setSampleVoiceResult();
+                setScreen("voiceResult");
+            }
+            @Override public void onResults(Bundle results) {
+                ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                if (matches != null && !matches.isEmpty()) {
+                    recognizedCommand = matches.get(0);
+                    inferVoiceTarget(recognizedCommand);
+                    postVoiceIntent(recognizedCommand);
+                } else {
+                    setSampleVoiceResult();
+                }
+                setScreen("voiceResult");
+            }
+            @Override public void onPartialResults(Bundle partialResults) {}
+            @Override public void onEvent(int eventType, Bundle params) {}
+        });
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
+        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+        speechRecognizer.startListening(intent);
+    }
+
+    private void stopSpeechRecognition() {
+        if (speechRecognizer != null) {
+            speechRecognizer.stopListening();
+            speechRecognizer.destroy();
+            speechRecognizer = null;
+        }
+    }
+
+    private void setSampleVoiceResult() {
+        recognizedCommand = "거실에 있는 트레이 가져와줘";
+        recognizedModule = selectedTray().name;
+        recognizedLocation = "거실";
+        recognizedIntent = "CALL_TRAY";
+        recognizedLabel = "";
+        recognizedMessage = "";
+        recognizedConfidence = 0.0;
+        voiceIntentAccepted = true;
+    }
+
+    private void inferVoiceTarget(String command) {
+        if (command == null) return;
+        List<TrayData> visibleTrays = currentTrays();
+        recognizedModule = (command.contains("B") || command.contains("비")) && visibleTrays.size() > 1
+                ? visibleTrays.get(1).name
+                : visibleTrays.get(0).name;
+        if (command.contains("현관")) {
+            recognizedLocation = "현관";
+        } else if (command.contains("침실")) {
+            recognizedLocation = "침실";
+        } else {
+            recognizedLocation = "거실";
+        }
+    }
+
+    private void applyVoiceIntentResult(JSONObject json) {
+        recognizedLabel = json.optString("label", recognizedLabel);
+        recognizedIntent = json.optString("intent", recognizedIntent);
+        recognizedMessage = json.optString("message", recognizedMessage);
+        recognizedConfidence = json.optDouble("confidence", recognizedConfidence);
+        voiceIntentAccepted = json.optBoolean("accepted", voiceIntentAccepted);
+
+        String targetTrayId = json.optString("targetTrayId", "");
+        TrayData targetTray = trayForVoiceTarget(targetTrayId, recognizedLabel);
+        if (targetTray != null) {
+            selectedTrayId = targetTray.id;
+            selectedModule = targetTray.name;
+            recognizedModule = targetTray.name;
+        } else if (!voiceIntentAccepted) {
+            recognizedModule = "명령 확인 필요";
+        }
+
+        String labelLocation = json.optString("label_location", "");
+        if (!labelLocation.isEmpty() && !"null".equals(labelLocation)) {
+            recognizedLocation = displayLocationFromVoiceLabel(labelLocation);
+        } else if (!voiceIntentAccepted) {
+            recognizedLocation = "목적지 확인 필요";
+        }
+    }
+
+    private TrayData trayForVoiceTarget(String targetTrayId, String label) {
+        List<TrayData> visibleTrays = currentTrays();
+        String target = emptyToFallback(targetTrayId, "").toLowerCase(Locale.ROOT);
+        for (TrayData tray : visibleTrays) {
+            if (tray.id.equalsIgnoreCase(targetTrayId) || tray.name.equalsIgnoreCase(targetTrayId)) {
+                return tray;
+            }
+        }
+
+        String normalizedLabel = emptyToFallback(label, "").toUpperCase(Locale.ROOT);
+        if (target.contains("baby") || normalizedLabel.contains("BABY")) {
+            return findTrayByKeywords("아기", "육아", "기저귀", "물티슈", "젖병", "장난감");
+        }
+        if (target.contains("medicine") || normalizedLabel.contains("MEDICINE")) {
+            return findTrayByKeywords("약", "복약", "비타민", "영양제", "혈압", "당뇨", "안경", "돋보기");
+        }
+        if (target.contains("commute") || normalizedLabel.contains("COMMUTE")) {
+            return findTrayByKeywords("출근", "통근", "차 키", "차키", "교통카드", "마스크");
+        }
+        return visibleTrays.isEmpty() ? null : visibleTrays.get(0);
+    }
+
+    private TrayData findTrayByKeywords(String... keywords) {
+        for (TrayData tray : currentTrays()) {
+            StringBuilder haystack = new StringBuilder(tray.name).append(' ').append(tray.location);
+            for (String item : tray.items) {
+                haystack.append(' ').append(item);
+            }
+            String text = haystack.toString();
+            for (String keyword : keywords) {
+                if (text.contains(keyword)) {
+                    return tray;
+                }
+            }
+        }
+        List<TrayData> visibleTrays = currentTrays();
+        return visibleTrays.isEmpty() ? null : visibleTrays.get(0);
+    }
+
+    private String displayLocationFromVoiceLabel(String labelLocation) {
+        String normalized = labelLocation.toLowerCase(Locale.ROOT);
+        if ("porch".equals(normalized)) return "현관";
+        if ("living_room".equals(normalized)) return "거실";
+        if ("bedroom".equals(normalized)) return "침실";
+        for (String place : places) {
+            if (place.equals(labelLocation)) return place;
+        }
+        return labelLocation;
+    }
+
+    private void saveVoiceRecord(String command, String status, String message) {
+        try {
+            long now = System.currentTimeMillis();
+            String key = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.KOREA).format(new Date(now));
+            db.child("voiceRecords").child(key).child("command").setValue(command);
+            db.child("voiceRecords").child(key).child("status").setValue(status);
+            db.child("voiceRecords").child(key).child("message").setValue(message);
+            db.child("voiceRecords").child(key).child("module").setValue(recognizedModule);
+            db.child("voiceRecords").child(key).child("location").setValue(recognizedLocation);
+            db.child("voiceRecords").child(key).child("intent").setValue(recognizedIntent);
+            db.child("voiceRecords").child(key).child("label").setValue(recognizedLabel);
+            db.child("voiceRecords").child(key).child("confidence").setValue(recognizedConfidence);
+            db.child("voiceRecords").child(key).child("accepted").setValue(voiceIntentAccepted);
+            db.child("voiceRecords").child(key).child("createdAt").setValue(now);
+            saveCallExecutionLog(command, status, now);
+            saveMovementNotificationFromVoiceStatus(status, now);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void saveMovementNotificationFromVoiceStatus(String status, long createdAt) {
+        if (!moveNotificationsEnabled) return;
+        if ("fallback".equals(status)) {
+            sendLocalNotification("호출 실패", "CARRY 호출에 실패했습니다.");
+            saveNotificationLog("호출 실패", recognizedModule, recognizedLocation, "호출 실패", "call", createdAt);
+        } else if ("sent".equals(status)) {
+            sendLocalNotification("호출 완료 알림", recognizedModule + " 이동이 완료되었습니다.");
+            saveNotificationLog("호출 완료 알림", recognizedModule, recognizedLocation, "호출 완료", "call", createdAt);
+        }
+    }
+
+    private void saveNotificationLog(String title, String trayName, String destination, String status, String source, long createdAt) {
+        try {
+            DatabaseReference ref = db.child("notificationLogs").push();
+            ref.child("title").setValue(title);
+            ref.child("trayName").setValue(trayName);
+            ref.child("destination").setValue(destination);
+            ref.child("status").setValue(status);
+            ref.child("source").setValue(source);
+            ref.child("createdAt").setValue(createdAt);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void saveCallExecutionLog(String command, String status, long createdAt) {
+        if ("recognized".equals(status)) return;
+        String lowerStatus = emptyToFallback(status, "").toLowerCase(Locale.ROOT);
+        boolean failed = "fallback".equals(status) || lowerStatus.contains("fail");
+        saveExecutionLog(
+                "call",
+                emptyToFallback(recognizedModule, "트레이 호출"),
+                emptyToFallback(command, ""),
+                failed ? "호출 실패" : "호출 완료",
+                emptyToFallback(recognizedLocation, "목적지 미상"),
+                createdAt
+        );
+    }
+
+    private void saveRoutineExecutionLog(RoutineData routine, boolean success, long createdAt) {
+        if (routine == null) return;
+        saveExecutionLog(
+                "routine",
+                emptyToFallback(routine.title, "루틴 실행"),
+                "",
+                success ? "루틴 실행" : "루틴 실행 실패",
+                emptyToFallback(routine.place, "목적지 미상"),
+                createdAt
+        );
+    }
+
+    private void saveExecutionLog(String source, String title, String command, String action, String destination, long createdAt) {
+        try {
+            DatabaseReference ref = db.child("logs").push();
+            ref.child("source").setValue(source);
+            ref.child("title").setValue(title);
+            ref.child("trayName").setValue(title);
+            ref.child("command").setValue(command);
+            ref.child("action").setValue(action);
+            ref.child("status").setValue(action);
+            ref.child("destination").setValue(destination);
+            ref.child("location").setValue(destination);
+            ref.child("createdAt").setValue(createdAt);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private String stringValue(DataSnapshot snapshot, String fallback) {
+        String value = snapshot.getValue(String.class);
+        return value == null ? fallback : value;
+    }
+
+    private void postVoiceIntent(String command) {
+        new Thread(() -> {
+            try {
+                JSONObject payload = new JSONObject();
+                payload.put("text", command);
+                JSONObject json = new JSONObject(postVoiceIntentPayload(payload));
+                runOnUiThread(() -> {
+                    applyVoiceIntentResult(json);
+                    saveVoiceRecord(command, voiceIntentAccepted ? "recognized" : "rejected", json.toString());
+                    if ("voiceResult".equals(screen)) {
+                        render();
+                    }
+                    if (!recognizedMessage.isEmpty()) {
+                        Toast.makeText(this, recognizedMessage, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    inferVoiceTarget(command);
+                    recognizedIntent = "FALLBACK";
+                    recognizedLabel = "";
+                    recognizedMessage = "음성 모델 서버에 연결하지 못했습니다.";
+                    recognizedConfidence = 0.0;
+                    voiceIntentAccepted = false;
+                    saveVoiceRecord(command, "fallback", e.getMessage());
+                    if ("voiceResult".equals(screen)) {
+                        render();
+                    }
+                    Toast.makeText(this, recognizedMessage, Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
+    }
+
+    private String postVoiceIntentPayload(JSONObject payload) throws Exception {
+        Exception lastError = null;
+        for (String apiUrl : VOICE_INTENT_API_URLS) {
+            HttpURLConnection conn = null;
+            try {
+                URL url = new URL(apiUrl);
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setConnectTimeout(2500);
+                conn.setReadTimeout(2500);
+                conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+                conn.setDoOutput(true);
+                try (OutputStream os = conn.getOutputStream()) {
+                    os.write(payload.toString().getBytes(StandardCharsets.UTF_8));
+                }
+                int statusCode = conn.getResponseCode();
+                BufferedReader br = new BufferedReader(new InputStreamReader(
+                        statusCode >= 400 ? conn.getErrorStream() : conn.getInputStream(),
+                        StandardCharsets.UTF_8
+                ));
+                StringBuilder response = new StringBuilder();
+                try (BufferedReader reader = br) {
+                    String line;
+                    while ((line = reader.readLine()) != null) response.append(line);
+                }
+                if (response.length() == 0) {
+                    throw new IllegalStateException("Empty voice intent response");
+                }
+                return response.toString();
+            } catch (Exception e) {
+                lastError = e;
+            } finally {
+                if (conn != null) conn.disconnect();
+            }
+        }
+        throw lastError == null ? new IllegalStateException("Voice intent API unavailable") : lastError;
+    }
+
+    private static class ItemSearchResult {
+        final String itemName;
+        final String trayId;
+        final String trayName;
+        final String location;
+
+        ItemSearchResult(String itemName, String trayId, String trayName, String location) {
+            this.itemName = itemName;
+            this.trayId = trayId;
+            this.trayName = trayName;
+            this.location = location;
+        }
+    }
+
+    private static class RoutineData {
+        final String id;
+        final String title;
+        final String trayId;
+        final String trayName;
+        final int hour;
+        final int minute;
+        final String place;
+        boolean enabled;
+        int quickSlot;
+
+        RoutineData(String id, String title, String trayId, String trayName, int hour, int minute, String place, boolean enabled) {
+            this(id, title, trayId, trayName, hour, minute, place, enabled, 0);
+        }
+
+        RoutineData(String id, String title, String trayId, String trayName, int hour, int minute, String place, boolean enabled, int quickSlot) {
+            this.id = id;
+            this.title = title;
+            this.trayId = trayId;
+            this.trayName = trayName;
+            this.hour = hour;
+            this.minute = minute;
+            this.place = place;
+            this.enabled = enabled;
+            this.quickSlot = quickSlot;
+        }
+    }
+
+    private static class TrayData {
+        final String id;
+        final String name;
+        final String location;
+        boolean representative;
+        final List<String> items = new ArrayList<>();
+
+        TrayData(String id, String name, String location) {
+            this(id, name, location, false);
+        }
+
+        TrayData(String id, String name, String location, boolean representative) {
+            this.id = id;
+            this.name = name;
+            this.location = location;
+            this.representative = representative;
+        }
+    }
+
+    private interface PlaceSelectionHandler {
+        void onPlaceSelected(int index);
+    }
+
+    private static class NotificationLogEntry {
+        final long createdAt;
+        final String title;
+        final String trayName;
+        final String destination;
+        final String status;
+        final String source;
+        final String time;
+
+        NotificationLogEntry(long createdAt, String title, String trayName, String destination, String status, String source, String time) {
+            this.createdAt = createdAt;
+            this.title = title;
+            this.trayName = trayName;
+            this.destination = destination;
+            this.status = status;
+            this.source = source;
+            this.time = time;
+        }
+    }
+
+    private static class LogEntry {
+        final long createdAt;
+        final String title;
+        final String item;
+        final String action;
+        final String place;
+        final String time;
+
+        LogEntry(long createdAt, String title, String item, String action, String place, String time) {
+            this.createdAt = createdAt;
+            this.title = title;
+            this.item = item;
+            this.action = action;
+            this.place = place;
+            this.time = time;
+        }
+    }
+
+}
+
+
