@@ -38,11 +38,13 @@
     <FrameLayout
         android:id="@+id/mapPreviewCard"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_height="312dp"
+        android:layout_marginLeft="44dp"
         android:layout_marginTop="76dp"
-        android:background="@drawable/bg_card">
+        android:layout_marginRight="44dp"
+        android:background="@drawable/bg_map_preview_frame"
+        android:clipToOutline="true"
+        android:foreground="@drawable/bg_map_preview_outline">
 
         <FrameLayout
             android:id="@+id/mapPreviewIcon"
@@ -56,8 +58,8 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_map"
-                android:contentDescription="@null" />
+                android:contentDescription="@null"
+                android:src="@drawable/ic_map" />
         </FrameLayout>
 
         <TextView
@@ -79,6 +81,15 @@
             android:textColor="#7C878A"
             android:textSize="12sp"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/mapPreviewImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/map_frame" />
     </FrameLayout>
 
     <FrameLayout
@@ -87,7 +98,7 @@
         android:layout_height="229dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="288dp"
+        android:layout_marginTop="441dp"
         android:background="@drawable/bg_card">
 
         <TextView
@@ -111,11 +122,11 @@
             android:background="@drawable/bg_chip_soft">
 
             <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_plus"
-            android:contentDescription="@null"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_plus" />
         </FrameLayout>
 
         <View
@@ -123,7 +134,7 @@
             android:layout_height="1dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="55dp"
             android:background="#ECEDEF" />
 
         <FrameLayout
@@ -132,7 +143,7 @@
             android:layout_height="20dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-        android:layout_marginTop="66dp">
+            android:layout_marginTop="66dp">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -173,7 +184,7 @@
             android:layout_height="1dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-        android:layout_marginTop="103dp"
+            android:layout_marginTop="103dp"
             android:background="#ECEDEF" />
 
         <FrameLayout
@@ -182,7 +193,7 @@
             android:layout_height="20dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-        android:layout_marginTop="121dp">
+            android:layout_marginTop="121dp">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -223,7 +234,7 @@
             android:layout_height="1dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-        android:layout_marginTop="158dp"
+            android:layout_marginTop="158dp"
             android:background="#ECEDEF" />
 
         <FrameLayout
@@ -232,7 +243,7 @@
             android:layout_height="20dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-        android:layout_marginTop="176dp">
+            android:layout_marginTop="176dp">
 
             <ImageView
                 android:layout_width="match_parent"

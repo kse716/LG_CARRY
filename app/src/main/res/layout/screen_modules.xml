@@ -56,9 +56,8 @@
             android:focusable="true">
 
             <ImageView
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:layout_gravity="center"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_search" />
         </FrameLayout>

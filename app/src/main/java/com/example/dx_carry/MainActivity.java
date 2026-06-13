@@ -1067,7 +1067,7 @@ public class MainActivity extends AppCompatActivity {
 
         FrameLayout list = modulesView.findViewById(R.id.modulesList);
         list.removeAllViews();
-        int cardHeight = dp(204);
+        int cardHeight = dp(216);
         int gap = dp(16);
         for (int i = 0; i < visibleTrays.size(); i++) {
             TrayData tray = visibleTrays.get(i);
@@ -2305,7 +2305,37 @@ public class MainActivity extends AppCompatActivity {
     private void renderMap() {
         FrameLayout c = inflateFixedCanvas(R.layout.screen_map);
         addBottomNav();
+        updateMapPreviewCardSize(c);
+        updateMapBasesCardPosition(c);
         c.findViewById(R.id.mapBackButton).setOnClickListener(v -> setScreen("menu"));
+    }
+
+    private void updateMapPreviewCardSize(View mapView) {
+        View previewCard = mapView.findViewById(R.id.mapPreviewCard);
+        if (previewCard == null) return;
+        previewCard.post(() -> {
+            int cardWidth = previewCard.getWidth();
+            if (cardWidth <= 0) {
+                cardWidth = getResources().getDisplayMetrics().widthPixels - dp(88);
+            }
+            int cardHeight = Math.round(cardWidth * 886f / 868f);
+            setHeight(previewCard, cardHeight);
+            updateMapBasesCardPosition(mapView);
+        });
+    }
+
+
+    private void updateMapBasesCardPosition(View mapView) {
+        View previewCard = mapView.findViewById(R.id.mapPreviewCard);
+        View basesCard = mapView.findViewById(R.id.mapBasesCard);
+        if (previewCard == null || basesCard == null) return;
+
+        ViewGroup.LayoutParams previewParams = previewCard.getLayoutParams();
+        if (!(previewParams instanceof FrameLayout.LayoutParams)) return;
+
+        FrameLayout.LayoutParams previewFrameParams = (FrameLayout.LayoutParams) previewParams;
+        int basesTop = previewFrameParams.topMargin + previewFrameParams.height + dp(12);
+        setTopMargin(basesCard, basesTop);
     }
 
     private void bindLogFilterChip(View c, int chipId, String filter) {
