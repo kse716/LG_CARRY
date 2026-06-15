@@ -17,7 +17,7 @@
             android:layout_height="29dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="27dp"
+            android:layout_marginTop="27dp"
             android:gravity="center_vertical"
             android:includeFontPadding="false"
             android:text="메뉴"
@@ -30,16 +30,15 @@
             android:layout_height="132dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="78dp"
-            android:background="@drawable/bg_card"
-            android:elevation="3dp">
+            android:layout_marginTop="78dp"
+            android:background="@drawable/bg_card">
 
             <FrameLayout android:id="@+id/menuUserIcon"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-        android:layout_marginTop="40dp"
+                android:layout_marginTop="40dp"
                 android:background="@drawable/bg_voice_soft_circle">
 
                 <ImageView
@@ -90,7 +89,7 @@
         </FrameLayout>
 
         <TextView android:layout_width="match_parent" android:layout_height="16dp" android:layout_marginStart="20dp" android:layout_marginEnd="20dp"
-        android:layout_marginTop="224dp" android:includeFontPadding="false" android:text="설정" android:textColor="#798385" android:textSize="13sp" android:textStyle="bold" />
+            android:layout_marginTop="224dp" android:includeFontPadding="false" android:text="설정" android:textColor="#798385" android:textSize="13sp" android:textStyle="bold" />
 
         <FrameLayout
             android:id="@+id/menuListCard"
@@ -98,9 +97,8 @@
             android:layout_height="329dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="254dp"
-            android:background="@drawable/bg_card"
-            android:elevation="3dp">
+            android:layout_marginTop="254dp"
+            android:background="@drawable/bg_card">
 
             <FrameLayout android:id="@+id/menuDeviceRow" android:layout_width="match_parent" android:layout_height="54dp" android:clickable="true" android:focusable="true" />
             <FrameLayout android:id="@+id/menuDeviceIcon"
@@ -108,7 +106,7 @@
                 android:layout_height="20dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-        android:layout_marginTop="17dp">
+                android:layout_marginTop="17dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -131,7 +129,7 @@
                 android:layout_height="20dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-        android:layout_marginTop="72dp">
+                android:layout_marginTop="72dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -147,13 +145,15 @@
             <FrameLayout android:id="@+id/menuNotificationChevron" android:layout_width="18dp" android:layout_height="18dp" android:layout_marginStart="316dp" android:layout_marginTop="73dp" />
             <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="109dp" android:background="#E2E7E7" />
 
+            <FrameLayout android:id="@+id/menuMemberRow" android:layout_width="match_parent" android:layout_height="54dp" android:layout_marginTop="110dp" android:clickable="true" android:focusable="true" />
+
             <FrameLayout
                 android:id="@+id/menuShareIcon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-        android:layout_marginTop="127dp">
+                android:layout_marginTop="127dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -169,7 +169,7 @@
                 android:layout_marginStart="48dp"
                 android:layout_marginTop="128dp"
                 android:includeFontPadding="false"
-                android:text="공유 및 권한"
+                android:text="가족 계정 공유 및 권한"
                 android:textColor="#14191B"
                 android:textSize="15sp" />
 
@@ -182,7 +182,7 @@
                 android:layout_height="20dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-        android:layout_marginTop="182dp">
+                android:layout_marginTop="182dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -203,7 +203,7 @@
                 android:layout_height="20dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-        android:layout_marginTop="237dp">
+                android:layout_marginTop="237dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -224,7 +224,7 @@
                 android:layout_height="20dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-        android:layout_marginTop="292dp">
+                android:layout_marginTop="292dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -243,7 +243,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="597dp"
+            android:layout_marginTop="597dp"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="앱 버전 1.0.0"

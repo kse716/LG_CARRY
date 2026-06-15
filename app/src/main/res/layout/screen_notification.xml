@@ -57,7 +57,6 @@
         android:layout_marginTop="112dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/bg_card"
-        android:elevation="2dp"
         android:orientation="vertical">
 
         <FrameLayout
@@ -312,7 +311,6 @@
         android:layout_marginEnd="20dp"
         android:background="@drawable/bg_card"
         android:clickable="true"
-        android:elevation="2dp"
         android:focusable="true">
 
         <ImageView
@@ -368,7 +366,6 @@
         android:layout_marginEnd="20dp"
         android:background="@drawable/bg_card"
         android:clickable="true"
-        android:elevation="2dp"
         android:focusable="true">
 
         <ImageView

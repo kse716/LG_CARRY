@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,8 +61,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -84,7 +88,11 @@ public class MainActivity extends AppCompatActivity {
     private final List<TrayData> trays = new ArrayList<>();
     private final List<RoutineData> routines = new ArrayList<>();
     private final List<String> places = new ArrayList<>();
+    private final List<MemberData> members = new ArrayList<>();
     private String representativeTrayId = "";
+    private String currentUserId = "";
+    private String currentUserName = "LG Carry";
+    private String currentFamilyId = "";
     private String selectedRoutineId = "routine1";
     private String logFilter = "today";
     private final boolean[] routineEnabled = {true, true, false};
@@ -111,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
     private AnimatorSet voiceMicPulseAnimator;
     private SpeechRecognizer speechRecognizer;
     private DatabaseReference db;
+    private DatabaseReference membersRef;
+    private ValueEventListener membersListener;
     private boolean pushNotificationsEnabled = true;
     private boolean moveNotificationsEnabled = true;
     private boolean batteryNotificationsEnabled = true;
@@ -137,10 +147,12 @@ public class MainActivity extends AppCompatActivity {
         bottomNavContainer = findViewById(R.id.bottomNavContainer);
 
         db = FirebaseDatabase.getInstance().getReference();
+        restoreCurrentUser();
         addFallbackPlaces();
         listenToPlaces();
         listenToTrays();
         listenToRoutines();
+        listenToMembers();
         createNotificationChannel();
         listenToNotificationSettings();
         listenToBatteryLevel();
@@ -394,6 +406,76 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void listenToMembers() {
+        if (membersRef != null && membersListener != null) {
+            membersRef.removeEventListener(membersListener);
+        }
+        membersRef = currentFamilyId.isEmpty()
+                ? db.child("members")
+                : db.child("familyAccounts").child(currentFamilyId).child("members");
+        membersListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                members.clear();
+                for (DataSnapshot memberSnapshot : snapshot.getChildren()) {
+                    String id = memberSnapshot.getKey() == null ? "" : memberSnapshot.getKey();
+                    String name = stringValue(memberSnapshot.child("name"), "");
+                    String memberId = stringValue(memberSnapshot.child("id"), id);
+                    Long createdAt = memberSnapshot.child("createdAt").getValue(Long.class);
+                    if (!memberId.isEmpty() && !name.trim().isEmpty()) {
+                        members.add(new MemberData(memberId, name.trim(), createdAt == null ? 0 : createdAt));
+                    }
+                }
+                if ("members".equals(screen) || "moduleDetail".equals(screen)) {
+                    render();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        };
+        membersRef.addValueEventListener(membersListener);
+    }
+
+    private void restoreCurrentUser() {
+        SharedPreferences prefs = getSharedPreferences("userSettings", MODE_PRIVATE);
+        currentUserId = emptyToFallback(prefs.getString("userId", ""), "");
+        currentUserName = emptyToFallback(prefs.getString("userName", ""), "LG Carry");
+        currentFamilyId = emptyToFallback(prefs.getString("familyId", ""), "");
+    }
+
+    private void saveCurrentUser(String userId, String userName, String familyId) {
+        boolean familyChanged = !emptyToFallback(familyId, "").equals(currentFamilyId);
+        currentUserId = userId;
+        currentUserName = emptyToFallback(userName, userId);
+        currentFamilyId = familyId;
+        getSharedPreferences("userSettings", MODE_PRIVATE)
+                .edit()
+                .putString("userId", currentUserId)
+                .putString("userName", currentUserName)
+                .putString("familyId", currentFamilyId)
+                .apply();
+        if (familyChanged && db != null) {
+            listenToMembers();
+        }
+    }
+
+    private String currentEditorName() {
+        return emptyToFallback(currentUserName, "LG Carry");
+    }
+
+    private String currentEditorId() {
+        return emptyToFallback(currentUserId, "local-user");
+    }
+
+    private void markTrayUpdated(DatabaseReference trayRef) {
+        long now = System.currentTimeMillis();
+        trayRef.child("updatedBy").setValue(currentEditorName());
+        trayRef.child("updatedById").setValue(currentEditorId());
+        trayRef.child("updatedAt").setValue(now);
+    }
+
     private TrayData parseTray(DataSnapshot snapshot) {
         String id = snapshot.getKey() == null ? "tray1" : snapshot.getKey();
         String name = snapshot.child("name").getValue(String.class);
@@ -402,7 +484,16 @@ public class MainActivity extends AppCompatActivity {
             location = snapshot.child("label_location").getValue(String.class);
         }
         Boolean representative = snapshot.child("representative").getValue(Boolean.class);
-        TrayData tray = new TrayData(id, emptyToFallback(name, defaultTrayName(id)), emptyToFallback(location, defaultTrayLocation(id)), representative != null && representative);
+        String updatedBy = stringValue(snapshot.child("updatedBy"), "");
+        Long updatedAt = snapshot.child("updatedAt").getValue(Long.class);
+        TrayData tray = new TrayData(
+                id,
+                emptyToFallback(name, defaultTrayName(id)),
+                emptyToFallback(location, defaultTrayLocation(id)),
+                representative != null && representative,
+                updatedBy,
+                updatedAt == null ? 0 : updatedAt
+        );
         if (tray.representative) {
             representativeTrayId = tray.id;
         }
@@ -469,8 +560,17 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         DatabaseReference trayRef = db.child("trays").push();
-        trayRef.child("name").setValue(trayName);
-        trayRef.child("location").setValue(location).addOnSuccessListener(unused -> {
+        long now = System.currentTimeMillis();
+        Map<String, Object> values = new HashMap<>();
+        values.put("name", trayName);
+        values.put("location", location);
+        values.put("createdBy", currentEditorName());
+        values.put("createdById", currentEditorId());
+        values.put("createdAt", now);
+        values.put("updatedBy", currentEditorName());
+        values.put("updatedById", currentEditorId());
+        values.put("updatedAt", now);
+        trayRef.updateChildren(values).addOnSuccessListener(unused -> {
             selectedTrayId = trayRef.getKey();
             selectedModule = trayName;
             setScreen("modules");
@@ -482,12 +582,17 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "트레이 이름을 입력하세요. ", Toast.LENGTH_SHORT).show();
             return;
         }
-        db.child("trays").child(selectedTrayId).child("name").setValue(trayName)
-                .addOnSuccessListener(unused -> {
-                    db.child("trays").child(selectedTrayId).child("location").setValue(location);
-                    selectedModule = trayName;
-                    setScreen("moduleDetail");
-                });
+        DatabaseReference trayRef = db.child("trays").child(selectedTrayId);
+        Map<String, Object> values = new HashMap<>();
+        values.put("name", trayName);
+        values.put("location", location);
+        values.put("updatedBy", currentEditorName());
+        values.put("updatedById", currentEditorId());
+        values.put("updatedAt", System.currentTimeMillis());
+        trayRef.updateChildren(values).addOnSuccessListener(unused -> {
+            selectedModule = trayName;
+            setScreen("moduleDetail");
+        });
     }
 
     private void addItemToSelectedTray(String itemName) {
@@ -496,10 +601,21 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         DatabaseReference itemRef = db.child("trays").child(selectedTrayId).child("items").push();
-        itemRef.child("itemName").setValue(itemName);
-        itemRef.child("trayId").setValue(selectedTrayId);
-        itemRef.child("createdAt").setValue(System.currentTimeMillis())
-                .addOnSuccessListener(unused -> setScreen("moduleDetail"));
+        long now = System.currentTimeMillis();
+        Map<String, Object> values = new HashMap<>();
+        values.put("itemName", itemName);
+        values.put("trayId", selectedTrayId);
+        values.put("createdBy", currentEditorName());
+        values.put("createdById", currentEditorId());
+        values.put("createdAt", now);
+        values.put("updatedBy", currentEditorName());
+        values.put("updatedById", currentEditorId());
+        values.put("updatedAt", now);
+        itemRef.updateChildren(values)
+                .addOnSuccessListener(unused -> {
+                    markTrayUpdated(db.child("trays").child(selectedTrayId));
+                    setScreen("moduleDetail");
+                });
     }
 
     private String emptyToFallback(String value, String fallback) {
@@ -581,6 +697,9 @@ public class MainActivity extends AppCompatActivity {
             case "map":
                 renderMap();
                 break;
+            case "members":
+                renderMembers();
+                break;
             case "alarm":
                 renderAlarm();
                 break;
@@ -606,16 +725,82 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderLogin() {
         FrameLayout c = inflateFixedCanvas(R.layout.screen_login);
+        EditText idInput = c.findViewById(R.id.loginIdInput);
         EditText password = c.findViewById(R.id.loginPasswordInputXml);
         password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        c.findViewById(R.id.loginSubmitButton).setOnClickListener(v -> setScreen("home"));
+        c.findViewById(R.id.loginSubmitButton).setOnClickListener(v -> loginWithId(idInput.getText().toString().trim()));
         c.findViewById(R.id.loginSignupButton).setOnClickListener(v -> setScreen("signup"));
+    }
+
+    private void loginWithId(String userId) {
+        if (userId.isEmpty()) {
+            Toast.makeText(this, "아이디를 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        db.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String userName = stringValue(snapshot.child("name"), userId);
+                String familyId = stringValue(snapshot.child("familyId"), currentFamilyId);
+                saveCurrentUser(userId, userName, familyId);
+                setScreen("home");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                saveCurrentUser(userId, userId, currentFamilyId);
+                setScreen("home");
+            }
+        });
     }
 
     private void renderSignup() {
         FrameLayout c = inflateFixedCanvas(R.layout.screen_signup);
         c.findViewById(R.id.signupBackButton).setOnClickListener(v -> setScreen("login"));
-        c.findViewById(R.id.signupSubmitButton).setOnClickListener(v -> setScreen("home"));
+        c.findViewById(R.id.signupSubmitButton).setOnClickListener(v -> {
+            EditText idInput = c.findViewById(R.id.signupIdInput);
+            EditText nameInput = c.findViewById(R.id.signupNameInput);
+            saveSignupUser(
+                    idInput.getText().toString().trim(),
+                    nameInput.getText().toString().trim()
+            );
+        });
+    }
+
+    private void saveSignupUser(String userId, String userName) {
+        if (userId.isEmpty()) {
+            Toast.makeText(this, "아이디를 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (userName.isEmpty()) {
+            Toast.makeText(this, "이름을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String familyId = generateFamilyId();
+        saveCurrentUser(userId, userName, familyId);
+        long now = System.currentTimeMillis();
+        Map<String, Object> userValues = new HashMap<>();
+        userValues.put("id", userId);
+        userValues.put("name", userName);
+        userValues.put("familyId", familyId);
+        userValues.put("createdAt", now);
+        db.child("users").child(userId).updateChildren(userValues);
+
+        Map<String, Object> memberValues = new HashMap<>();
+        memberValues.put("id", userId);
+        memberValues.put("name", userName);
+        memberValues.put("createdAt", now);
+        memberValues.put("familyId", familyId);
+        db.child("familyAccounts").child(familyId).child("id").setValue(familyId);
+        db.child("familyAccounts").child(familyId).child("createdAt").setValue(now);
+        db.child("familyAccounts").child(familyId).child("members").child(userId).updateChildren(memberValues);
+        db.child("members").child(userId).updateChildren(memberValues);
+        setScreen("home");
+    }
+
+    private String generateFamilyId() {
+        String token = UUID.randomUUID().toString().replace("-", "").substring(0, 8).toUpperCase(Locale.ROOT);
+        return "FAM-" + token;
     }
 
     private void renderHome() {
@@ -712,11 +897,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void bindHomeItemText(TextView textView, TrayData tray, int index) {
         if (index >= tray.items.size()) {
-            textView.setText("•  -");
+            textView.setText("• -");
             textView.setTextColor(0xFF798385);
             return;
         }
-        textView.setText("•  " + tray.items.get(index));
+        textView.setText("• " + tray.items.get(index));
         textView.setTextColor(0xFF14191B);
     }
 
@@ -754,7 +939,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         title.setText(entry.title);
-        sub.setText("→ " + entry.place);
+        sub.setText("• " + entry.place);
         time.setText(formatHomeLogTime(entry.createdAt));
     }
 
@@ -1143,7 +1328,7 @@ public class MainActivity extends AppCompatActivity {
         detailView.findViewById(R.id.moduleDetailBackButton).setOnClickListener(v -> setScreen("modules"));
         ((TextView) detailView.findViewById(R.id.moduleDetailTitle)).setText(tray.name);
         ((TextView) detailView.findViewById(R.id.moduleDetailTrayName)).setText(tray.name);
-        ((TextView) detailView.findViewById(R.id.moduleDetailTrayLocation)).setText("현재 위치 · " + tray.location);
+        ((TextView) detailView.findViewById(R.id.moduleDetailTrayLocation)).setText("현재 위치 · " + tray.location + trayUpdatedSuffix(tray));
         ((TextView) detailView.findViewById(R.id.moduleDetailItemCount)).setText("보관 물품 " + tray.items.size() + "개");
         bindModuleDetailItems(detailView, tray);
         EditText itemInput = detailView.findViewById(R.id.moduleDetailItemInput);
@@ -1273,7 +1458,10 @@ public class MainActivity extends AppCompatActivity {
                         storedName = itemSnapshot.child("name").getValue(String.class);
                     }
                     if (itemName.equals(storedName)) {
-                        itemSnapshot.getRef().removeValue().addOnSuccessListener(unused -> setScreen("moduleDetail"));
+                        itemSnapshot.getRef().removeValue().addOnSuccessListener(unused -> {
+                            markTrayUpdated(db.child("trays").child(selectedTrayId));
+                            setScreen("moduleDetail");
+                        });
                         return;
                     }
                 }
@@ -1337,6 +1525,9 @@ public class MainActivity extends AppCompatActivity {
         }
         Boolean enabled = snapshot.child("enabled").getValue(Boolean.class);
         Integer quickSlot = snapshot.child("quickSlot").getValue(Integer.class);
+        String updatedBy = stringValue(snapshot.child("updatedBy"), "");
+        String updatedById = stringValue(snapshot.child("updatedById"), "");
+        Long updatedAt = snapshot.child("updatedAt").getValue(Long.class);
         return new RoutineData(
                 id,
                 emptyToFallback(title, defaultRoutineTitle(id)),
@@ -1346,7 +1537,10 @@ public class MainActivity extends AppCompatActivity {
                 minute == null ? 30 : minute,
                 emptyToFallback(place, "거실"),
                 enabled == null || enabled,
-                quickSlot == null ? 0 : quickSlot
+                quickSlot == null ? 0 : quickSlot,
+                updatedBy,
+                updatedById,
+                updatedAt == null ? 0 : updatedAt
         );
     }
 
@@ -1770,6 +1964,11 @@ public class MainActivity extends AppCompatActivity {
     private void addRoutineCard(FrameLayout list, int index, RoutineData routine) {
         View card = LayoutInflater.from(this).inflate(R.layout.item_routine_card, list, false);
         ((TextView) card.findViewById(R.id.routineTitleText)).setText(routine.title);
+        TextView updatedText = card.findViewById(R.id.routineUpdatedText);
+        if (updatedText != null) {
+            updatedText.setText(routineUpdatedText(routine));
+            updatedText.setVisibility(routine.updatedAt > 0 ? View.VISIBLE : View.GONE);
+        }
         ((TextView) card.findViewById(R.id.routineTrayText)).setText(routine.trayName);
         ((TextView) card.findViewById(R.id.routineTimeText)).setText(formatDialTime(routine.hour, routine.minute));
         ((TextView) card.findViewById(R.id.routinePlaceText)).setText(routine.place);
@@ -1850,6 +2049,11 @@ public class MainActivity extends AppCompatActivity {
         nameInput.setSelection(nameInput.getText().length());
         ((TextView) editView.findViewById(R.id.routineEditTrayValue)).setText(selectedTray().name);
         ((TextView) editView.findViewById(R.id.routineEditTimeValue)).setText("매일 " + formatDialTime(selectedRoutineHour, selectedRoutineMinute));
+        TextView updatedText = editView.findViewById(R.id.routineEditUpdatedText);
+        if (updatedText != null) {
+            updatedText.setText(routineUpdatedText(routine));
+            updatedText.setVisibility(routine.updatedAt > 0 ? View.VISIBLE : View.GONE);
+        }
         bindRoutinePlace(editView);
 
         editView.findViewById(R.id.routineEditBackButton).setOnClickListener(v -> setScreen("routine"));
@@ -1864,22 +2068,35 @@ public class MainActivity extends AppCompatActivity {
         String place = routinePlaceName(selectedRoutinePlaceIndex);
         String title = emptyToFallback(routineName, routine.title);
         DatabaseReference ref = db.child("routines").child(routine.id);
-        ref.child("title").setValue(title);
-        ref.child("name").setValue(title);
-        ref.child("trayId").setValue(tray.id);
-        ref.child("trayName").setValue(tray.name);
-        ref.child("hour").setValue(selectedRoutineHour);
-        ref.child("minute").setValue(selectedRoutineMinute);
-        ref.child("time").setValue(formatDialTime(selectedRoutineHour, selectedRoutineMinute));
-        ref.child("place").setValue(place);
-        ref.child("location").setValue(place);
-        ref.child("destination").setValue(place);
-        ref.child("quickSlot").setValue(routine.quickSlot);
-        ref.child("enabled").setValue(routine.enabled)
+        Map<String, Object> values = new HashMap<>();
+        values.put("title", title);
+        values.put("name", title);
+        values.put("trayId", tray.id);
+        values.put("trayName", tray.name);
+        values.put("hour", selectedRoutineHour);
+        values.put("minute", selectedRoutineMinute);
+        values.put("time", formatDialTime(selectedRoutineHour, selectedRoutineMinute));
+        values.put("place", place);
+        values.put("location", place);
+        values.put("destination", place);
+        values.put("quickSlot", routine.quickSlot);
+        values.put("enabled", routine.enabled);
+        values.put("updatedBy", currentEditorName());
+        values.put("updatedById", currentEditorId());
+        values.put("updatedAt", System.currentTimeMillis());
+        ref.updateChildren(values)
                 .addOnSuccessListener(unused -> {
                     routinePlaceExpanded = false;
                     setScreen("routine");
                 });
+    }
+
+    private String routineUpdatedText(RoutineData routine) {
+        if (routine.updatedBy == null || routine.updatedBy.trim().isEmpty() || routine.updatedAt <= 0) {
+            return "";
+        }
+        String updatedTime = new SimpleDateFormat("MM.dd HH:mm", Locale.KOREA).format(new Date(routine.updatedAt));
+        return "마지막 수정 " + routine.updatedBy + " " + updatedTime;
     }
 
     private void renderModuleSelect() {
@@ -1955,6 +2172,168 @@ public class MainActivity extends AppCompatActivity {
         addBottomNav();
         menuView.findViewById(R.id.menuNotificationRow).setOnClickListener(v -> setScreen("notification"));
         menuView.findViewById(R.id.menuMapRow).setOnClickListener(v -> setScreen("map"));
+        View memberRow = findOptionalView(menuView, "menuMemberRow");
+        if (memberRow != null) {
+            memberRow.setOnClickListener(v -> setScreen("members"));
+        }
+    }
+
+    private String trayUpdatedSuffix(TrayData tray) {
+        if (tray.updatedBy == null || tray.updatedBy.trim().isEmpty() || tray.updatedAt <= 0) {
+            return "";
+        }
+        String updatedTime = new SimpleDateFormat("MM.dd HH:mm", Locale.KOREA).format(new Date(tray.updatedAt));
+        return " · 마지막 수정 " + tray.updatedBy + " " + updatedTime;
+    }
+
+    private void renderMembers() {
+        View membersView = LayoutInflater.from(this).inflate(R.layout.screen_members, contentContainer, false);
+        contentContainer.addView(membersView);
+        centerScreen(membersView);
+        membersView.findViewById(R.id.membersBackButton).setOnClickListener(v -> setScreen("menu"));
+        EditText idInput = membersView.findViewById(R.id.membersIdInput);
+        membersView.findViewById(R.id.membersAddButton).setOnClickListener(v -> {
+            addMember(idInput.getText().toString().trim());
+            idInput.setText("");
+        });
+        bindMembersList(membersView);
+    }
+
+    private void addMember(String memberId) {
+        if (memberId.isEmpty()) {
+            Toast.makeText(this, "구성원 ID를 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (currentFamilyId.isEmpty()) {
+            Toast.makeText(this, "가족 계정 ID가 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        db.child("users").child(memberId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String name = stringValue(snapshot.child("name"), "");
+                if (name.trim().isEmpty()) {
+                    Toast.makeText(MainActivity.this, "해당 아이디의 사용자를 찾지 못했습니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                long now = System.currentTimeMillis();
+                Map<String, Object> values = new HashMap<>();
+                values.put("id", memberId);
+                values.put("name", name.trim());
+                values.put("familyId", currentFamilyId);
+                values.put("createdAt", now);
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("/members/" + memberId, values);
+                updates.put("/familyAccounts/" + currentFamilyId + "/members/" + memberId, values);
+                db.updateChildren(updates)
+                        .addOnSuccessListener(unused -> Toast.makeText(MainActivity.this, "구성원을 추가했습니다.", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(error -> Toast.makeText(MainActivity.this, "구성원 추가에 실패했습니다.", Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(MainActivity.this, "사용자 정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void confirmDeleteMember(MemberData member) {
+        new AlertDialog.Builder(this)
+                .setMessage(member.name + " 구성원을 삭제하시겠습니까?")
+                .setNegativeButton("취소", null)
+                .setPositiveButton("삭제", (dialog, which) -> deleteMember(member))
+                .show();
+    }
+
+    private void deleteMember(MemberData member) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("/members/" + member.id, null);
+        if (!currentFamilyId.isEmpty()) {
+            updates.put("/familyAccounts/" + currentFamilyId + "/members/" + member.id, null);
+        }
+        db.updateChildren(updates)
+                .addOnSuccessListener(unused -> Toast.makeText(this, "구성원을 삭제했습니다.", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(error -> Toast.makeText(this, "구성원 삭제에 실패했습니다.", Toast.LENGTH_SHORT).show());
+    }
+
+    private void bindMembersList(View root) {
+        LinearLayout list = root.findViewById(R.id.membersList);
+        TextView emptyText = root.findViewById(R.id.membersEmptyText);
+        TextView currentText = root.findViewById(R.id.membersCurrentText);
+        list.removeAllViews();
+        currentText.setText(currentFamilyId.isEmpty() ? "가족 계정 ID가 설정되지 않았습니다." : "가족 계정 ID: " + currentFamilyId);
+        emptyText.setVisibility(members.isEmpty() ? View.VISIBLE : View.GONE);
+        for (int i = 0; i < members.size(); i++) {
+            MemberData member = members.get(i);
+            list.addView(createMemberRow(member));
+            if (i < members.size() - 1) {
+                View divider = new View(this);
+                divider.setBackgroundColor(0xFFE2E7E7);
+                list.addView(divider, new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        dp(1)
+                ));
+            }
+        }
+    }
+
+    private View createMemberRow(MemberData member) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setPadding(dp(16), 0, dp(14), 0);
+
+        FrameLayout iconCircle = new FrameLayout(this);
+        iconCircle.setBackgroundResource(R.drawable.bg_module_icon_circle);
+        row.addView(iconCircle, new LinearLayout.LayoutParams(dp(38), dp(38)));
+
+        ImageView icon = new ImageView(this);
+        icon.setImageResource(R.drawable.ic_user);
+        icon.setColorFilter(0xFF008E84);
+        icon.setContentDescription(null);
+        iconCircle.addView(icon, new FrameLayout.LayoutParams(dp(22), dp(22), Gravity.CENTER));
+
+        LinearLayout textGroup = new LinearLayout(this);
+        textGroup.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(0, dp(56), 1f);
+        textParams.setMargins(dp(12), 0, dp(8), 0);
+        row.addView(textGroup, textParams);
+
+        TextView name = new TextView(this);
+        name.setText(member.name);
+        name.setTextColor(0xFF14191B);
+        name.setTextSize(15);
+        name.setTypeface(null, android.graphics.Typeface.BOLD);
+        name.setIncludeFontPadding(false);
+        LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        nameParams.setMargins(0, dp(9), 0, 0);
+        textGroup.addView(name, nameParams);
+
+        TextView id = new TextView(this);
+        id.setText("ID " + member.id);
+        id.setTextColor(0xFF798385);
+        id.setTextSize(12);
+        id.setIncludeFontPadding(false);
+        LinearLayout.LayoutParams idParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        idParams.setMargins(0, dp(5), 0, 0);
+        textGroup.addView(id, idParams);
+
+        TextView deleteButton = new TextView(this);
+        deleteButton.setText("×");
+        deleteButton.setTextColor(0xFFFF5C5C);
+        deleteButton.setTextSize(20);
+        deleteButton.setGravity(Gravity.CENTER);
+        deleteButton.setIncludeFontPadding(false);
+        deleteButton.setBackgroundResource(R.drawable.bg_item_remove_circle);
+        deleteButton.setOnClickListener(v -> confirmDeleteMember(member));
+        row.addView(deleteButton, new LinearLayout.LayoutParams(dp(34), dp(34)));
+        return row;
     }
 
 
@@ -2251,7 +2630,7 @@ public class MainActivity extends AppCompatActivity {
         if ("battery".equals(entry.source) || "push".equals(entry.source)) {
             return status;
         }
-        return status + "  ·  " + destination;
+        return status + "  · " + destination;
     }
 
     private boolean notificationLogIsFailure(NotificationLogEntry entry) {
@@ -2576,7 +2955,7 @@ public class MainActivity extends AppCompatActivity {
         textGroup.addView(title);
 
         TextView action = new TextView(this);
-        action.setText(entry.action + "  ·  " + entry.place);
+        action.setText(entry.action + "  · " + entry.place);
         action.setTextColor(0xFF4D585B);
         action.setTextSize(12);
         action.setIncludeFontPadding(false);
@@ -2723,7 +3102,6 @@ public class MainActivity extends AppCompatActivity {
         row.setBackgroundResource(R.drawable.bg_card);
         row.setClickable(true);
         row.setFocusable(true);
-        row.setElevation(dp(2));
         row.setPadding(dp(16), 0, dp(14), 0);
 
         ImageView icon = new ImageView(this);
@@ -3211,6 +3589,9 @@ public class MainActivity extends AppCompatActivity {
         final int hour;
         final int minute;
         final String place;
+        final String updatedBy;
+        final String updatedById;
+        final long updatedAt;
         boolean enabled;
         int quickSlot;
 
@@ -3219,6 +3600,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         RoutineData(String id, String title, String trayId, String trayName, int hour, int minute, String place, boolean enabled, int quickSlot) {
+            this(id, title, trayId, trayName, hour, minute, place, enabled, quickSlot, "", "", 0);
+        }
+
+        RoutineData(String id, String title, String trayId, String trayName, int hour, int minute, String place, boolean enabled, int quickSlot, String updatedBy, String updatedById, long updatedAt) {
             this.id = id;
             this.title = title;
             this.trayId = trayId;
@@ -3228,6 +3613,9 @@ public class MainActivity extends AppCompatActivity {
             this.place = place;
             this.enabled = enabled;
             this.quickSlot = quickSlot;
+            this.updatedBy = updatedBy;
+            this.updatedById = updatedById;
+            this.updatedAt = updatedAt;
         }
     }
 
@@ -3235,6 +3623,8 @@ public class MainActivity extends AppCompatActivity {
         final String id;
         final String name;
         final String location;
+        final String updatedBy;
+        final long updatedAt;
         boolean representative;
         final List<String> items = new ArrayList<>();
 
@@ -3243,10 +3633,28 @@ public class MainActivity extends AppCompatActivity {
         }
 
         TrayData(String id, String name, String location, boolean representative) {
+            this(id, name, location, representative, "", 0);
+        }
+
+        TrayData(String id, String name, String location, boolean representative, String updatedBy, long updatedAt) {
             this.id = id;
             this.name = name;
             this.location = location;
             this.representative = representative;
+            this.updatedBy = updatedBy;
+            this.updatedAt = updatedAt;
+        }
+    }
+
+    private static class MemberData {
+        final String id;
+        final String name;
+        final long createdAt;
+
+        MemberData(String id, String name, long createdAt) {
+            this.id = id;
+            this.name = name;
+            this.createdAt = createdAt;
         }
     }
 

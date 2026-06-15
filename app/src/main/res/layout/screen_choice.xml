@@ -61,8 +61,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="108dp"
-        android:background="@drawable/bg_card"
-        android:elevation="3dp">
+        android:background="@drawable/bg_card">
 
         <LinearLayout
             android:id="@+id/choiceList"

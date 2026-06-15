@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_card"
     android:clickable="true"
-    android:elevation="2dp"
     android:focusable="true">
 
     <FrameLayout

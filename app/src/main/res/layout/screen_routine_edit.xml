@@ -68,6 +68,19 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/routineEditUpdatedText"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="166dp"
+        android:layout_marginEnd="20dp"
+        android:includeFontPadding="false"
+        android:textColor="#798385"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="16dp"
         android:layout_marginStart="20dp"
@@ -86,8 +99,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="208dp"
         android:layout_marginEnd="20dp"
-        android:background="@drawable/bg_card"
-        android:elevation="3dp">
+        android:background="@drawable/bg_card">
 
         <FrameLayout
             android:id="@+id/routineEditTrayRow"
@@ -204,7 +216,6 @@
         android:layout_marginEnd="20dp"
         android:background="@drawable/bg_card"
         android:clickable="true"
-        android:elevation="3dp"
         android:focusable="true">
 
         <TextView
