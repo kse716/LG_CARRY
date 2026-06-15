@@ -776,6 +776,24 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "이름을 입력하세요.", Toast.LENGTH_SHORT).show();
             return;
         }
+        db.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Toast.makeText(MainActivity.this, "이미 가입된 아이디입니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                createSignupUser(userId, userName);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(MainActivity.this, "회원가입 정보를 확인하지 못했습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void createSignupUser(String userId, String userName) {
         String familyId = generateFamilyId();
         saveCurrentUser(userId, userName, familyId);
         long now = System.currentTimeMillis();
@@ -2201,7 +2219,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void addMember(String memberId) {
         if (memberId.isEmpty()) {
-            Toast.makeText(this, "구성원 ID를 입력하세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "구성원의 ID를 입력하세요.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (currentFamilyId.isEmpty()) {
