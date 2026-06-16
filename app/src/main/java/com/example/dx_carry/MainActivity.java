@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_POST_NOTIFICATIONS = 1002;
     private static final String NOTIFICATION_CHANNEL_ID = "carry_notifications";
     private static final String[] VOICE_INTENT_API_URLS = {
-            "http://192.168.0.21:5000/api/ai/voice-intent", //강의실 wifi ip
+            "http://192.168.0.21:5000/api/ai/voice-intent",
             "http://10.0.2.2:5000/api/ai/voice-intent",
             "http://10.50.137.25:5000/api/ai/voice-intent",
             "http://127.0.0.1:5000/api/ai/voice-intent"
@@ -110,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean routinePlaceExpanded = false;
     private int voiceState = 0;
     private String recognizedCommand = "거실에 있는 트레이 가져와줘";
-    private String recognizedModule = "1번 트레이";
-    private String recognizedLocation = "거실";
+    private String recognizedModule = "-";
+    private String recognizedLocation = "-";
     private String recognizedIntent = "";
     private String recognizedLabel = "";
     private String recognizedMessage = "";
@@ -184,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_RECORD_AUDIO) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                resetVoiceResult();
                 setScreen("voiceListening");
             } else {
                 Toast.makeText(this, "마이크 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
@@ -645,6 +646,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "voice":
                 voiceState = 0;
+                resetVoiceResult();
                 renderVoice();
                 break;
             case "voiceListening":
@@ -1031,15 +1033,17 @@ public class MainActivity extends AppCompatActivity {
             TextView executeButton = voiceView.findViewById(R.id.voiceExecuteButton);
             View resultCheckIcon = voiceView.findViewById(R.id.voiceResultCheckIcon);
             ImageView resultStatusIcon = voiceView.findViewById(R.id.voiceResultStatusIcon);
-            boolean recognitionFailed = !voiceIntentAccepted && "UNKNOWN".equals(recognizedIntent)
-                    && "UNKNOWN".equals(recognizedLabel);
-            if (recognitionFailed) {
+            boolean speechRecognitionFailed = recognizedCommand == null || recognizedCommand.trim().isEmpty();
+            boolean commandRejected = !voiceIntentAccepted;
+            if (commandRejected) {
                 resultTitle.setVisibility(View.VISIBLE);
-                resultTitle.setText("\uC74C\uC131 \uC778\uC2DD \uC2E4\uD328");
+                resultTitle.setText(speechRecognitionFailed ? "\uC74C\uC131 \uC778\uC2DD \uC2E4\uD328" : "\uBA85\uB839 \uC778\uC2DD \uC2E4\uD328");
                 resultCheckIcon.setVisibility(View.VISIBLE);
                 resultStatusIcon.setImageResource(R.drawable.ic_x_white);
                 executeButton.setVisibility(View.GONE);
-                ((TextView) voiceView.findViewById(R.id.voiceResultCommand)).setText(recognizedMessage);
+                ((TextView) voiceView.findViewById(R.id.voiceResultCommand)).setText(
+                        speechRecognitionFailed ? recognizedMessage : recognizedCommand
+                );
             } else {
                 resultTitle.setVisibility(View.VISIBLE);
                 resultTitle.setText("\uC778\uC2DD \uC644\uB8CC");
@@ -3290,6 +3294,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO);
             return;
         }
+        resetVoiceResult();
         setScreen("voiceListening");
     }
 
@@ -3357,18 +3362,33 @@ public class MainActivity extends AppCompatActivity {
         voiceIntentAccepted = false;
     }
 
+    private void resetVoiceResult() {
+        recognizedCommand = "";
+        recognizedModule = "-";
+        recognizedLocation = "-";
+        recognizedIntent = "";
+        recognizedLabel = "";
+        recognizedMessage = "";
+        recognizedConfidence = 0.0;
+        voiceIntentAccepted = false;
+    }
+
     private void inferVoiceTarget(String command) {
         if (command == null) return;
         List<TrayData> visibleTrays = currentTrays();
-        recognizedModule = (command.contains("B") || command.contains("비")) && visibleTrays.size() > 1
-                ? visibleTrays.get(1).name
-                : visibleTrays.get(0).name;
+        if ((command.contains("B") || command.contains("비")) && visibleTrays.size() > 1) {
+            recognizedModule = visibleTrays.get(1).name;
+        } else if (command.contains("1번") || command.contains("첫") || command.contains("A")) {
+            recognizedModule = visibleTrays.isEmpty() ? "-" : visibleTrays.get(0).name;
+        } else {
+            recognizedModule = "-";
+        }
         if (command.contains("현관")) {
             recognizedLocation = "현관";
         } else if (command.contains("침실")) {
             recognizedLocation = "침실";
         } else {
-            recognizedLocation = "거실";
+            recognizedLocation = "-";
         }
     }
 
@@ -3379,21 +3399,35 @@ public class MainActivity extends AppCompatActivity {
         recognizedConfidence = json.optDouble("confidence", recognizedConfidence);
         voiceIntentAccepted = json.optBoolean("accepted", voiceIntentAccepted);
 
+        if (applyLocalVoiceCommand(recognizedCommand)) {
+            return;
+        }
+
+        if (!voiceIntentAccepted || "UNKNOWN".equals(recognizedIntent)) {
+            recognizedModule = "-";
+            recognizedLocation = "-";
+            return;
+        }
+
         String targetTrayId = json.optString("targetTrayId", "");
         TrayData targetTray = trayForVoiceTarget(targetTrayId, recognizedLabel);
         if (targetTray != null) {
             selectedTrayId = targetTray.id;
             selectedModule = targetTray.name;
             recognizedModule = targetTray.name;
-        } else if (!voiceIntentAccepted) {
-            recognizedModule = "명령 확인 필요";
+        } else {
+            recognizedModule = "-";
+            if (voiceIntentAccepted) {
+                voiceIntentAccepted = false;
+                recognizedMessage = "호출할 트레이를 찾을 수 없습니다.";
+            }
         }
 
         String labelLocation = json.optString("label_location", "");
         if (!labelLocation.isEmpty() && !"null".equals(labelLocation)) {
             recognizedLocation = displayLocationFromVoiceLabel(labelLocation);
-        } else if (!voiceIntentAccepted) {
-            recognizedLocation = "목적지 확인 필요";
+        } else {
+            recognizedLocation = "-";
         }
     }
 
@@ -3408,32 +3442,118 @@ public class MainActivity extends AppCompatActivity {
 
         String normalizedLabel = emptyToFallback(label, "").toUpperCase(Locale.ROOT);
         if (target.contains("baby") || normalizedLabel.contains("BABY")) {
-            return findTrayByKeywords("아기", "육아", "기저귀", "물티슈", "젖병", "장난감");
+            TrayData tray = findTrayByNameOrIdKeywords("아기", "육아", "baby", "TRAY_BABY");
+            return tray != null ? tray : findTrayByItemKeywords("기저귀", "물티슈", "젖병", "장난감");
         }
         if (target.contains("medicine") || normalizedLabel.contains("MEDICINE")) {
-            return findTrayByKeywords("약", "복약", "비타민", "영양제", "혈압", "당뇨", "안경", "돋보기");
+            TrayData tray = findTrayByNameOrIdKeywords("약", "복약", "medicine", "TRAY_MEDICINE");
+            return tray != null ? tray : findTrayByItemKeywords("비타민", "영양제", "혈압", "당뇨", "안경", "돋보기");
         }
         if (target.contains("commute") || normalizedLabel.contains("COMMUTE")) {
-            return findTrayByKeywords("출근", "통근", "차 키", "차키", "교통카드", "마스크");
+            TrayData tray = findTrayByNameOrIdKeywords("출근", "통근", "commute", "TRAY_COMMUTE");
+            return tray != null ? tray : findTrayByItemKeywords("차 키", "차키", "교통카드");
         }
-        return visibleTrays.isEmpty() ? null : visibleTrays.get(0);
+        return null;
     }
 
-    private TrayData findTrayByKeywords(String... keywords) {
+    private TrayData findTrayByNameOrIdKeywords(String... keywords) {
         for (TrayData tray : currentTrays()) {
-            StringBuilder haystack = new StringBuilder(tray.name).append(' ').append(tray.location);
-            for (String item : tray.items) {
-                haystack.append(' ').append(item);
-            }
-            String text = haystack.toString();
+            String text = (tray.id + " " + tray.name).toLowerCase(Locale.ROOT);
             for (String keyword : keywords) {
-                if (text.contains(keyword)) {
+                if (text.contains(keyword.toLowerCase(Locale.ROOT))) {
                     return tray;
                 }
             }
         }
-        List<TrayData> visibleTrays = currentTrays();
-        return visibleTrays.isEmpty() ? null : visibleTrays.get(0);
+        return null;
+    }
+
+    private TrayData findTrayByItemKeywords(String... keywords) {
+        for (TrayData tray : currentTrays()) {
+            for (String item : tray.items) {
+                String text = item.toLowerCase(Locale.ROOT);
+                for (String keyword : keywords) {
+                    if (text.contains(keyword.toLowerCase(Locale.ROOT))) {
+                        return tray;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean applyLocalVoiceCommand(String command) {
+        if (command == null || command.trim().isEmpty()) return false;
+
+        int destinationStart = voiceDestinationStart(command);
+        String traySearchText = destinationStart >= 0 ? command.substring(0, destinationStart) : command;
+        TrayData tray = findTrayMentionedInText(traySearchText);
+        String destination = findVoiceDestinationPlace(command);
+        if (tray == null || destination.isEmpty()) return false;
+
+        selectedTrayId = tray.id;
+        selectedModule = tray.name;
+        recognizedModule = tray.name;
+        recognizedLocation = destination;
+        recognizedIntent = "CALL_TRAY";
+        recognizedLabel = "LOCAL_TRAY_NAME";
+        recognizedMessage = "명령 후보가 생성되었습니다.";
+        voiceIntentAccepted = true;
+        return true;
+    }
+
+    private TrayData findTrayMentionedInText(String text) {
+        String normalizedText = normalizeVoiceText(text);
+        for (TrayData tray : currentTrays()) {
+            if (normalizedText.contains(normalizeVoiceText(tray.name))) {
+                return tray;
+            }
+            String shortName = tray.name.replace("트레이", "").trim();
+            if (!shortName.isEmpty() && normalizedText.contains(normalizeVoiceText(shortName))) {
+                return tray;
+            }
+        }
+        return null;
+    }
+
+    private String findVoiceDestinationPlace(String command) {
+        int bestStart = -1;
+        String bestPlace = "";
+        for (String place : places) {
+            int start = voiceDestinationStart(command, place);
+            if (start >= 0 && start > bestStart) {
+                bestStart = start;
+                bestPlace = place;
+            }
+        }
+        return bestPlace;
+    }
+
+    private int voiceDestinationStart(String command) {
+        int bestStart = -1;
+        for (String place : places) {
+            int start = voiceDestinationStart(command, place);
+            if (start >= 0 && start > bestStart) {
+                bestStart = start;
+            }
+        }
+        return bestStart;
+    }
+
+    private int voiceDestinationStart(String command, String place) {
+        String[] suffixes = {"쪽으로", "앞으로", "앞에", "으로", "까지", "로", "에"};
+        int bestStart = -1;
+        for (String suffix : suffixes) {
+            int start = command.indexOf(place + suffix);
+            if (start >= 0 && start > bestStart) {
+                bestStart = start;
+            }
+        }
+        return bestStart;
+    }
+
+    private String normalizeVoiceText(String text) {
+        return emptyToFallback(text, "").replace(" ", "").toLowerCase(Locale.ROOT);
     }
 
     private String displayLocationFromVoiceLabel(String labelLocation) {
@@ -3563,7 +3683,8 @@ public class MainActivity extends AppCompatActivity {
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {
-                    inferVoiceTarget(command);
+                    recognizedModule = "-";
+                    recognizedLocation = "-";
                     recognizedIntent = "FALLBACK";
                     recognizedLabel = "";
                     recognizedMessage = "음성 모델 서버에 연결하지 못했습니다.";
@@ -3753,3 +3874,4 @@ public class MainActivity extends AppCompatActivity {
 }
 
 
+0
