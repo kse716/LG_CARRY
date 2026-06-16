@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_POST_NOTIFICATIONS = 1002;
     private static final String NOTIFICATION_CHANNEL_ID = "carry_notifications";
     private static final String[] VOICE_INTENT_API_URLS = {
+            "http://192.168.0.21:5000/api/ai/voice-intent", //강의실 wifi ip
             "http://10.0.2.2:5000/api/ai/voice-intent",
             "http://10.50.137.25:5000/api/ai/voice-intent",
             "http://127.0.0.1:5000/api/ai/voice-intent"
@@ -989,7 +990,7 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener startOrFinishClick = v -> {
             if (voiceState == 1) {
                 stopSpeechRecognition();
-                setSampleVoiceResult();
+                setVoiceRecognitionFailed();
                 setScreen("voiceResult");
             } else {
                 requestOrStartVoice();
@@ -1003,7 +1004,7 @@ public class MainActivity extends AppCompatActivity {
         listeningMic.setOnClickListener(startOrFinishClick);
         voiceView.findViewById(R.id.voiceStopButton).setOnClickListener(v -> {
             stopSpeechRecognition();
-            setSampleVoiceResult();
+            setVoiceRecognitionFailed();
             setScreen("voiceResult");
         });
         voiceView.findViewById(R.id.voiceRetryButton).setOnClickListener(v -> setScreen("voice"));
@@ -1026,7 +1027,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (voiceState == 2) {
-            ((TextView) voiceView.findViewById(R.id.voiceResultCommand)).setText(recognizedCommand);
+            TextView resultTitle = voiceView.findViewById(R.id.voiceResultTitle);
+            TextView executeButton = voiceView.findViewById(R.id.voiceExecuteButton);
+            View resultCheckIcon = voiceView.findViewById(R.id.voiceResultCheckIcon);
+            ImageView resultStatusIcon = voiceView.findViewById(R.id.voiceResultStatusIcon);
+            boolean recognitionFailed = !voiceIntentAccepted && "UNKNOWN".equals(recognizedIntent)
+                    && "UNKNOWN".equals(recognizedLabel);
+            if (recognitionFailed) {
+                resultTitle.setVisibility(View.VISIBLE);
+                resultTitle.setText("\uC74C\uC131 \uC778\uC2DD \uC2E4\uD328");
+                resultCheckIcon.setVisibility(View.VISIBLE);
+                resultStatusIcon.setImageResource(R.drawable.ic_x_white);
+                executeButton.setVisibility(View.GONE);
+                ((TextView) voiceView.findViewById(R.id.voiceResultCommand)).setText(recognizedMessage);
+            } else {
+                resultTitle.setVisibility(View.VISIBLE);
+                resultTitle.setText("\uC778\uC2DD \uC644\uB8CC");
+                resultCheckIcon.setVisibility(View.VISIBLE);
+                resultStatusIcon.setImageResource(R.drawable.ic_check_white);
+                executeButton.setVisibility(View.VISIBLE);
+                ((TextView) voiceView.findViewById(R.id.voiceResultCommand)).setText(recognizedCommand);
+            }
             ((TextView) voiceView.findViewById(R.id.voiceResultModule)).setText(recognizedModule);
             ((TextView) voiceView.findViewById(R.id.voiceResultLocation)).setText(recognizedLocation);
         }
@@ -2257,7 +2278,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void confirmDeleteMember(MemberData member) {
         new AlertDialog.Builder(this)
-                .setMessage(member.name + " 구성원을 삭제하시겠습니까?")
+                .setMessage(member.name + "을(를) 가족 계정 구성원에서 삭제하시겠습니까?")
                 .setNegativeButton("취소", null)
                 .setPositiveButton("삭제", (dialog, which) -> deleteMember(member))
                 .show();
@@ -3282,7 +3303,7 @@ public class MainActivity extends AppCompatActivity {
             @Override public void onBufferReceived(byte[] buffer) {}
             @Override public void onEndOfSpeech() {}
             @Override public void onError(int error) {
-                setSampleVoiceResult();
+                setVoiceRecognitionFailed();
                 setScreen("voiceResult");
             }
             @Override public void onResults(Bundle results) {
@@ -3292,7 +3313,7 @@ public class MainActivity extends AppCompatActivity {
                     inferVoiceTarget(recognizedCommand);
                     postVoiceIntent(recognizedCommand);
                 } else {
-                    setSampleVoiceResult();
+                    setVoiceRecognitionFailed();
                 }
                 setScreen("voiceResult");
             }
@@ -3323,6 +3344,17 @@ public class MainActivity extends AppCompatActivity {
         recognizedMessage = "";
         recognizedConfidence = 0.0;
         voiceIntentAccepted = true;
+    }
+
+    private void setVoiceRecognitionFailed() {
+        recognizedCommand = "";
+        recognizedModule = "-";
+        recognizedLocation = "-";
+        recognizedIntent = "UNKNOWN";
+        recognizedLabel = "UNKNOWN";
+        recognizedMessage = "\uC74C\uC131 \uC778\uC2DD\uC5D0 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4.";
+        recognizedConfidence = 0.0;
+        voiceIntentAccepted = false;
     }
 
     private void inferVoiceTarget(String command) {
