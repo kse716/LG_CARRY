@@ -3497,7 +3497,7 @@ public class MainActivity extends AppCompatActivity {
         recognizedLocation = destination;
         recognizedIntent = "CALL_TRAY";
         recognizedLabel = "LOCAL_TRAY_NAME";
-        recognizedMessage = "명령 후보가 생성되었습니다.";
+        recognizedMessage = "";
         voiceIntentAccepted = true;
         return true;
     }
