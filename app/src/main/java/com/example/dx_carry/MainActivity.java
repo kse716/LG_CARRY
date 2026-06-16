@@ -9,6 +9,8 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -78,6 +80,10 @@ public class MainActivity extends AppCompatActivity {
             "http://10.0.2.2:5000/api/ai/voice-intent",
             "http://10.50.137.25:5000/api/ai/voice-intent",
             "http://127.0.0.1:5000/api/ai/voice-intent"
+    };
+    private static final String[] MISSION_API_BASE_URLS = {
+            "http://10.37.161.133:5001",
+            "http://192.168.0.21:5000"
     };
 
     private LinearLayout appRoot;
@@ -1015,9 +1021,11 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, emptyToFallback(recognizedMessage, "명령을 다시 말해주세요."), Toast.LENGTH_SHORT).show();
                 return;
             }
-            saveVoiceRecord(recognizedCommand, "sent", "CARRY 실행 명령 전송");
-            Toast.makeText(this, "CARRY 실행 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
+            startCarryMissionFromVoice();
         });
+        voiceView.findViewById(R.id.voiceMissionOneButton).setOnClickListener(v -> startCarryMission(1, "Mission 1 테스트"));
+        voiceView.findViewById(R.id.voiceMissionTwoButton).setOnClickListener(v -> startCarryMission(2, "Mission 2 테스트"));
+        voiceView.findViewById(R.id.voiceMissionThreeButton).setOnClickListener(v -> startCarryMission(3, "Mission 3 테스트"));
 
         voiceView.findViewById(R.id.voiceIdleGroup).setVisibility(voiceState == 0 ? View.VISIBLE : View.GONE);
         voiceView.findViewById(R.id.voiceListeningGroup).setVisibility(voiceState == 1 ? View.VISIBLE : View.GONE);
@@ -2281,11 +2289,99 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void confirmDeleteMember(MemberData member) {
-        new AlertDialog.Builder(this)
-                .setMessage(member.name + "을(를) 가족 계정 구성원에서 삭제하시겠습니까?")
-                .setNegativeButton("취소", null)
-                .setPositiveButton("삭제", (dialog, which) -> deleteMember(member))
-                .show();
+        AlertDialog dialog = new AlertDialog.Builder(this).create();
+
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setGravity(Gravity.CENTER_HORIZONTAL);
+        card.setPadding(dp(24), dp(24), dp(24), dp(20));
+        card.setBackgroundResource(R.drawable.bg_member_dialog);
+
+        FrameLayout iconCircle = new FrameLayout(this);
+        iconCircle.setBackgroundResource(R.drawable.bg_item_remove_circle);
+        LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dp(58), dp(58));
+        card.addView(iconCircle, iconParams);
+
+        TextView icon = new TextView(this);
+        icon.setText("×");
+        icon.setTextColor(0xFFE85D5D);
+        icon.setTextSize(30);
+        icon.setGravity(Gravity.CENTER);
+        icon.setIncludeFontPadding(false);
+        iconCircle.addView(icon, new FrameLayout.LayoutParams(dp(58), dp(58), Gravity.CENTER));
+
+        TextView title = new TextView(this);
+        title.setText("구성원을 삭제할까요?");
+        title.setTextColor(0xFF12181B);
+        title.setTextSize(20);
+        title.setTypeface(null, android.graphics.Typeface.BOLD);
+        title.setGravity(Gravity.CENTER);
+        title.setIncludeFontPadding(false);
+        LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        titleParams.setMargins(0, dp(18), 0, 0);
+        card.addView(title, titleParams);
+
+        TextView message = new TextView(this);
+        message.setText(member.name + "님을 가족 계정 구성원 목록에서 삭제합니다.");
+        message.setTextColor(0xFF798385);
+        message.setTextSize(14);
+        message.setGravity(Gravity.CENTER);
+        message.setLineSpacing(dp(2), 1.0f);
+        LinearLayout.LayoutParams messageParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        messageParams.setMargins(0, dp(10), 0, 0);
+        card.addView(message, messageParams);
+
+        LinearLayout buttons = new LinearLayout(this);
+        buttons.setOrientation(LinearLayout.HORIZONTAL);
+        buttons.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams buttonsParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                dp(52)
+        );
+        buttonsParams.setMargins(0, dp(24), 0, 0);
+        card.addView(buttons, buttonsParams);
+
+        TextView cancelButton = new TextView(this);
+        cancelButton.setText("취소");
+        cancelButton.setTextColor(0xFF6F7A7C);
+        cancelButton.setTextSize(15);
+        cancelButton.setTypeface(null, android.graphics.Typeface.BOLD);
+        cancelButton.setGravity(Gravity.CENTER);
+        cancelButton.setIncludeFontPadding(false);
+        cancelButton.setBackgroundResource(R.drawable.bg_member_dialog_cancel);
+        cancelButton.setOnClickListener(v -> dialog.dismiss());
+        LinearLayout.LayoutParams cancelParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+        buttons.addView(cancelButton, cancelParams);
+
+        TextView deleteButton = new TextView(this);
+        deleteButton.setText("삭제");
+        deleteButton.setTextColor(0xFFFFFFFF);
+        deleteButton.setTextSize(15);
+        deleteButton.setTypeface(null, android.graphics.Typeface.BOLD);
+        deleteButton.setGravity(Gravity.CENTER);
+        deleteButton.setIncludeFontPadding(false);
+        deleteButton.setBackgroundResource(R.drawable.bg_member_dialog_delete);
+        deleteButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            deleteMember(member);
+        });
+        LinearLayout.LayoutParams deleteParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+        deleteParams.setMargins(dp(10), 0, 0, 0);
+        buttons.addView(deleteButton, deleteParams);
+
+        dialog.setView(card);
+        dialog.setOnShowListener(shownDialog -> {
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            }
+        });
+        dialog.show();
     }
 
     private void deleteMember(MemberData member) {
@@ -3497,7 +3593,7 @@ public class MainActivity extends AppCompatActivity {
         recognizedLocation = destination;
         recognizedIntent = "CALL_TRAY";
         recognizedLabel = "LOCAL_TRAY_NAME";
-        recognizedMessage = "";
+        recognizedMessage = "명령 후보가 생성되었습니다.";
         voiceIntentAccepted = true;
         return true;
     }
@@ -3736,6 +3832,88 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         throw lastError == null ? new IllegalStateException("Voice intent API unavailable") : lastError;
+    }
+
+    private void startCarryMissionFromVoice() {
+        int missionId = missionIdForLocation(recognizedLocation);
+        if (missionId <= 0) {
+            Toast.makeText(this, "이동할 위치를 찾지 못했습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        startCarryMission(missionId, recognizedCommand);
+    }
+
+    private void startCarryMission(int missionId, String commandLabel) {
+        String command = emptyToFallback(commandLabel, "Mission " + missionId + " 테스트");
+        Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보내는 중입니다.", Toast.LENGTH_SHORT).show();
+        new Thread(() -> {
+            try {
+                JSONObject payload = new JSONObject();
+                payload.put("mission", missionId);
+                String response = postMissionJson("/mission/start", payload);
+                runOnUiThread(() -> {
+                    saveVoiceRecord(command, "sent", response);
+                    Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    saveVoiceRecord(command, "fallback", e.getMessage());
+                    Toast.makeText(this, "로봇 서버에 연결하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
+    }
+
+    private int missionIdForLocation(String location) {
+        String normalized = normalizeVoiceText(location);
+        if (normalized.contains("현관")) return 2;
+        if (normalized.contains("방2") || normalized.contains("선반") || normalized.contains("침실")) return 3;
+        if (normalized.contains("방1") || normalized.contains("거실")) return 1;
+        return 1;
+    }
+
+    private String postMissionJson(String path, JSONObject payload) throws Exception {
+        Exception lastError = null;
+        for (String baseUrl : MISSION_API_BASE_URLS) {
+            try {
+                return postJson(baseUrl + path, payload);
+            } catch (Exception e) {
+                lastError = e;
+            }
+        }
+        throw lastError == null ? new IllegalStateException("Mission API unavailable") : lastError;
+    }
+
+    private String postJson(String apiUrl, JSONObject payload) throws Exception {
+        HttpURLConnection conn = null;
+        try {
+            URL url = new URL(apiUrl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(5000);
+            conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            conn.setDoOutput(true);
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(payload.toString().getBytes(StandardCharsets.UTF_8));
+            }
+            int statusCode = conn.getResponseCode();
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    statusCode >= 400 ? conn.getErrorStream() : conn.getInputStream(),
+                    StandardCharsets.UTF_8
+            ));
+            StringBuilder response = new StringBuilder();
+            try (BufferedReader reader = br) {
+                String line;
+                while ((line = reader.readLine()) != null) response.append(line);
+            }
+            if (statusCode >= 400) {
+                throw new IllegalStateException(response.length() == 0 ? "Mission API error: " + statusCode : response.toString());
+            }
+            return response.toString();
+        } finally {
+            if (conn != null) conn.disconnect();
+        }
     }
 
     private static class ItemSearchResult {
