@@ -82,8 +82,7 @@ public class MainActivity extends AppCompatActivity {
             "http://192.168.0.21:5000/voice/parse"
     };
     private static final String[] MISSION_API_BASE_URLS = {
-            "http://10.37.161.133:5001",
-            "http://192.168.0.21:5000"
+            "http://10.37.161.133:5001"
     };
     private static final long BATTERY_REFRESH_INTERVAL_MS = 60_000L;
     private static final long MISSION_STATUS_REFRESH_INTERVAL_MS = 5_000L;
@@ -3695,12 +3694,39 @@ public class MainActivity extends AppCompatActivity {
             if (normalizedText.contains(normalizeVoiceText(tray.name))) {
                 return tray;
             }
-            String shortName = tray.name.replace("트레이", "").trim();
+            String shortName = tray.name
+                    .replace("트레이", "")
+                    .replace("서랍", "")
+                    .trim();
             if (!shortName.isEmpty() && normalizedText.contains(normalizeVoiceText(shortName))) {
                 return tray;
             }
+            for (String item : tray.items) {
+                String normalizedItem = normalizeVoiceText(item);
+                if (!normalizedItem.isEmpty() && normalizedText.contains(normalizedItem)) {
+                    return tray;
+                }
+            }
         }
         return null;
+    }
+
+    private int drawerIdForTray(TrayData tray) {
+        if (tray == null) return -1;
+        String normalized = normalizeVoiceText(tray.id + " " + tray.name + " " + tray.location);
+        if (normalized.contains("tray1")
+                || normalized.contains("child")
+                || normalized.contains("아이방")
+                || normalized.contains("아이")
+                || normalized.contains("육아")
+                || normalized.contains("baby")) return 1;
+        if (normalized.contains("tray2")
+                || normalized.contains("master")
+                || normalized.contains("안방")
+                || normalized.contains("출근")
+                || normalized.contains("통근")
+                || normalized.contains("commute")) return 2;
+        return -1;
     }
 
     private String findVoiceDestinationPlace(String command) {
@@ -3870,13 +3896,15 @@ public class MainActivity extends AppCompatActivity {
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {
-                    recognizedModule = "-";
-                    recognizedLocation = "-";
-                    recognizedIntent = "FALLBACK";
-                    recognizedLabel = "";
-                    recognizedMessage = "음성 모델 서버에 연결하지 못했습니다.";
-                    recognizedConfidence = 0.0;
-                    voiceIntentAccepted = false;
+                    if (!applyLocalVoiceCommand(command)) {
+                        recognizedModule = "-";
+                        recognizedLocation = "-";
+                        recognizedIntent = "FALLBACK";
+                        recognizedLabel = "";
+                        recognizedMessage = "음성 모델 서버에 연결하지 못했습니다.";
+                        recognizedConfidence = 0.0;
+                        voiceIntentAccepted = false;
+                    }
                     saveVoiceRecord(command, "fallback", e.getMessage());
                     if ("voiceResult".equals(screen)) {
                         render();
@@ -3965,36 +3993,37 @@ public class MainActivity extends AppCompatActivity {
 
         if (drawer == 1 && destination == 2) return 1;
         if (drawer == 2 && destination == 1) return 2;
-        if (drawer == 1 && destination == 1) return 3;
-        if (drawer == 2 && destination == 2) return 4;
-        if (drawer == 1 && destination == 3) return 5;
-        if (drawer == 2 && destination == 3) return 6;
+        if (drawer == 1 && destination == 3) return 3;
+        if (drawer == 2 && destination == 3) return 4;
+        if (drawer == 1 && destination == 4) return 5;
+        if (drawer == 2 && destination == 4) return 6;
         return -1;
     }
 
     private int drawerIdForVoiceText(String text) {
         String normalized = normalizeVoiceText(text);
+        TrayData tray = findTrayMentionedInText(text);
+        int drawerFromTray = drawerIdForTray(tray);
+        if (drawerFromTray > 0) {
+            return drawerFromTray;
+        }
         if (normalized.contains("서랍1")
                 || normalized.contains("1번서랍")
                 || normalized.contains("첫번째서랍")
-                || normalized.contains("아이 트레이")
-                || normalized.contains("아이트레이")
+                || normalized.contains("아이방서랍")
+                || normalized.contains("육아트레이")
                 || normalized.contains("육아")
                 || normalized.contains("baby")
-                || normalized.contains("tray_baby")) {
-            return 1;
-        }
+                || normalized.contains("tray_baby")) return 1;
         if (normalized.contains("서랍2")
                 || normalized.contains("2번서랍")
                 || normalized.contains("두번째서랍")
-                || normalized.contains("출근 트레이")
+                || normalized.contains("안방서랍")
                 || normalized.contains("출근트레이")
                 || normalized.contains("출근")
                 || normalized.contains("통근")
                 || normalized.contains("commute")
-                || normalized.contains("tray_commute")) {
-            return 2;
-        }
+                || normalized.contains("tray_commute")) return 2;
         return -1;
     }
 
@@ -4003,6 +4032,7 @@ public class MainActivity extends AppCompatActivity {
         if (normalized.contains("방1") || normalized.contains("안방")) return 1;
         if (normalized.contains("방2") || normalized.contains("아이방") || normalized.contains("선반")) return 2;
         if (normalized.contains("현관")) return 3;
+        if (normalized.contains("거실")) return 4;
         return -1;
     }
 
@@ -4279,8 +4309,8 @@ public class MainActivity extends AppCompatActivity {
             URL url = new URL(apiUrl);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
-            conn.setConnectTimeout(3000);
-            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(15000);
             int statusCode = conn.getResponseCode();
             BufferedReader br = new BufferedReader(new InputStreamReader(
                     statusCode >= 400 ? conn.getErrorStream() : conn.getInputStream(),
@@ -4306,8 +4336,8 @@ public class MainActivity extends AppCompatActivity {
             URL url = new URL(apiUrl);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
-            conn.setConnectTimeout(3000);
-            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(15000);
             conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             conn.setDoOutput(true);
             try (OutputStream os = conn.getOutputStream()) {

@@ -61,7 +61,7 @@
             android:layout_marginTop="2dp"
             android:duplicateParentState="true"
             android:gravity="center"
-            android:text="모듈"
+            android:text="트레이"
             android:textColor="@color/bottom_nav_text"
             android:textSize="11sp"
             android:textStyle="bold" />
