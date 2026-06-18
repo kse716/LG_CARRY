@@ -99,7 +99,7 @@
             android:layout_height="22dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="420dp"
+            android:layout_marginTop="420dp"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="버튼을 눌러 말해보세요"
@@ -112,7 +112,7 @@
             android:layout_height="16dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="452dp"
+            android:layout_marginTop="452dp"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="예: 책상에 있는 트레이 가져와줘"
@@ -125,7 +125,7 @@
             android:layout_height="15dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="664dp"
+            android:layout_marginTop="664dp"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="마이크를 탭하면 시작합니다"
@@ -460,55 +460,116 @@
         <LinearLayout
             android:id="@+id/voiceMissionTestButtons"
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="128dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginTop="638dp"
+            android:layout_marginTop="624dp"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/voiceMissionOneButton"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_voice_outline_button"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:text="Mission 1"
-                android:textColor="#008E84"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/voiceMissionTwoButton"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_marginStart="6dp"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_voice_outline_button"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:text="Mission 2"
-                android:textColor="#008E84"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/voiceMissionOneButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="아이방 서랍 → 안방"
+                    android:textColor="#008E84"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/voiceMissionThreeButton"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_voice_outline_button"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:text="Mission 3"
-                android:textColor="#008E84"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/voiceMissionTwoButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="안방 서랍 → 아이방"
+                    android:textColor="#008E84"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_marginTop="7dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/voiceMissionThreeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="아이방 서랍 → 현관"
+                    android:textColor="#008E84"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/voiceMissionFourButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="안방 서랍 → 현관"
+                    android:textColor="#008E84"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_marginTop="7dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/voiceMissionFiveButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="아이방 서랍 → 거실"
+                    android:textColor="#008E84"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/voiceMissionSixButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="안방 서랍 → 거실"
+                    android:textColor="#008E84"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
 
         <TextView
@@ -517,7 +578,7 @@
             android:layout_height="44dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginTop="694dp"
+            android:layout_marginTop="764dp"
             android:background="@drawable/bg_emergency_stop_button"
             android:gravity="center"
             android:includeFontPadding="false"

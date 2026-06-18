@@ -115,7 +115,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="침실"
+            android:text="안방"
             android:textColor="#798385"
             android:textSize="13sp"
             android:textStyle="bold" />
