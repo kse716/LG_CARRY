@@ -13,6 +13,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.speech.RecognitionListener;
@@ -85,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
             "http://10.37.161.133:5001",
             "http://192.168.0.21:5000"
     };
+    private static final long BATTERY_REFRESH_INTERVAL_MS = 60_000L;
+    private static final long MISSION_STATUS_REFRESH_INTERVAL_MS = 5_000L;
 
     private LinearLayout appRoot;
     private FrameLayout contentContainer;
@@ -134,6 +138,26 @@ public class MainActivity extends AppCompatActivity {
     private boolean batteryLowNotified = false;
     private int selectedNotificationSoundIndex = 0;
     private String notificationLogFilter = "today";
+    private final Handler batteryRefreshHandler = new Handler(Looper.getMainLooper());
+    private String robotBatteryDisplay = "--";
+    private boolean batteryRequestInFlight = false;
+    private final Runnable batteryRefreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            fetchRobotBatteryStatus();
+            batteryRefreshHandler.postDelayed(this, BATTERY_REFRESH_INTERVAL_MS);
+        }
+    };
+    private final Handler missionStatusHandler = new Handler(Looper.getMainLooper());
+    private String robotMissionState = "IDLE";
+    private boolean missionStatusRequestInFlight = false;
+    private final Runnable missionStatusRunnable = new Runnable() {
+        @Override
+        public void run() {
+            fetchMissionStatus();
+            missionStatusHandler.postDelayed(this, MISSION_STATUS_REFRESH_INTERVAL_MS);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,6 +187,8 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannel();
         listenToNotificationSettings();
         listenToBatteryLevel();
+        startBatteryRefresh();
+        startMissionStatusRefresh();
 
         ViewCompat.setOnApplyWindowInsetsListener(appRoot, (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -177,6 +203,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        batteryRefreshHandler.removeCallbacks(batteryRefreshRunnable);
+        missionStatusHandler.removeCallbacks(missionStatusRunnable);
         stopVoiceMicPulse();
         if (speechRecognizer != null) {
             speechRecognizer.destroy();
@@ -843,14 +871,32 @@ public class MainActivity extends AppCompatActivity {
         bindHomeQuickRoutines(homeView);
         bindHomeRepresentativeTray(homeView);
         loadHomeRecentLogs(homeView);
+        updateHomeBatteryValue(homeView);
+        updateHomeRobotState(homeView);
+        fetchRobotBatteryStatus();
 
         homeView.findViewById(R.id.homeBellIcon).setOnClickListener(v -> setScreen("notification"));
         homeView.findViewById(R.id.homeSettingsIcon).setOnClickListener(v -> setScreen("menu"));
         homeView.findViewById(R.id.homeAllLogsButton).setOnClickListener(v -> setScreen("logs"));
         homeView.findViewById(R.id.homeLogsChevron).setOnClickListener(v -> setScreen("logs"));
         homeView.findViewById(R.id.homeVoiceButton).setOnClickListener(v -> setScreen("voice"));
+        homeView.findViewById(R.id.homeEmergencyStopButton).setOnClickListener(v -> stopCarryMission());
         homeView.findViewById(R.id.homeRoutineManageButton).setOnClickListener(v -> setScreen("routine"));
         homeView.findViewById(R.id.homeModuleCard).setOnClickListener(v -> openRepresentativeTrayDetail());
+    }
+
+    private void updateHomeBatteryValue(View homeView) {
+        TextView batteryValue = homeView.findViewById(R.id.homeBatteryValue);
+        if (batteryValue != null) {
+            batteryValue.setText(robotBatteryDisplay);
+        }
+    }
+
+    private void updateHomeRobotState(View homeView) {
+        TextView stateBadge = homeView.findViewById(R.id.homeRobotStateBadge);
+        if (stateBadge != null) {
+            stateBadge.setText(isRobotMovingState(robotMissionState) ? "이동 중" : "대기 중");
+        }
     }
 
     private void bindHomeQuickRoutines(View homeView) {
@@ -1026,6 +1072,7 @@ public class MainActivity extends AppCompatActivity {
         voiceView.findViewById(R.id.voiceMissionOneButton).setOnClickListener(v -> startCarryMission(1, "Mission 1 테스트"));
         voiceView.findViewById(R.id.voiceMissionTwoButton).setOnClickListener(v -> startCarryMission(2, "Mission 2 테스트"));
         voiceView.findViewById(R.id.voiceMissionThreeButton).setOnClickListener(v -> startCarryMission(3, "Mission 3 테스트"));
+        voiceView.findViewById(R.id.voiceEmergencyStopButton).setOnClickListener(v -> stopCarryMission());
 
         voiceView.findViewById(R.id.voiceIdleGroup).setVisibility(voiceState == 0 ? View.VISIBLE : View.GONE);
         voiceView.findViewById(R.id.voiceListeningGroup).setVisibility(voiceState == 1 ? View.VISIBLE : View.GONE);
@@ -3852,6 +3899,8 @@ public class MainActivity extends AppCompatActivity {
                 payload.put("mission", missionId);
                 String response = postMissionJson("/mission/start", payload);
                 runOnUiThread(() -> {
+                    robotMissionState = "RUNNING";
+                    updateVisibleHomeRobotState();
                     saveVoiceRecord(command, "sent", response);
                     Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
                 });
@@ -3872,6 +3921,117 @@ public class MainActivity extends AppCompatActivity {
         return 1;
     }
 
+    private void startBatteryRefresh() {
+        batteryRefreshHandler.removeCallbacks(batteryRefreshRunnable);
+        batteryRefreshRunnable.run();
+    }
+
+    private void startMissionStatusRefresh() {
+        missionStatusHandler.removeCallbacks(missionStatusRunnable);
+        missionStatusRunnable.run();
+    }
+
+    private void fetchMissionStatus() {
+        if (missionStatusRequestInFlight) return;
+        missionStatusRequestInFlight = true;
+        new Thread(() -> {
+            try {
+                JSONObject json = new JSONObject(getMissionText("/mission/status"));
+                String state = json.optString("state", json.optString("status", robotMissionState));
+                runOnUiThread(() -> {
+                    robotMissionState = emptyToFallback(state, "IDLE").toUpperCase(Locale.ROOT);
+                    missionStatusRequestInFlight = false;
+                    updateVisibleHomeRobotState();
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> missionStatusRequestInFlight = false);
+            }
+        }).start();
+    }
+
+    private void updateVisibleHomeRobotState() {
+        if (!"home".equals(screen)) return;
+        View stateView = contentContainer.findViewById(R.id.homeRobotStateBadge);
+        if (stateView instanceof TextView) {
+            ((TextView) stateView).setText(isRobotMovingState(robotMissionState) ? "이동 중" : "대기 중");
+        }
+    }
+
+    private boolean isRobotMovingState(String state) {
+        String normalized = emptyToFallback(state, "").toUpperCase(Locale.ROOT);
+        return "RUNNING".equals(normalized) || "STOPPING".equals(normalized);
+    }
+
+    private void fetchRobotBatteryStatus() {
+        if (batteryRequestInFlight) return;
+        batteryRequestInFlight = true;
+        new Thread(() -> {
+            try {
+                JSONObject json = new JSONObject(getMissionText("/battery/status"));
+                String display = batteryDisplayText(json);
+                runOnUiThread(() -> {
+                    robotBatteryDisplay = display;
+                    batteryRequestInFlight = false;
+                    updateVisibleHomeBattery();
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    robotBatteryDisplay = "--";
+                    batteryRequestInFlight = false;
+                    updateVisibleHomeBattery();
+                });
+            }
+        }).start();
+    }
+
+    private void updateVisibleHomeBattery() {
+        if (!"home".equals(screen)) return;
+        View batteryView = contentContainer.findViewById(R.id.homeBatteryValue);
+        if (batteryView instanceof TextView) {
+            ((TextView) batteryView).setText(robotBatteryDisplay);
+        }
+    }
+
+    private String batteryDisplayText(JSONObject json) {
+        if (json.has("percent") && !json.isNull("percent")) {
+            double percent = json.optDouble("percent", -1);
+            if (percent >= 0) {
+                return Math.round(percent) + "%";
+            }
+        }
+
+        double voltage = -1;
+        if (json.has("voltage") && !json.isNull("voltage")) {
+            voltage = json.optDouble("voltage", -1);
+        } else if (json.has("battery") && !json.isNull("battery")) {
+            voltage = json.optDouble("battery", -1);
+        }
+        if (voltage >= 0) {
+            return String.format(Locale.KOREA, "%.1fV", voltage);
+        }
+        return "--";
+    }
+
+    private void stopCarryMission() {
+        Toast.makeText(this, "긴급 정지 명령을 보내는 중입니다.", Toast.LENGTH_SHORT).show();
+        new Thread(() -> {
+            try {
+                String response = postMissionWithoutBody("/mission/stop");
+                runOnUiThread(() -> {
+                    robotMissionState = "STOPPED";
+                    updateVisibleHomeRobotState();
+                    saveVoiceRecord("긴급 정지", "sent", response);
+                    Toast.makeText(this, "긴급 정지 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    saveVoiceRecord("긴급 정지", "fallback", e.getMessage());
+                    Toast.makeText(this, "긴급 정지 요청에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
+    }
+
     private String postMissionJson(String path, JSONObject payload) throws Exception {
         Exception lastError = null;
         for (String baseUrl : MISSION_API_BASE_URLS) {
@@ -3882,6 +4042,84 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         throw lastError == null ? new IllegalStateException("Mission API unavailable") : lastError;
+    }
+
+    private String postMissionWithoutBody(String path) throws Exception {
+        Exception lastError = null;
+        for (String baseUrl : MISSION_API_BASE_URLS) {
+            try {
+                return postWithoutBody(baseUrl + path);
+            } catch (Exception e) {
+                lastError = e;
+            }
+        }
+        throw lastError == null ? new IllegalStateException("Mission API unavailable") : lastError;
+    }
+
+    private String getMissionText(String path) throws Exception {
+        Exception lastError = null;
+        for (String baseUrl : MISSION_API_BASE_URLS) {
+            try {
+                return getText(baseUrl + path);
+            } catch (Exception e) {
+                lastError = e;
+            }
+        }
+        throw lastError == null ? new IllegalStateException("Mission API unavailable") : lastError;
+    }
+
+    private String getText(String apiUrl) throws Exception {
+        HttpURLConnection conn = null;
+        try {
+            URL url = new URL(apiUrl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(15000);
+            int statusCode = conn.getResponseCode();
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    statusCode >= 400 ? conn.getErrorStream() : conn.getInputStream(),
+                    StandardCharsets.UTF_8
+            ));
+            StringBuilder response = new StringBuilder();
+            try (BufferedReader reader = br) {
+                String line;
+                while ((line = reader.readLine()) != null) response.append(line);
+            }
+            if (statusCode >= 400) {
+                throw new IllegalStateException(response.length() == 0 ? "Mission API error: " + statusCode : response.toString());
+            }
+            return response.toString();
+        } finally {
+            if (conn != null) conn.disconnect();
+        }
+    }
+
+    private String postWithoutBody(String apiUrl) throws Exception {
+        HttpURLConnection conn = null;
+        try {
+            URL url = new URL(apiUrl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(5000);
+            int statusCode = conn.getResponseCode();
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    statusCode >= 400 ? conn.getErrorStream() : conn.getInputStream(),
+                    StandardCharsets.UTF_8
+            ));
+            StringBuilder response = new StringBuilder();
+            try (BufferedReader reader = br) {
+                String line;
+                while ((line = reader.readLine()) != null) response.append(line);
+            }
+            if (statusCode >= 400) {
+                throw new IllegalStateException(response.length() == 0 ? "Mission API error: " + statusCode : response.toString());
+            }
+            return response.toString();
+        } finally {
+            if (conn != null) conn.disconnect();
+        }
     }
 
     private String postJson(String apiUrl, JSONObject payload) throws Exception {

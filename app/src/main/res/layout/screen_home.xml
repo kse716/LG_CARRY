@@ -39,7 +39,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:text="LG ThinQ Carry"
+                android:text="LG Carry"
                 android:textColor="#14191B"
                 android:textSize="22sp"
                 android:textStyle="bold" />
@@ -86,6 +86,7 @@
             android:src="@drawable/carry_product" />
 
         <TextView
+            android:id="@+id/homeRobotStateBadge"
             android:layout_width="88dp"
             android:layout_height="32dp"
             android:layout_gravity="center_horizontal"
@@ -112,7 +113,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="74dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="14dp"
             android:background="@drawable/bg_card"
             android:gravity="center"
             android:orientation="horizontal">
@@ -178,16 +179,18 @@
                     android:textSize="11sp" />
 
                 <TextView
+                    android:id="@+id/homeBatteryValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:includeFontPadding="false"
-                    android:text="82%"
+                    android:text="--"
                     android:textColor="#14191B"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -580,5 +583,17 @@
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
+        <TextView
+            android:id="@+id/homeEmergencyStopButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_emergency_stop_button"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="긴급 정지"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>

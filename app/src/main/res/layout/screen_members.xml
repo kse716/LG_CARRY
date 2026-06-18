@@ -62,8 +62,8 @@
         android:singleLine="true"
         android:textColor="#14191B"
         android:textColorHint="#9AA3A5"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
 
     <TextView
