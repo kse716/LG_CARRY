@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomNav"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingTop="28dp"
+    android:paddingBottom="28dp">
+
+    <ImageView
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="34dp"
+        android:contentDescription="LG CARRY"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/ic_launcher_test" />
+
+    <LinearLayout
+        android:id="@+id/bottomNavHome"
+        android:layout_width="88dp"
+        android:layout_height="82dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView android:layout_width="28dp" android:layout_height="28dp" android:contentDescription="@null" android:duplicateParentState="true" android:src="@drawable/ic_bottom_home" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:duplicateParentState="true" android:text="홈" android:textColor="@color/bottom_nav_text" android:textSize="13sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomNavModules"
+        android:layout_width="88dp"
+        android:layout_height="82dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView android:layout_width="28dp" android:layout_height="28dp" android:contentDescription="@null" android:duplicateParentState="true" android:src="@drawable/ic_bottom_box" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:duplicateParentState="true" android:text="모듈" android:textColor="@color/bottom_nav_text" android:textSize="13sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomNavRoutine"
+        android:layout_width="88dp"
+        android:layout_height="82dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView android:layout_width="28dp" android:layout_height="28dp" android:contentDescription="@null" android:duplicateParentState="true" android:src="@drawable/ic_bottom_play_circle" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:duplicateParentState="true" android:text="루틴" android:textColor="@color/bottom_nav_text" android:textSize="13sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomNavMenu"
+        android:layout_width="88dp"
+        android:layout_height="82dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView android:layout_width="28dp" android:layout_height="28dp" android:contentDescription="@null" android:duplicateParentState="true" android:src="@drawable/ic_bottom_menu" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:duplicateParentState="true" android:text="메뉴" android:textColor="@color/bottom_nav_text" android:textSize="13sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <Space android:layout_width="1dp" android:layout_height="0dp" android:layout_weight="1" />
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CARRY" android:textColor="#008E84" android:textSize="12sp" android:textStyle="bold" />
+</LinearLayout>

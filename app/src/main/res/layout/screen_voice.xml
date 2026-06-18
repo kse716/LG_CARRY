@@ -359,7 +359,7 @@
                     android:layout_gravity="center"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_box"
-                    android:tint="#008E84" />
+                    app:tint="#008E84" />
             </FrameLayout>
 
             <TextView

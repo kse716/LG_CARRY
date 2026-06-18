@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout appRoot;
     private FrameLayout contentContainer;
     private FrameLayout bottomNavContainer;
+    private boolean tabletLandscape;
     private String screen = "home";
     private String selectedModule = "1번 트레이";
     private String selectedTrayId = "tray1";
@@ -188,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
         appRoot = findViewById(R.id.appRoot);
         contentContainer = findViewById(R.id.contentContainer);
         bottomNavContainer = findViewById(R.id.bottomNavContainer);
+        tabletLandscape = getResources().getBoolean(R.bool.is_tablet_landscape);
 
         db = FirebaseDatabase.getInstance().getReference();
         restoreCurrentUser();
@@ -206,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(appRoot, (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             contentContainer.setPadding(0, bars.top, 0, 0);
-            bottomNavContainer.setPadding(0, 0, 0, bars.bottom);
+            bottomNavContainer.setPadding(0, tabletLandscape ? bars.top : 0, 0, bars.bottom);
             return insets;
         });
 
@@ -879,8 +881,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderHomeXml() {
         View homeView = LayoutInflater.from(this).inflate(R.layout.screen_home, contentContainer, false);
-        contentContainer.addView(homeView);
-        centerScreen(homeView);
+        attachScreen(homeView);
         addBottomNav();
 
         bindHomeQuickRoutines(homeView);
@@ -1061,8 +1062,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderVoice() {
         View voiceView = LayoutInflater.from(this).inflate(R.layout.screen_voice, contentContainer, false);
-        contentContainer.addView(voiceView);
-        centerScreen(voiceView);
+        attachScreen(voiceView);
 
         View.OnClickListener startOrFinishClick = v -> {
             if (voiceState == 1) {
@@ -1366,8 +1366,7 @@ public class MainActivity extends AppCompatActivity {
     private void renderModules() {
         List<TrayData> visibleTrays = currentTrays();
         View modulesView = LayoutInflater.from(this).inflate(R.layout.screen_modules, contentContainer, false);
-        contentContainer.addView(modulesView);
-        centerScreen(modulesView);
+        attachScreen(modulesView);
         addBottomNav();
 
         modulesView.findViewById(R.id.modulesAddButton).setOnClickListener(v -> setScreen("moduleAdd"));
@@ -1447,8 +1446,7 @@ public class MainActivity extends AppCompatActivity {
         TrayData tray = selectedTray();
 
         View detailView = LayoutInflater.from(this).inflate(R.layout.screen_module_detail, contentContainer, false);
-        contentContainer.addView(detailView);
-        centerScreen(detailView);
+        attachScreen(detailView);
         detailView.findViewById(R.id.moduleDetailBackButton).setOnClickListener(v -> setScreen("modules"));
         ((TextView) detailView.findViewById(R.id.moduleDetailTitle)).setText(tray.name);
         ((TextView) detailView.findViewById(R.id.moduleDetailTrayName)).setText(tray.name);
@@ -1725,8 +1723,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderModuleAdd() {
         View addView = LayoutInflater.from(this).inflate(R.layout.screen_module_add, contentContainer, false);
-        contentContainer.addView(addView);
-        centerScreen(addView);
+        attachScreen(addView);
         addView.findViewById(R.id.moduleAddBackButton).setOnClickListener(v -> setScreen("modules"));
         EditText nameInput = addView.findViewById(R.id.moduleAddNameInput);
         bindModuleAddPlace(addView);
@@ -1865,8 +1862,7 @@ public class MainActivity extends AppCompatActivity {
     private void renderModuleRename() {
         TrayData tray = selectedTray();
         View renameView = LayoutInflater.from(this).inflate(R.layout.screen_module_rename, contentContainer, false);
-        contentContainer.addView(renameView);
-        centerScreen(renameView);
+        attachScreen(renameView);
         renameView.findViewById(R.id.moduleRenameBackButton).setOnClickListener(v -> setScreen("moduleDetail"));
         EditText edit = renameView.findViewById(R.id.moduleRenameNameInput);
         edit.setText(tray.name);
@@ -1881,8 +1877,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderItemSearch() {
         View searchView = LayoutInflater.from(this).inflate(R.layout.screen_item_search, contentContainer, false);
-        contentContainer.addView(searchView);
-        centerScreen(searchView);
+        attachScreen(searchView);
         searchView.findViewById(R.id.itemSearchBackButton).setOnClickListener(v -> setScreen("modules"));
         EditText searchInput = searchView.findViewById(R.id.itemSearchInput);
         bindItemSearchResults(searchView, "");
@@ -2046,8 +2041,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderItemAdd() {
         View addView = LayoutInflater.from(this).inflate(R.layout.screen_item_add, contentContainer, false);
-        contentContainer.addView(addView);
-        centerScreen(addView);
+        attachScreen(addView);
         addView.findViewById(R.id.itemAddBackButton).setOnClickListener(v -> setScreen("moduleDetail"));
         EditText itemInput = addView.findViewById(R.id.itemAddNameInput);
         bindItemChip(addView, R.id.itemChipRemote, itemInput, "리모컨");
@@ -2063,8 +2057,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderRoutine() {
         View routineView = LayoutInflater.from(this).inflate(R.layout.screen_routine, contentContainer, false);
-        contentContainer.addView(routineView);
-        centerScreen(routineView);
+        attachScreen(routineView);
         addBottomNav();
         routineView.findViewById(R.id.routineAddTopButton).setOnClickListener(v -> prepareNewRoutine());
         View addBottomButton = findOptionalView(routineView, "routineAddBottomButton");
@@ -2165,8 +2158,7 @@ public class MainActivity extends AppCompatActivity {
     private void renderRoutineEdit() {
         RoutineData routine = selectedRoutine();
         View editView = LayoutInflater.from(this).inflate(R.layout.screen_routine_edit, contentContainer, false);
-        contentContainer.addView(editView);
-        centerScreen(editView);
+        attachScreen(editView);
 
         EditText nameInput = editView.findViewById(R.id.routineEditNameInput);
         nameInput.setText(routine.title);
@@ -2291,8 +2283,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderMenu() {
         View menuView = LayoutInflater.from(this).inflate(R.layout.screen_menu, contentContainer, false);
-        contentContainer.addView(menuView);
-        centerScreen(menuView);
+        attachScreen(menuView);
         addBottomNav();
         menuView.findViewById(R.id.menuNotificationRow).setOnClickListener(v -> setScreen("notification"));
         menuView.findViewById(R.id.menuMapRow).setOnClickListener(v -> setScreen("map"));
@@ -2312,8 +2303,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderMembers() {
         View membersView = LayoutInflater.from(this).inflate(R.layout.screen_members, contentContainer, false);
-        contentContainer.addView(membersView);
-        centerScreen(membersView);
+        attachScreen(membersView);
         membersView.findViewById(R.id.membersBackButton).setOnClickListener(v -> setScreen("menu"));
         EditText idInput = membersView.findViewById(R.id.membersIdInput);
         membersView.findViewById(R.id.membersAddButton).setOnClickListener(v -> {
@@ -2551,8 +2541,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderNotification() {
         View notificationView = LayoutInflater.from(this).inflate(R.layout.screen_notification, contentContainer, false);
-        contentContainer.addView(notificationView);
-        centerScreen(notificationView);
+        attachScreen(notificationView);
         notificationView.findViewById(R.id.notificationBackButton).setOnClickListener(v -> setScreen("menu"));
         bindNotificationToggle(notificationView, R.id.notificationPushRow, R.id.notificationPushToggleTrack, R.id.notificationPushToggleKnob, "push");
         bindNotificationToggle(notificationView, R.id.notificationMoveRow, R.id.notificationMoveToggleTrack, R.id.notificationMoveToggleKnob, "move");
@@ -2564,8 +2553,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderAlarm() {
         View alarmView = LayoutInflater.from(this).inflate(R.layout.screen_alarm, contentContainer, false);
-        contentContainer.addView(alarmView);
-        centerScreen(alarmView);
+        attachScreen(alarmView);
         alarmView.findViewById(R.id.alarmBackButton).setOnClickListener(v -> setScreen("notification"));
         bindAlarmRow(alarmView, R.id.alarmDefaultRow, 0);
         bindAlarmRow(alarmView, R.id.alarmSoftRow, 1);
@@ -2643,8 +2631,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderNotificationLogs() {
         View logsView = LayoutInflater.from(this).inflate(R.layout.screen_notification_logs, contentContainer, false);
-        contentContainer.addView(logsView);
-        centerScreen(logsView);
+        attachScreen(logsView);
         logsView.findViewById(R.id.notificationLogsBackButton).setOnClickListener(v -> setScreen("notification"));
         bindNotificationLogFilter(logsView, R.id.notificationLogsFilterToday, "today");
         bindNotificationLogFilter(logsView, R.id.notificationLogsFilterWeek, "week");
@@ -2882,8 +2869,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderLogs() {
         View logsView = LayoutInflater.from(this).inflate(R.layout.screen_logs, contentContainer, false);
-        contentContainer.addView(logsView);
-        centerScreen(logsView);
+        attachScreen(logsView);
         logsView.findViewById(R.id.logsBackButton).setOnClickListener(v -> setScreen("home"));
         bindLogFilterChip(logsView, R.id.logsChipToday, "today");
         bindLogFilterChip(logsView, R.id.logsChipWeek, "week");
@@ -3286,8 +3272,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void choiceScreen(String title, String section, String[] choices, String back) {
         View choiceView = LayoutInflater.from(this).inflate(R.layout.screen_choice, contentContainer, false);
-        contentContainer.addView(choiceView);
-        centerScreen(choiceView);
+        attachScreen(choiceView);
         choiceView.findViewById(R.id.choiceBackButton).setOnClickListener(v -> setScreen(back));
         ((TextView) choiceView.findViewById(R.id.choiceTitle)).setText(title);
         ((TextView) choiceView.findViewById(R.id.choiceSection)).setText(section);
@@ -3351,18 +3336,39 @@ public class MainActivity extends AppCompatActivity {
 
     private FrameLayout inflateFixedCanvas(int layoutRes) {
         FrameLayout c = (FrameLayout) LayoutInflater.from(this).inflate(layoutRes, contentContainer, false);
-        contentContainer.addView(c);
-        centerScreen(c);
+        attachScreen(c);
         return c;
+    }
+
+    private void attachScreen(View screenView) {
+        contentContainer.addView(screenView);
+        centerScreen(screenView);
     }
 
 
     private void centerScreen(View screenView) {
+        int width = ViewGroup.LayoutParams.MATCH_PARENT;
+        if (tabletLandscape && !isWideTabletRoute()) {
+            width = dp(760);
+        }
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                width,
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
+                Gravity.CENTER_HORIZONTAL
         );
         screenView.setLayoutParams(params);
+    }
+
+    private boolean isWideTabletRoute() {
+        return "home".equals(screen)
+                || "voice".equals(screen)
+                || "voiceListening".equals(screen)
+                || "voiceResult".equals(screen)
+                || "modules".equals(screen)
+                || "routine".equals(screen)
+                || "menu".equals(screen)
+                || "logs".equals(screen)
+                || "notificationLogs".equals(screen);
     }
 
     private View findOptionalView(View rootView, String idName) {
