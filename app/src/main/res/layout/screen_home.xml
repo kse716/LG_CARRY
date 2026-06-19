@@ -87,7 +87,7 @@
 
         <TextView
             android:id="@+id/homeRobotStateBadge"
-            android:layout_width="88dp"
+            android:layout_width="136dp"
             android:layout_height="32dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
@@ -97,18 +97,6 @@
             android:text="대기 중"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/homeRobotPhaseLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="12dp"
-            android:includeFontPadding="false"
-            android:text="충전 중 · 명령 대기"
-            android:textColor="#798385"
-            android:textSize="13sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -133,7 +121,6 @@
                     android:src="@drawable/ic_state" />
 
                 <TextView
-                    android:id="@+id/homeRobotPhaseDetail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -143,6 +130,7 @@
                     android:textSize="11sp" />
 
                 <TextView
+                    android:id="@+id/homeRobotPhaseDetail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"

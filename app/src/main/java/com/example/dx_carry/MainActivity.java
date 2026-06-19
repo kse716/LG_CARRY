@@ -15,12 +15,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,15 +28,12 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.LinearLayout;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -45,13 +42,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONObject;
 
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     private final Handler missionPhaseHandler = new Handler(Looper.getMainLooper());
     private String robotMissionFrontStatus = "대기중";
     private String robotMissionPhaseLabel = "대기 중";
-    private String robotMissionPhaseDetail = "충전 스테이션 대기 중";
+    private String robotMissionPhaseDetail = "대기 중";
     private String lastMissionPhaseToastCode = "";
     private boolean missionPhaseRequestInFlight = false;
     private final Runnable missionPhaseRunnable = new Runnable() {
@@ -912,13 +912,13 @@ public class MainActivity extends AppCompatActivity {
         if (stateBadge != null) {
             stateBadge.setText(homeRobotStateBadgeText());
         }
-        TextView phaseLabel = homeView.findViewById(R.id.homeRobotPhaseLabel);
-        if (phaseLabel != null) {
-            phaseLabel.setText(emptyToFallback(robotMissionPhaseLabel, "대기 중"));
+        View phaseLabel = findOptionalView(homeView, "homeRobotPhaseLabel");
+        if (phaseLabel instanceof TextView) {
+            ((TextView) phaseLabel).setText(emptyToFallback(robotMissionPhaseLabel, "대기 중"));
         }
         TextView phaseDetail = homeView.findViewById(R.id.homeRobotPhaseDetail);
         if (phaseDetail != null) {
-            phaseDetail.setText(emptyToFallback(robotMissionPhaseDetail, "충전 스테이션 대기 중"));
+            phaseDetail.setText(emptyToFallback(robotMissionPhaseDetail, "대기 중"));
         }
     }
 
@@ -1086,7 +1086,7 @@ public class MainActivity extends AppCompatActivity {
         });
         voiceView.findViewById(R.id.voiceRetryButton).setOnClickListener(v -> setScreen("voice"));
         voiceView.findViewById(R.id.voiceExecuteButton).setOnClickListener(v -> {
-            if (!voiceIntentAccepted) {
+            if (currentVoiceMissionId() <= 0) {
                 Toast.makeText(this, emptyToFallback(recognizedMessage, "명령을 다시 말해주세요."), Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -1304,7 +1304,7 @@ public class MainActivity extends AppCompatActivity {
             popupList.addView(row);
         }
         popup.setOutsideTouchable(true);
-        popup.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         popup.showAsDropDown(anchor, 0, dp(6));
     }
 
@@ -3954,15 +3954,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startCarryMissionFromVoice() {
-        int missionId = parsedVoiceMissionId > 0 ? parsedVoiceMissionId : missionIdForVoiceCommand();
+        int missionId = currentVoiceMissionId();
         if (missionId <= 0) {
+            Toast.makeText(this, "먼저 음성 명령을 말하거나 미션 버튼을 선택해주세요.", Toast.LENGTH_SHORT).show();
             return;
         }
         startCarryMission(missionId, recognizedCommand);
     }
 
+    private int currentVoiceMissionId() {
+        return parsedVoiceMissionId > 0 ? parsedVoiceMissionId : missionIdForVoiceCommand();
+    }
+
     private void startCarryMission(int missionId, String commandLabel) {
         String command = emptyToFallback(commandLabel, "Mission " + missionId + " 테스트");
+        Toast.makeText(this, missionToastText(missionId), Toast.LENGTH_LONG).show();
         Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보내는 중입니다.", Toast.LENGTH_SHORT).show();
         new Thread(() -> {
             try {
@@ -3973,7 +3979,7 @@ public class MainActivity extends AppCompatActivity {
                     robotMissionState = "RUNNING";
                     robotMissionFrontStatus = "준비중";
                     robotMissionPhaseLabel = "미션 시작 준비";
-                    robotMissionPhaseDetail = "Mission " + missionId;
+                    robotMissionPhaseDetail = "미션 시작 준비";
                     updateVisibleHomeRobotState();
                     saveVoiceRecord(command, "sent", response);
                     Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
@@ -3985,6 +3991,25 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }).start();
+    }
+
+    private String missionToastText(int missionId) {
+        switch (missionId) {
+            case 1:
+                return "Mission 1: 육아 트레이를 안방으로 전달";
+            case 2:
+                return "Mission 2: 출근 트레이를 아이방으로 전달";
+            case 3:
+                return "Mission 3: 육아 트레이를 현관으로 전달";
+            case 4:
+                return "Mission 4: 출근 트레이를 현관으로 전달";
+            case 5:
+                return "Mission 5: 육아 트레이를 거실로 전달";
+            case 6:
+                return "Mission 6: 출근 트레이를 거실로 전달";
+            default:
+                return "Mission " + missionId + ": 미션 정보를 확인 중";
+        }
     }
 
     private int missionIdForVoiceCommand() {
@@ -4078,7 +4103,8 @@ public class MainActivity extends AppCompatActivity {
                 String code = json.optString("code", "").toUpperCase(Locale.ROOT);
                 String frontStatus = json.optString("front_status", robotMissionFrontStatus);
                 String label = json.optString("label", robotMissionPhaseLabel);
-                String detail = json.optString("detail", robotMissionPhaseDetail);
+                String detail = json.optString("detail", "");
+                String displayText = missionPhaseDetailText(code, frontStatus, label, detail);
                 runOnUiThread(() -> {
                     missionPhaseRequestInFlight = false;
                     if (isMissionPhaseToastCode(code)) {
@@ -4089,7 +4115,7 @@ public class MainActivity extends AppCompatActivity {
                         lastMissionPhaseToastCode = "";
                         robotMissionFrontStatus = emptyToFallback(frontStatus, robotMissionFrontStatus);
                         robotMissionPhaseLabel = emptyToFallback(label, robotMissionPhaseLabel);
-                        robotMissionPhaseDetail = emptyToFallback(detail, robotMissionPhaseDetail);
+                        robotMissionPhaseDetail = emptyToFallback(displayText, robotMissionPhaseDetail);
                         updateVisibleHomeRobotState();
                     }
                 });
@@ -4125,6 +4151,54 @@ public class MainActivity extends AppCompatActivity {
         return "SUCCESS".equals(normalized) || "FAILED".equals(normalized);
     }
 
+    private String missionPhaseDetailText(String code, String frontStatus, String label, String detail) {
+        String normalized = emptyToFallback(code, "").toUpperCase(Locale.ROOT);
+        String normalizedFrontStatus = emptyToFallback(frontStatus, "");
+        String apiDetail = formatMissionPhaseDetail(detail);
+        if (!apiDetail.isEmpty()
+                && ("이동중".equals(normalizedFrontStatus)
+                || "도킹중".equals(normalizedFrontStatus)
+                || "주차중".equals(normalizedFrontStatus))) {
+            return apiDetail;
+        }
+
+        String apiLabel = emptyToFallback(label, "");
+        switch (normalized) {
+            case "IDLE":
+                return "대기 중";
+            case "MISSION_STARTING":
+                return "미션 시작 준비";
+            case "NAV_READY":
+                return "Nav2 연결 완료";
+            case "NAV_TO_DRAWER":
+                return "서랍 위치로 이동 중";
+            case "PICKUP_BACK_OUT":
+                return "서랍 분리 중";
+            case "NAV_TO_DESTINATION":
+                return "목적지로 이동 중";
+            case "ARRIVED_WAITING":
+                return "사용자 사용 대기 중";
+            case "NAV_TO_RETURN":
+                return "원래 서랍 위치로 복귀 중";
+            case "RETURN_BACK_OUT":
+                return "서랍에서 분리 중";
+            case "PARKING_TURN":
+                return "스테이션 방향 전환 중";
+            case "NAV_TO_STATION":
+                return "스테이션으로 이동 중";
+            case "STATION_PARKING":
+                return "스테이션 주차 중";
+            case "STOPPED":
+                return "사용자 정지 요청";
+            default:
+                return emptyToFallback(apiLabel, robotMissionPhaseDetail);
+        }
+    }
+
+    private String formatMissionPhaseDetail(String detail) {
+        return emptyToFallback(detail, "").replace("_", " ").trim();
+    }
+
     private void showMissionPhaseToastOnce(String code, String label) {
         String normalized = emptyToFallback(code, "").toUpperCase(Locale.ROOT);
         if (normalized.equals(lastMissionPhaseToastCode)) return;
@@ -4139,13 +4213,13 @@ public class MainActivity extends AppCompatActivity {
         if (stateView instanceof TextView) {
             ((TextView) stateView).setText(homeRobotStateBadgeText());
         }
-        View labelView = contentContainer.findViewById(R.id.homeRobotPhaseLabel);
+        View labelView = findOptionalView(contentContainer, "homeRobotPhaseLabel");
         if (labelView instanceof TextView) {
             ((TextView) labelView).setText(emptyToFallback(robotMissionPhaseLabel, "대기 중"));
         }
         View detailView = contentContainer.findViewById(R.id.homeRobotPhaseDetail);
         if (detailView instanceof TextView) {
-            ((TextView) detailView).setText(emptyToFallback(robotMissionPhaseDetail, "충전 스테이션 대기 중"));
+            ((TextView) detailView).setText(emptyToFallback(robotMissionPhaseDetail, "대기 중"));
         }
     }
 
@@ -4226,7 +4300,7 @@ public class MainActivity extends AppCompatActivity {
                     robotMissionState = "STOPPED";
                     robotMissionFrontStatus = "정지됨";
                     robotMissionPhaseLabel = "사용자 정지 요청";
-                    robotMissionPhaseDetail = "긴급 정지";
+                    robotMissionPhaseDetail = "사용자 정지 요청";
                     updateVisibleHomeRobotState();
                     saveVoiceRecord("긴급 정지", "sent", response);
                     Toast.makeText(this, "긴급 정지 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
