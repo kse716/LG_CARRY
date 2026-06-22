@@ -23,6 +23,7 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,6 +76,7 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "DXCarry";
     private static final int APP_BACKGROUND = 0xFFF7F9F9;
     private static final int REQUEST_RECORD_AUDIO = 1001;
     private static final int REQUEST_POST_NOTIFICATIONS = 1002;
