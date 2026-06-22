@@ -99,7 +99,7 @@
             android:layout_height="22dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="420dp"
+            android:layout_marginTop="420dp"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="버튼을 눌러 말해보세요"
@@ -112,7 +112,7 @@
             android:layout_height="16dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="452dp"
+            android:layout_marginTop="452dp"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="예: 책상에 있는 트레이 가져와줘"
@@ -125,7 +125,7 @@
             android:layout_height="15dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-        android:layout_marginTop="664dp"
+            android:layout_marginTop="664dp"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="마이크를 탭하면 시작합니다"
@@ -359,7 +359,7 @@
                     android:layout_gravity="center"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_box"
-                    android:tint="#008E84" />
+                    app:tint="#008E84" />
             </FrameLayout>
 
             <TextView
@@ -465,7 +465,8 @@
             android:layout_marginEnd="20dp"
             android:layout_marginTop="624dp"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -578,7 +579,7 @@
             android:layout_height="44dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginTop="764dp"
+            android:layout_marginTop="640dp"
             android:background="@drawable/bg_emergency_stop_button"
             android:gravity="center"
             android:includeFontPadding="false"

@@ -8,19 +8,21 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,12 +30,15 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.LinearLayout;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -42,16 +47,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONObject;
 
@@ -78,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_POST_NOTIFICATIONS = 1002;
     private static final String NOTIFICATION_CHANNEL_ID = "carry_notifications";
     private static final String[] VOICE_INTENT_API_URLS = {
-            "http://10.37.161.133:5000/voice/parse",
-            "http://192.168.0.21:5000/voice/parse"
+            "http://10.37.161.133:5000/api/ai/voice-intent",
+            "http://192.168.0.21:5000/api/ai/voice-intent"
     };
     private static final String[] MISSION_API_BASE_URLS = {
             "http://10.37.161.133:5001"
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout appRoot;
     private FrameLayout contentContainer;
     private FrameLayout bottomNavContainer;
+    private boolean tabletLandscape;
     private String screen = "home";
     private String selectedModule = "1번 트레이";
     private String selectedTrayId = "tray1";
@@ -125,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
     private String recognizedMessage = "";
     private double recognizedConfidence = 0.0;
     private boolean voiceIntentAccepted = false;
+    private boolean voiceIntentAnalyzing = false;
     private int parsedVoiceMissionId = -1;
     private AnimatorSet voiceMicPulseAnimator;
     private SpeechRecognizer speechRecognizer;
@@ -160,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
     private final Handler missionPhaseHandler = new Handler(Looper.getMainLooper());
     private String robotMissionFrontStatus = "대기중";
     private String robotMissionPhaseLabel = "대기 중";
-    private String robotMissionPhaseDetail = "대기 중";
+    private String robotMissionPhaseDetail = "스테이션 대기 중";
     private String lastMissionPhaseToastCode = "";
     private boolean missionPhaseRequestInFlight = false;
     private final Runnable missionPhaseRunnable = new Runnable() {
@@ -175,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        lockOrientationForSupportedFormFactor();
         setContentView(R.layout.activity_main);
 
         getWindow().setStatusBarColor(APP_BACKGROUND);
@@ -188,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
         appRoot = findViewById(R.id.appRoot);
         contentContainer = findViewById(R.id.contentContainer);
         bottomNavContainer = findViewById(R.id.bottomNavContainer);
+        tabletLandscape = getResources().getBoolean(R.bool.is_tablet_landscape);
 
         db = FirebaseDatabase.getInstance().getReference();
         restoreCurrentUser();
@@ -206,11 +212,19 @@ public class MainActivity extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(appRoot, (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             contentContainer.setPadding(0, bars.top, 0, 0);
-            bottomNavContainer.setPadding(0, 0, 0, bars.bottom);
+            bottomNavContainer.setPadding(0, tabletLandscape ? bars.top : 0, 0, bars.bottom);
             return insets;
         });
 
         render();
+    }
+
+    private void lockOrientationForSupportedFormFactor() {
+        Configuration configuration = getResources().getConfiguration();
+        boolean tablet = configuration.smallestScreenWidthDp >= 600;
+        setRequestedOrientation(tablet
+                ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
 
@@ -879,8 +893,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderHomeXml() {
         View homeView = LayoutInflater.from(this).inflate(R.layout.screen_home, contentContainer, false);
-        contentContainer.addView(homeView);
-        centerScreen(homeView);
+        attachScreen(homeView);
         addBottomNav();
 
         bindHomeQuickRoutines(homeView);
@@ -912,13 +925,13 @@ public class MainActivity extends AppCompatActivity {
         if (stateBadge != null) {
             stateBadge.setText(homeRobotStateBadgeText());
         }
-        View phaseLabel = findOptionalView(homeView, "homeRobotPhaseLabel");
-        if (phaseLabel instanceof TextView) {
-            ((TextView) phaseLabel).setText(emptyToFallback(robotMissionPhaseLabel, "대기 중"));
+        TextView phaseLabel = homeView.findViewById(R.id.homeRobotPhaseLabel);
+        if (phaseLabel != null) {
+            phaseLabel.setText(emptyToFallback(robotMissionPhaseLabel, "대기 중"));
         }
         TextView phaseDetail = homeView.findViewById(R.id.homeRobotPhaseDetail);
         if (phaseDetail != null) {
-            phaseDetail.setText(emptyToFallback(robotMissionPhaseDetail, "대기 중"));
+            phaseDetail.setText(emptyToFallback(robotMissionPhaseDetail, "충전 스테이션 대기 중"));
         }
     }
 
@@ -1061,8 +1074,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderVoice() {
         View voiceView = LayoutInflater.from(this).inflate(R.layout.screen_voice, contentContainer, false);
-        contentContainer.addView(voiceView);
-        centerScreen(voiceView);
+        attachScreen(voiceView);
 
         View.OnClickListener startOrFinishClick = v -> {
             if (voiceState == 1) {
@@ -1086,8 +1098,8 @@ public class MainActivity extends AppCompatActivity {
         });
         voiceView.findViewById(R.id.voiceRetryButton).setOnClickListener(v -> setScreen("voice"));
         voiceView.findViewById(R.id.voiceExecuteButton).setOnClickListener(v -> {
-            if (currentVoiceMissionId() <= 0) {
-                Toast.makeText(this, emptyToFallback(recognizedMessage, "명령을 다시 말해주세요."), Toast.LENGTH_SHORT).show();
+            if (voiceIntentAnalyzing) {
+                Toast.makeText(this, "명령을 분석하는 중입니다.", Toast.LENGTH_SHORT).show();
                 return;
             }
             startCarryMissionFromVoice();
@@ -1116,12 +1128,19 @@ public class MainActivity extends AppCompatActivity {
             ImageView resultStatusIcon = voiceView.findViewById(R.id.voiceResultStatusIcon);
             boolean speechRecognitionFailed = recognizedCommand == null || recognizedCommand.trim().isEmpty();
             boolean commandRejected = !voiceIntentAccepted;
-            if (commandRejected) {
+            if (voiceIntentAnalyzing) {
+                resultTitle.setVisibility(View.VISIBLE);
+                resultTitle.setText("음성 인식 중");
+                resultCheckIcon.setVisibility(View.VISIBLE);
+                resultStatusIcon.setImageResource(R.drawable.ic_search_white);
+                executeButton.setVisibility(View.GONE);
+                ((TextView) voiceView.findViewById(R.id.voiceResultCommand)).setText(recognizedCommand);
+            } else if (commandRejected) {
                 resultTitle.setVisibility(View.VISIBLE);
                 resultTitle.setText(speechRecognitionFailed ? "\uC74C\uC131 \uC778\uC2DD \uC2E4\uD328" : "\uBA85\uB839 \uC778\uC2DD \uC2E4\uD328");
                 resultCheckIcon.setVisibility(View.VISIBLE);
                 resultStatusIcon.setImageResource(R.drawable.ic_x_white);
-                executeButton.setVisibility(View.GONE);
+                executeButton.setVisibility(speechRecognitionFailed ? View.GONE : View.VISIBLE);
                 ((TextView) voiceView.findViewById(R.id.voiceResultCommand)).setText(
                         speechRecognitionFailed ? recognizedMessage : recognizedCommand
                 );
@@ -1304,7 +1323,7 @@ public class MainActivity extends AppCompatActivity {
             popupList.addView(row);
         }
         popup.setOutsideTouchable(true);
-        popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popup.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
         popup.showAsDropDown(anchor, 0, dp(6));
     }
 
@@ -1366,8 +1385,7 @@ public class MainActivity extends AppCompatActivity {
     private void renderModules() {
         List<TrayData> visibleTrays = currentTrays();
         View modulesView = LayoutInflater.from(this).inflate(R.layout.screen_modules, contentContainer, false);
-        contentContainer.addView(modulesView);
-        centerScreen(modulesView);
+        attachScreen(modulesView);
         addBottomNav();
 
         modulesView.findViewById(R.id.modulesAddButton).setOnClickListener(v -> setScreen("moduleAdd"));
@@ -1447,12 +1465,11 @@ public class MainActivity extends AppCompatActivity {
         TrayData tray = selectedTray();
 
         View detailView = LayoutInflater.from(this).inflate(R.layout.screen_module_detail, contentContainer, false);
-        contentContainer.addView(detailView);
-        centerScreen(detailView);
+        attachScreen(detailView);
         detailView.findViewById(R.id.moduleDetailBackButton).setOnClickListener(v -> setScreen("modules"));
         ((TextView) detailView.findViewById(R.id.moduleDetailTitle)).setText(tray.name);
         ((TextView) detailView.findViewById(R.id.moduleDetailTrayName)).setText(tray.name);
-        ((TextView) detailView.findViewById(R.id.moduleDetailTrayLocation)).setText("현재 위치 · " + tray.location + trayUpdatedSuffix(tray));
+        ((TextView) detailView.findViewById(R.id.moduleDetailTrayLocation)).setText("현재 위치 · " + tray.location);
         ((TextView) detailView.findViewById(R.id.moduleDetailItemCount)).setText("보관 물품 " + tray.items.size() + "개");
         bindModuleDetailItems(detailView, tray);
         EditText itemInput = detailView.findViewById(R.id.moduleDetailItemInput);
@@ -1725,8 +1742,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderModuleAdd() {
         View addView = LayoutInflater.from(this).inflate(R.layout.screen_module_add, contentContainer, false);
-        contentContainer.addView(addView);
-        centerScreen(addView);
+        attachScreen(addView);
         addView.findViewById(R.id.moduleAddBackButton).setOnClickListener(v -> setScreen("modules"));
         EditText nameInput = addView.findViewById(R.id.moduleAddNameInput);
         bindModuleAddPlace(addView);
@@ -1865,8 +1881,7 @@ public class MainActivity extends AppCompatActivity {
     private void renderModuleRename() {
         TrayData tray = selectedTray();
         View renameView = LayoutInflater.from(this).inflate(R.layout.screen_module_rename, contentContainer, false);
-        contentContainer.addView(renameView);
-        centerScreen(renameView);
+        attachScreen(renameView);
         renameView.findViewById(R.id.moduleRenameBackButton).setOnClickListener(v -> setScreen("moduleDetail"));
         EditText edit = renameView.findViewById(R.id.moduleRenameNameInput);
         edit.setText(tray.name);
@@ -1881,8 +1896,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderItemSearch() {
         View searchView = LayoutInflater.from(this).inflate(R.layout.screen_item_search, contentContainer, false);
-        contentContainer.addView(searchView);
-        centerScreen(searchView);
+        attachScreen(searchView);
         searchView.findViewById(R.id.itemSearchBackButton).setOnClickListener(v -> setScreen("modules"));
         EditText searchInput = searchView.findViewById(R.id.itemSearchInput);
         bindItemSearchResults(searchView, "");
@@ -2046,8 +2060,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderItemAdd() {
         View addView = LayoutInflater.from(this).inflate(R.layout.screen_item_add, contentContainer, false);
-        contentContainer.addView(addView);
-        centerScreen(addView);
+        attachScreen(addView);
         addView.findViewById(R.id.itemAddBackButton).setOnClickListener(v -> setScreen("moduleDetail"));
         EditText itemInput = addView.findViewById(R.id.itemAddNameInput);
         bindItemChip(addView, R.id.itemChipRemote, itemInput, "리모컨");
@@ -2063,8 +2076,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderRoutine() {
         View routineView = LayoutInflater.from(this).inflate(R.layout.screen_routine, contentContainer, false);
-        contentContainer.addView(routineView);
-        centerScreen(routineView);
+        attachScreen(routineView);
         addBottomNav();
         routineView.findViewById(R.id.routineAddTopButton).setOnClickListener(v -> prepareNewRoutine());
         View addBottomButton = findOptionalView(routineView, "routineAddBottomButton");
@@ -2090,8 +2102,8 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) card.findViewById(R.id.routineTitleText)).setText(routine.title);
         TextView updatedText = card.findViewById(R.id.routineUpdatedText);
         if (updatedText != null) {
-            updatedText.setText(routineUpdatedText(routine));
-            updatedText.setVisibility(routine.updatedAt > 0 ? View.VISIBLE : View.GONE);
+            updatedText.setText("");
+            updatedText.setVisibility(View.GONE);
         }
         ((TextView) card.findViewById(R.id.routineTrayText)).setText(routine.trayName);
         ((TextView) card.findViewById(R.id.routineTimeText)).setText(formatDialTime(routine.hour, routine.minute));
@@ -2165,8 +2177,7 @@ public class MainActivity extends AppCompatActivity {
     private void renderRoutineEdit() {
         RoutineData routine = selectedRoutine();
         View editView = LayoutInflater.from(this).inflate(R.layout.screen_routine_edit, contentContainer, false);
-        contentContainer.addView(editView);
-        centerScreen(editView);
+        attachScreen(editView);
 
         EditText nameInput = editView.findViewById(R.id.routineEditNameInput);
         nameInput.setText(routine.title);
@@ -2175,8 +2186,8 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) editView.findViewById(R.id.routineEditTimeValue)).setText("매일 " + formatDialTime(selectedRoutineHour, selectedRoutineMinute));
         TextView updatedText = editView.findViewById(R.id.routineEditUpdatedText);
         if (updatedText != null) {
-            updatedText.setText(routineUpdatedText(routine));
-            updatedText.setVisibility(routine.updatedAt > 0 ? View.VISIBLE : View.GONE);
+            updatedText.setText("");
+            updatedText.setVisibility(View.GONE);
         }
         bindRoutinePlace(editView);
 
@@ -2213,14 +2224,6 @@ public class MainActivity extends AppCompatActivity {
                     routinePlaceExpanded = false;
                     setScreen("routine");
                 });
-    }
-
-    private String routineUpdatedText(RoutineData routine) {
-        if (routine.updatedBy == null || routine.updatedBy.trim().isEmpty() || routine.updatedAt <= 0) {
-            return "";
-        }
-        String updatedTime = new SimpleDateFormat("MM.dd HH:mm", Locale.KOREA).format(new Date(routine.updatedAt));
-        return "마지막 수정 " + routine.updatedBy + " " + updatedTime;
     }
 
     private void renderModuleSelect() {
@@ -2291,8 +2294,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderMenu() {
         View menuView = LayoutInflater.from(this).inflate(R.layout.screen_menu, contentContainer, false);
-        contentContainer.addView(menuView);
-        centerScreen(menuView);
+        attachScreen(menuView);
         addBottomNav();
         menuView.findViewById(R.id.menuNotificationRow).setOnClickListener(v -> setScreen("notification"));
         menuView.findViewById(R.id.menuMapRow).setOnClickListener(v -> setScreen("map"));
@@ -2302,18 +2304,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String trayUpdatedSuffix(TrayData tray) {
-        if (tray.updatedBy == null || tray.updatedBy.trim().isEmpty() || tray.updatedAt <= 0) {
-            return "";
-        }
-        String updatedTime = new SimpleDateFormat("MM.dd HH:mm", Locale.KOREA).format(new Date(tray.updatedAt));
-        return " · 마지막 수정 " + tray.updatedBy + " " + updatedTime;
-    }
-
     private void renderMembers() {
         View membersView = LayoutInflater.from(this).inflate(R.layout.screen_members, contentContainer, false);
-        contentContainer.addView(membersView);
-        centerScreen(membersView);
+        attachScreen(membersView);
         membersView.findViewById(R.id.membersBackButton).setOnClickListener(v -> setScreen("menu"));
         EditText idInput = membersView.findViewById(R.id.membersIdInput);
         membersView.findViewById(R.id.membersAddButton).setOnClickListener(v -> {
@@ -2551,8 +2544,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderNotification() {
         View notificationView = LayoutInflater.from(this).inflate(R.layout.screen_notification, contentContainer, false);
-        contentContainer.addView(notificationView);
-        centerScreen(notificationView);
+        attachScreen(notificationView);
         notificationView.findViewById(R.id.notificationBackButton).setOnClickListener(v -> setScreen("menu"));
         bindNotificationToggle(notificationView, R.id.notificationPushRow, R.id.notificationPushToggleTrack, R.id.notificationPushToggleKnob, "push");
         bindNotificationToggle(notificationView, R.id.notificationMoveRow, R.id.notificationMoveToggleTrack, R.id.notificationMoveToggleKnob, "move");
@@ -2564,8 +2556,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderAlarm() {
         View alarmView = LayoutInflater.from(this).inflate(R.layout.screen_alarm, contentContainer, false);
-        contentContainer.addView(alarmView);
-        centerScreen(alarmView);
+        attachScreen(alarmView);
         alarmView.findViewById(R.id.alarmBackButton).setOnClickListener(v -> setScreen("notification"));
         bindAlarmRow(alarmView, R.id.alarmDefaultRow, 0);
         bindAlarmRow(alarmView, R.id.alarmSoftRow, 1);
@@ -2643,8 +2634,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderNotificationLogs() {
         View logsView = LayoutInflater.from(this).inflate(R.layout.screen_notification_logs, contentContainer, false);
-        contentContainer.addView(logsView);
-        centerScreen(logsView);
+        attachScreen(logsView);
         logsView.findViewById(R.id.notificationLogsBackButton).setOnClickListener(v -> setScreen("notification"));
         bindNotificationLogFilter(logsView, R.id.notificationLogsFilterToday, "today");
         bindNotificationLogFilter(logsView, R.id.notificationLogsFilterWeek, "week");
@@ -2882,8 +2872,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderLogs() {
         View logsView = LayoutInflater.from(this).inflate(R.layout.screen_logs, contentContainer, false);
-        contentContainer.addView(logsView);
-        centerScreen(logsView);
+        attachScreen(logsView);
         logsView.findViewById(R.id.logsBackButton).setOnClickListener(v -> setScreen("home"));
         bindLogFilterChip(logsView, R.id.logsChipToday, "today");
         bindLogFilterChip(logsView, R.id.logsChipWeek, "week");
@@ -3286,8 +3275,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void choiceScreen(String title, String section, String[] choices, String back) {
         View choiceView = LayoutInflater.from(this).inflate(R.layout.screen_choice, contentContainer, false);
-        contentContainer.addView(choiceView);
-        centerScreen(choiceView);
+        attachScreen(choiceView);
         choiceView.findViewById(R.id.choiceBackButton).setOnClickListener(v -> setScreen(back));
         ((TextView) choiceView.findViewById(R.id.choiceTitle)).setText(title);
         ((TextView) choiceView.findViewById(R.id.choiceSection)).setText(section);
@@ -3351,18 +3339,39 @@ public class MainActivity extends AppCompatActivity {
 
     private FrameLayout inflateFixedCanvas(int layoutRes) {
         FrameLayout c = (FrameLayout) LayoutInflater.from(this).inflate(layoutRes, contentContainer, false);
-        contentContainer.addView(c);
-        centerScreen(c);
+        attachScreen(c);
         return c;
+    }
+
+    private void attachScreen(View screenView) {
+        contentContainer.addView(screenView);
+        centerScreen(screenView);
     }
 
 
     private void centerScreen(View screenView) {
+        int width = ViewGroup.LayoutParams.MATCH_PARENT;
+        if (tabletLandscape && !isWideTabletRoute()) {
+            width = dp(760);
+        }
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                width,
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
+                Gravity.CENTER_HORIZONTAL
         );
         screenView.setLayoutParams(params);
+    }
+
+    private boolean isWideTabletRoute() {
+        return "home".equals(screen)
+                || "voice".equals(screen)
+                || "voiceListening".equals(screen)
+                || "voiceResult".equals(screen)
+                || "modules".equals(screen)
+                || "routine".equals(screen)
+                || "menu".equals(screen)
+                || "logs".equals(screen)
+                || "notificationLogs".equals(screen);
     }
 
     private View findOptionalView(View rootView, String idName) {
@@ -3518,6 +3527,7 @@ public class MainActivity extends AppCompatActivity {
         recognizedMessage = "";
         recognizedConfidence = 0.0;
         voiceIntentAccepted = true;
+        voiceIntentAnalyzing = false;
     }
 
     private void setVoiceRecognitionFailed() {
@@ -3529,6 +3539,7 @@ public class MainActivity extends AppCompatActivity {
         recognizedMessage = "\uC74C\uC131 \uC778\uC2DD\uC5D0 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4.";
         recognizedConfidence = 0.0;
         voiceIntentAccepted = false;
+        voiceIntentAnalyzing = false;
         parsedVoiceMissionId = -1;
     }
 
@@ -3541,6 +3552,7 @@ public class MainActivity extends AppCompatActivity {
         recognizedMessage = "";
         recognizedConfidence = 0.0;
         voiceIntentAccepted = false;
+        voiceIntentAnalyzing = false;
         parsedVoiceMissionId = -1;
     }
 
@@ -3568,7 +3580,7 @@ public class MainActivity extends AppCompatActivity {
             parsedVoiceMissionId = json.optInt("mission", -1);
             recognizedIntent = "CARRY";
             recognizedLabel = json.optString("label", "");
-            recognizedMessage = json.optString("message", "명령 후보가 생성되었습니다.");
+            recognizedMessage = json.optString("message", "");
             recognizedModule = emptyToFallback(json.optString("source_label", ""), "-");
             if (!"-".equals(recognizedModule)) {
                 recognizedModule = recognizedModule + " 서랍";
@@ -3683,7 +3695,7 @@ public class MainActivity extends AppCompatActivity {
         recognizedLocation = destination;
         recognizedIntent = "CALL_TRAY";
         recognizedLabel = "LOCAL_TRAY_NAME";
-        recognizedMessage = "명령 후보가 생성되었습니다.";
+        recognizedMessage = "음성 인식을 성공했습니다.";
         voiceIntentAccepted = true;
         return true;
     }
@@ -3879,12 +3891,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void postVoiceIntent(String command) {
+        voiceIntentAnalyzing = true;
         new Thread(() -> {
             try {
                 JSONObject payload = new JSONObject();
                 payload.put("text", command);
                 JSONObject json = new JSONObject(postVoiceIntentPayload(payload));
                 runOnUiThread(() -> {
+                    voiceIntentAnalyzing = false;
                     applyVoiceIntentResult(json);
                     saveVoiceRecord(command, voiceIntentAccepted ? "recognized" : "rejected", json.toString());
                     if ("voiceResult".equals(screen)) {
@@ -3896,6 +3910,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {
+                    voiceIntentAnalyzing = false;
                     if (!applyLocalVoiceCommand(command)) {
                         recognizedModule = "-";
                         recognizedLocation = "-";
@@ -3954,21 +3969,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startCarryMissionFromVoice() {
-        int missionId = currentVoiceMissionId();
+        int missionId = parsedVoiceMissionId > 0 ? parsedVoiceMissionId : missionIdForVoiceCommand();
         if (missionId <= 0) {
-            Toast.makeText(this, "먼저 음성 명령을 말하거나 미션 버튼을 선택해주세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Carry를 실행합니다.", Toast.LENGTH_SHORT).show();
             return;
         }
         startCarryMission(missionId, recognizedCommand);
     }
 
-    private int currentVoiceMissionId() {
-        return parsedVoiceMissionId > 0 ? parsedVoiceMissionId : missionIdForVoiceCommand();
-    }
-
     private void startCarryMission(int missionId, String commandLabel) {
         String command = emptyToFallback(commandLabel, "Mission " + missionId + " 테스트");
-        Toast.makeText(this, missionToastText(missionId), Toast.LENGTH_LONG).show();
         Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보내는 중입니다.", Toast.LENGTH_SHORT).show();
         new Thread(() -> {
             try {
@@ -3979,7 +3989,7 @@ public class MainActivity extends AppCompatActivity {
                     robotMissionState = "RUNNING";
                     robotMissionFrontStatus = "준비중";
                     robotMissionPhaseLabel = "미션 시작 준비";
-                    robotMissionPhaseDetail = "미션 시작 준비";
+                    robotMissionPhaseDetail = "Mission " + missionId;
                     updateVisibleHomeRobotState();
                     saveVoiceRecord(command, "sent", response);
                     Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
@@ -3991,25 +4001,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }).start();
-    }
-
-    private String missionToastText(int missionId) {
-        switch (missionId) {
-            case 1:
-                return "Mission 1: 육아 트레이를 안방으로 전달";
-            case 2:
-                return "Mission 2: 출근 트레이를 아이방으로 전달";
-            case 3:
-                return "Mission 3: 육아 트레이를 현관으로 전달";
-            case 4:
-                return "Mission 4: 출근 트레이를 현관으로 전달";
-            case 5:
-                return "Mission 5: 육아 트레이를 거실로 전달";
-            case 6:
-                return "Mission 6: 출근 트레이를 거실로 전달";
-            default:
-                return "Mission " + missionId + ": 미션 정보를 확인 중";
-        }
     }
 
     private int missionIdForVoiceCommand() {
@@ -4103,8 +4094,7 @@ public class MainActivity extends AppCompatActivity {
                 String code = json.optString("code", "").toUpperCase(Locale.ROOT);
                 String frontStatus = json.optString("front_status", robotMissionFrontStatus);
                 String label = json.optString("label", robotMissionPhaseLabel);
-                String detail = json.optString("detail", "");
-                String displayText = missionPhaseDetailText(code, frontStatus, label, detail);
+                String detail = json.optString("detail", robotMissionPhaseDetail);
                 runOnUiThread(() -> {
                     missionPhaseRequestInFlight = false;
                     if (isMissionPhaseToastCode(code)) {
@@ -4115,7 +4105,7 @@ public class MainActivity extends AppCompatActivity {
                         lastMissionPhaseToastCode = "";
                         robotMissionFrontStatus = emptyToFallback(frontStatus, robotMissionFrontStatus);
                         robotMissionPhaseLabel = emptyToFallback(label, robotMissionPhaseLabel);
-                        robotMissionPhaseDetail = emptyToFallback(displayText, robotMissionPhaseDetail);
+                        robotMissionPhaseDetail = emptyToFallback(detail, robotMissionPhaseDetail);
                         updateVisibleHomeRobotState();
                     }
                 });
@@ -4151,54 +4141,6 @@ public class MainActivity extends AppCompatActivity {
         return "SUCCESS".equals(normalized) || "FAILED".equals(normalized);
     }
 
-    private String missionPhaseDetailText(String code, String frontStatus, String label, String detail) {
-        String normalized = emptyToFallback(code, "").toUpperCase(Locale.ROOT);
-        String normalizedFrontStatus = emptyToFallback(frontStatus, "");
-        String apiDetail = formatMissionPhaseDetail(detail);
-        if (!apiDetail.isEmpty()
-                && ("이동중".equals(normalizedFrontStatus)
-                || "도킹중".equals(normalizedFrontStatus)
-                || "주차중".equals(normalizedFrontStatus))) {
-            return apiDetail;
-        }
-
-        String apiLabel = emptyToFallback(label, "");
-        switch (normalized) {
-            case "IDLE":
-                return "대기 중";
-            case "MISSION_STARTING":
-                return "미션 시작 준비";
-            case "NAV_READY":
-                return "Nav2 연결 완료";
-            case "NAV_TO_DRAWER":
-                return "서랍 위치로 이동 중";
-            case "PICKUP_BACK_OUT":
-                return "서랍 분리 중";
-            case "NAV_TO_DESTINATION":
-                return "목적지로 이동 중";
-            case "ARRIVED_WAITING":
-                return "사용자 사용 대기 중";
-            case "NAV_TO_RETURN":
-                return "원래 서랍 위치로 복귀 중";
-            case "RETURN_BACK_OUT":
-                return "서랍에서 분리 중";
-            case "PARKING_TURN":
-                return "스테이션 방향 전환 중";
-            case "NAV_TO_STATION":
-                return "스테이션으로 이동 중";
-            case "STATION_PARKING":
-                return "스테이션 주차 중";
-            case "STOPPED":
-                return "사용자 정지 요청";
-            default:
-                return emptyToFallback(apiLabel, robotMissionPhaseDetail);
-        }
-    }
-
-    private String formatMissionPhaseDetail(String detail) {
-        return emptyToFallback(detail, "").replace("_", " ").trim();
-    }
-
     private void showMissionPhaseToastOnce(String code, String label) {
         String normalized = emptyToFallback(code, "").toUpperCase(Locale.ROOT);
         if (normalized.equals(lastMissionPhaseToastCode)) return;
@@ -4213,13 +4155,13 @@ public class MainActivity extends AppCompatActivity {
         if (stateView instanceof TextView) {
             ((TextView) stateView).setText(homeRobotStateBadgeText());
         }
-        View labelView = findOptionalView(contentContainer, "homeRobotPhaseLabel");
+        View labelView = contentContainer.findViewById(R.id.homeRobotPhaseLabel);
         if (labelView instanceof TextView) {
             ((TextView) labelView).setText(emptyToFallback(robotMissionPhaseLabel, "대기 중"));
         }
         View detailView = contentContainer.findViewById(R.id.homeRobotPhaseDetail);
         if (detailView instanceof TextView) {
-            ((TextView) detailView).setText(emptyToFallback(robotMissionPhaseDetail, "대기 중"));
+            ((TextView) detailView).setText(emptyToFallback(robotMissionPhaseDetail, "스테이션 대기 중"));
         }
     }
 
@@ -4300,7 +4242,7 @@ public class MainActivity extends AppCompatActivity {
                     robotMissionState = "STOPPED";
                     robotMissionFrontStatus = "정지됨";
                     robotMissionPhaseLabel = "사용자 정지 요청";
-                    robotMissionPhaseDetail = "사용자 정지 요청";
+                    robotMissionPhaseDetail = "긴급 정지";
                     updateVisibleHomeRobotState();
                     saveVoiceRecord("긴급 정지", "sent", response);
                     Toast.makeText(this, "긴급 정지 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
