@@ -86,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
             "http://192.168.0.21:5000/api/ai/voice-intent"
     };
     private static final String[] MISSION_API_BASE_URLS = {
-            "http://10.37.161.133:5001"
+            "http://10.37.161.133:5001",
+            "http://192.168.0.21:5001"
     };
     private static final long BATTERY_REFRESH_INTERVAL_MS = 60_000L;
     private static final long MISSION_STATUS_REFRESH_INTERVAL_MS = 5_000L;
@@ -450,7 +451,10 @@ public class MainActivity extends AppCompatActivity {
                 trays.clear();
                 representativeTrayId = "";
                 for (DataSnapshot traySnapshot : snapshot.getChildren()) {
-                    trays.add(parseTray(traySnapshot));
+                    TrayData tray = parseTray(traySnapshot);
+                    if (isSupportedMissionTray(tray)) {
+                        trays.add(tray);
+                    }
                 }
                 if (trays.isEmpty()) {
                     addFallbackTrays();
@@ -601,8 +605,35 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+    private boolean isSupportedMissionTray(TrayData tray) {
+        if (tray == null) return false;
+        String text = normalizeVoiceText(tray.id + " " + tray.name + " " + tray.location);
+        return text.contains("tray1")
+                || text.contains("tray2")
+                || text.contains("baby")
+                || text.contains("commute")
+                || text.contains("육아")
+                || text.contains("출근")
+                || text.contains("아이방")
+                || text.contains("안방");
+    }
+
     private void addFallbackTrays() {
         trays.clear();
+        if (System.currentTimeMillis() >= 0) {
+            TrayData babyTray = new TrayData("tray1", "육아 트레이", "아이방", true);
+            babyTray.items.add("기저귀");
+            babyTray.items.add("물티슈");
+            babyTray.items.add("장난감");
+            TrayData commuteTray = new TrayData("tray2", "출근 트레이", "안방");
+            commuteTray.items.add("차키");
+            commuteTray.items.add("마스크");
+            commuteTray.items.add("교통카드");
+            trays.add(babyTray);
+            trays.add(commuteTray);
+            representativeTrayId = babyTray.id;
+            return;
+        }
         TrayData tray1 = new TrayData("tray1", "아이방 서랍", "아이방", true);
         tray1.items.add("리모컨");
         tray1.items.add("안경");
@@ -690,12 +721,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String defaultTrayName(String trayId) {
+        if (System.currentTimeMillis() >= 0) {
+            return "tray2".equals(trayId) ? "출근 트레이" : "육아 트레이";
+        }
         if ("tray2".equals(trayId)) return "2번 트레이";
         if ("tray3".equals(trayId)) return "3번 트레이";
         return "1번 트레이";
     }
 
     private String defaultTrayLocation(String trayId) {
+        if (System.currentTimeMillis() >= 0) {
+            return "tray2".equals(trayId) ? "안방" : "아이방";
+        }
         if ("tray2".equals(trayId)) return "현관";
         if ("tray3".equals(trayId)) return "안방";
         return "아이방";
@@ -3629,6 +3666,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             recognizedLocation = "-";
         }
+
+        parsedVoiceMissionId = missionIdForVoiceIntent(targetTrayId, labelLocation);
     }
 
     private TrayData trayForVoiceTarget(String targetTrayId, String label) {
@@ -3646,6 +3685,7 @@ public class MainActivity extends AppCompatActivity {
             return tray != null ? tray : findTrayByItemKeywords("기저귀", "물티슈", "젖병", "장난감");
         }
         if (target.contains("medicine") || normalizedLabel.contains("MEDICINE")) {
+            if (System.currentTimeMillis() >= 0) return null;
             TrayData tray = findTrayByNameOrIdKeywords("약", "복약", "medicine", "TRAY_MEDICINE");
             return tray != null ? tray : findTrayByItemKeywords("비타민", "영양제", "혈압", "당뇨", "안경", "돋보기");
         }
@@ -3785,6 +3825,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String displayLocationFromVoiceLabel(String labelLocation) {
         String normalized = labelLocation.toLowerCase(Locale.ROOT);
+        if ("master_bedroom".equals(normalized)) return "방1";
+        if ("child_room".equals(normalized)) return "방2";
         if ("porch".equals(normalized)) return "현관";
         if ("living_room".equals(normalized)) return "방2";
         if ("bedroom".equals(normalized)) return "방1";
@@ -3892,6 +3934,14 @@ public class MainActivity extends AppCompatActivity {
         return value == null ? fallback : value;
     }
 
+    private void logConnectionError(String stage, String url, String payload, Exception error) {
+        String message = error == null ? "" : emptyToFallback(error.getMessage(), error.toString());
+        Log.e(TAG, stage + " failed"
+                + " | url=" + emptyToFallback(url, "-")
+                + " | payload=" + emptyToFallback(payload, "-")
+                + " | error=" + message, error);
+    }
+
     private void postVoiceIntent(String command) {
         voiceIntentAnalyzing = true;
         new Thread(() -> {
@@ -3911,6 +3961,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             } catch (Exception e) {
+                logConnectionError("VOICE_INTENT", "", "{\"text\":\"" + emptyToFallback(command, "") + "\"}", e);
                 runOnUiThread(() -> {
                     voiceIntentAnalyzing = false;
                     if (!applyLocalVoiceCommand(command)) {
@@ -3958,11 +4009,14 @@ public class MainActivity extends AppCompatActivity {
                     while ((line = reader.readLine()) != null) response.append(line);
                 }
                 if (response.length() == 0) {
-                    throw new IllegalStateException("Empty voice intent response");
+                    throw new IllegalStateException("Voice API empty response from " + apiUrl);
+                }
+                if (statusCode >= 400) {
+                    throw new IllegalStateException("Voice API error " + statusCode + " from " + apiUrl + ": " + response);
                 }
                 return response.toString();
             } catch (Exception e) {
-                lastError = e;
+                lastError = new IllegalStateException("Voice API request failed: " + apiUrl + " / " + e.getMessage(), e);
             } finally {
                 if (conn != null) conn.disconnect();
             }
@@ -3973,6 +4027,16 @@ public class MainActivity extends AppCompatActivity {
     private void startCarryMissionFromVoice() {
         int missionId = parsedVoiceMissionId > 0 ? parsedVoiceMissionId : missionIdForVoiceCommand();
         if (missionId <= 0) {
+            logConnectionError(
+                    "MISSION_MAPPING",
+                    "",
+                    "command=" + emptyToFallback(recognizedCommand, "")
+                            + ", intent=" + emptyToFallback(recognizedIntent, "")
+                            + ", label=" + emptyToFallback(recognizedLabel, "")
+                            + ", module=" + emptyToFallback(recognizedModule, "")
+                            + ", location=" + emptyToFallback(recognizedLocation, ""),
+                    new IllegalStateException("Mission id mapping failed")
+            );
             Toast.makeText(this, "Carry를 실행합니다.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -3997,6 +4061,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
                 });
             } catch (Exception e) {
+                logConnectionError("MISSION_START", "/mission/start", "{\"mission\":" + missionId + "}", e);
                 runOnUiThread(() -> {
                     saveVoiceRecord(command, "fallback", e.getMessage());
                     Toast.makeText(this, "로봇 서버에 연결하지 못했습니다.", Toast.LENGTH_SHORT).show();
@@ -4009,12 +4074,39 @@ public class MainActivity extends AppCompatActivity {
         int drawer = drawerIdForVoiceText(recognizedCommand + " " + recognizedModule + " " + recognizedLabel);
         int destination = destinationIdForVoiceText(recognizedCommand + " " + recognizedLocation);
 
-        if (drawer == 1 && destination == 2) return 1;
-        if (drawer == 2 && destination == 1) return 2;
+        return missionIdForDrawerDestination(drawer, destination);
+    }
+
+    private int missionIdForVoiceIntent(String targetTrayId, String labelLocation) {
+        int drawer = drawerIdForVoiceTarget(targetTrayId, recognizedLabel);
+        int destination = destinationIdForVoiceLabel(labelLocation);
+        return missionIdForDrawerDestination(drawer, destination);
+    }
+
+    private int missionIdForDrawerDestination(int drawer, int destination) {
+        if (drawer == 1 && destination == 1) return 1;
+        if (drawer == 2 && destination == 2) return 2;
         if (drawer == 1 && destination == 3) return 3;
         if (drawer == 2 && destination == 3) return 4;
         if (drawer == 1 && destination == 4) return 5;
         if (drawer == 2 && destination == 4) return 6;
+        return -1;
+    }
+
+    private int drawerIdForVoiceTarget(String targetTrayId, String label) {
+        String target = emptyToFallback(targetTrayId, "").toLowerCase(Locale.ROOT);
+        String normalizedLabel = emptyToFallback(label, "").toUpperCase(Locale.ROOT);
+        if (target.contains("baby") || normalizedLabel.contains("BABY")) return 1;
+        if (target.contains("commute") || normalizedLabel.contains("COMMUTE")) return 2;
+        return -1;
+    }
+
+    private int destinationIdForVoiceLabel(String labelLocation) {
+        String normalized = emptyToFallback(labelLocation, "").toLowerCase(Locale.ROOT);
+        if (normalized.equals("master_bedroom") || normalized.equals("bedroom")) return 1;
+        if (normalized.equals("child_room")) return 2;
+        if (normalized.equals("porch") || normalized.equals("entrance")) return 3;
+        if (normalized.equals("living_room")) return 4;
         return -1;
     }
 
@@ -4250,6 +4342,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "긴급 정지 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
                 });
             } catch (Exception e) {
+                logConnectionError("MISSION_STOP", "/mission/stop", "", e);
                 runOnUiThread(() -> {
                     saveVoiceRecord("긴급 정지", "fallback", e.getMessage());
                     Toast.makeText(this, "긴급 정지 요청에 실패했습니다.", Toast.LENGTH_SHORT).show();
@@ -4264,7 +4357,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 return postJson(baseUrl + path, payload);
             } catch (Exception e) {
-                lastError = e;
+                lastError = new IllegalStateException("Mission API request failed: " + baseUrl + path + " / " + e.getMessage(), e);
             }
         }
         throw lastError == null ? new IllegalStateException("Mission API unavailable") : lastError;
@@ -4276,7 +4369,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 return postWithoutBody(baseUrl + path);
             } catch (Exception e) {
-                lastError = e;
+                lastError = new IllegalStateException("Mission API request failed: " + baseUrl + path + " / " + e.getMessage(), e);
             }
         }
         throw lastError == null ? new IllegalStateException("Mission API unavailable") : lastError;
@@ -4288,7 +4381,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 return getText(baseUrl + path);
             } catch (Exception e) {
-                lastError = e;
+                lastError = new IllegalStateException("Mission API request failed: " + baseUrl + path + " / " + e.getMessage(), e);
             }
         }
         throw lastError == null ? new IllegalStateException("Mission API unavailable") : lastError;

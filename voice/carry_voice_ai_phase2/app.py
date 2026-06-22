@@ -15,6 +15,24 @@ mapping = json.loads(MAPPING_PATH.read_text(encoding="utf-8"))
 threshold = float(mapping.get("confidence_threshold", 0.70))
 
 LOCATION_PHRASES = (
+    "\uc548\ubc29 \ucabd\uc73c\ub85c",
+    "\uc548\ubc29\ucabd\uc73c\ub85c",
+    "\uc548\ubc29\uc73c\ub85c",
+    "\uc548\ubc29\uae4c\uc9c0",
+    "\uc548\ubc29\uc5d0",
+    "\uce68\uc2e4 \ucabd\uc73c\ub85c",
+    "\uce68\uc2e4\uc73c\ub85c",
+    "\uce68\uc2e4\uae4c\uc9c0",
+    "\uce68\uc2e4\uc5d0",
+    "\uc544\uc774\ubc29 \ucabd\uc73c\ub85c",
+    "\uc544\uc774\ubc29\ucabd\uc73c\ub85c",
+    "\uc544\uc774\ubc29\uc73c\ub85c",
+    "\uc544\uc774\ubc29\uae4c\uc9c0",
+    "\uc544\uc774\ubc29\uc5d0",
+    "\uc544\uae30\ubc29 \ucabd\uc73c\ub85c",
+    "\uc544\uae30\ubc29\uc73c\ub85c",
+    "\uc544\uae30\ubc29\uae4c\uc9c0",
+    "\uc544\uae30\ubc29\uc5d0",
     "\ud604\uad00 \ucabd\uc73c\ub85c",
     "\ud604\uad00\ucabd\uc73c\ub85c",
     "\ud604\uad00\uc73c\ub85c",
@@ -39,6 +57,24 @@ def strip_location_for_command(text):
 
 def infer_label_location(text):
     normalized = text.replace(" ", "").lower()
+    master_bedroom_keywords = (
+        "\uc548\ubc29",
+        "\uce68\uc2e4",
+        "\ubd80\ubaa8\ubc29",
+        "\uba54\uc778\ub8f8",
+        "masterbedroom",
+        "masterroom",
+    )
+    child_room_keywords = (
+        "\uc544\uc774\ubc29",
+        "\uc544\uae30\ubc29",
+        "\uc790\ub140\ubc29",
+        "\uc720\uc544\ubc29",
+        "\ud0a4\uc988\ub8f8",
+        "childroom",
+        "kidsroom",
+        "babyroom",
+    )
     porch_keywords = (
         "\ud604\uad00",
         "\uc785\uad6c",
@@ -53,6 +89,10 @@ def infer_label_location(text):
         "\ud2f0\ube44",
     )
 
+    if any(keyword in normalized for keyword in master_bedroom_keywords):
+        return "master_bedroom"
+    if any(keyword in normalized for keyword in child_room_keywords):
+        return "child_room"
     if any(keyword in normalized for keyword in porch_keywords):
         return "porch"
     if any(keyword in normalized for keyword in living_room_keywords):
@@ -101,7 +141,7 @@ def voice_intent():
         })
 
     command = mapping["labels"].get(label, mapping["labels"]["UNKNOWN"])
-    accepted = label != "UNKNOWN"
+    accepted = command["intent"] != "UNKNOWN"
     message = "\uba85\ub839 \ud6c4\ubcf4\uac00 \uc0dd\uc131\ub418\uc5c8\uc2b5\ub2c8\ub2e4." if accepted else "\uc9c0\uc6d0\ud558\uc9c0 \uc54a\ub294 \uba85\ub839\uc785\ub2c8\ub2e4."
     if accepted and not label_location:
         message = "\uc5b4\ub514\ub85c \uac00\uc838\uac08\uae4c\uc694"

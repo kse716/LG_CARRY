@@ -13,12 +13,6 @@
       "requiresConfirm": true,
       "confirmText": "출근 트레이를 호출할까요?"
     },
-    "CALL_TRAY_MEDICINE": {
-      "intent": "CALL_TRAY",
-      "targetTrayId": "TRAY_MEDICINE",
-      "requiresConfirm": true,
-      "confirmText": "복약 트레이를 호출할까요?"
-    },
     "UNKNOWN": {
       "intent": "UNKNOWN",
       "targetTrayId": null,
