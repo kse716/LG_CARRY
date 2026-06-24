@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -17,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.speech.RecognitionListener;
@@ -78,20 +80,42 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "DXCarry";
     private static final int APP_BACKGROUND = 0xFFF7F9F9;
+    private static final float TABLET_FONT_SCALE = 1.20f;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        Configuration configuration = new Configuration(
+                newBase.getResources().getConfiguration()
+        );
+
+        if (configuration.smallestScreenWidthDp >= 600) {
+            configuration.fontScale *= TABLET_FONT_SCALE;
+            super.attachBaseContext(newBase.createConfigurationContext(configuration));
+            return;
+        }
+
+        super.attachBaseContext(newBase);
+    }
     private static final int REQUEST_RECORD_AUDIO = 1001;
     private static final int REQUEST_POST_NOTIFICATIONS = 1002;
     private static final String NOTIFICATION_CHANNEL_ID = "carry_notifications";
     private static final String[] VOICE_INTENT_API_URLS = {
+            "http://10.206.188.83:5000/api/ai/voice-intent",
             "http://10.37.161.133:5000/api/ai/voice-intent",
-            "http://192.168.0.21:5000/api/ai/voice-intent"
+            "http://192.168.0.21:5000/api/ai/voice-intent",
+            "http://192.168.219.56:5000/api/ai/voice-intent"
     };
     private static final String[] MISSION_API_BASE_URLS = {
+            "http://10.206.188.133:5001",
             "http://10.37.161.133:5001",
             "http://192.168.0.21:5001"
     };
     private static final long BATTERY_REFRESH_INTERVAL_MS = 60_000L;
     private static final long MISSION_STATUS_REFRESH_INTERVAL_MS = 5_000L;
     private static final long MISSION_PHASE_REFRESH_INTERVAL_MS = 1_000L;
+    private static final long MISSION_START_DEBOUNCE_MS = 2_000L;
+    private static final String RUNTIME_CACHE_PREFS = "carryRuntimeCache";
+    private static final String PREF_ROBOT_BATTERY_DISPLAY = "robotBatteryDisplay";
 
     private LinearLayout appRoot;
     private FrameLayout contentContainer;
@@ -144,9 +168,14 @@ public class MainActivity extends AppCompatActivity {
     private boolean batteryLowNotified = false;
     private int selectedNotificationSoundIndex = 0;
     private String notificationLogFilter = "today";
+    private boolean isMissionStarting = false;
+    private boolean isMissionRunning = false;
+    private long lastMissionStartRequestAt = 0L;
+    private String pollingMode = "IDLE";
     private final Handler batteryRefreshHandler = new Handler(Looper.getMainLooper());
     private String robotBatteryDisplay = "--";
     private boolean batteryRequestInFlight = false;
+    private long lastBatteryRefreshAt = 0L;
     private final Runnable batteryRefreshRunnable = new Runnable() {
         @Override
         public void run() {
@@ -200,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
 
         db = FirebaseDatabase.getInstance().getReference();
         restoreCurrentUser();
+        bootstrapKioskAccount();
         addFallbackPlaces();
         listenToPlaces();
         listenToTrays();
@@ -208,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannel();
         listenToNotificationSettings();
         listenToBatteryLevel();
+        restoreRobotBatteryDisplay();
         startBatteryRefresh();
         startMissionStatusRefresh();
         startMissionPhaseRefresh();
@@ -489,12 +520,12 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 members.clear();
                 for (DataSnapshot memberSnapshot : snapshot.getChildren()) {
-                    String id = memberSnapshot.getKey() == null ? "" : memberSnapshot.getKey();
+                    String key = memberSnapshot.getKey() == null ? "" : memberSnapshot.getKey();
                     String name = stringValue(memberSnapshot.child("name"), "");
-                    String memberId = stringValue(memberSnapshot.child("id"), id);
+                    String memberId = stringValue(memberSnapshot.child("id"), key);
                     Long createdAt = memberSnapshot.child("createdAt").getValue(Long.class);
-                    if (!memberId.isEmpty() && !name.trim().isEmpty()) {
-                        members.add(new MemberData(memberId, name.trim(), createdAt == null ? 0 : createdAt));
+                    if (!key.isEmpty() && !memberId.isEmpty() && !name.trim().isEmpty()) {
+                        members.add(new MemberData(key, memberId, name.trim(), createdAt == null ? 0 : createdAt));
                     }
                 }
                 if ("members".equals(screen) || "moduleDetail".equals(screen)) {
@@ -825,6 +856,10 @@ public class MainActivity extends AppCompatActivity {
                 renderLogin();
                 break;
         }
+
+        if (tabletLandscape && !"login".equals(screen) && !"signup".equals(screen)) {
+            addBottomNav();
+        }
     }
 
 
@@ -934,6 +969,7 @@ public class MainActivity extends AppCompatActivity {
         View homeView = LayoutInflater.from(this).inflate(R.layout.screen_home, contentContainer, false);
         attachScreen(homeView);
         addBottomNav();
+        updateTabletHomeCardGrid(homeView);
 
         bindHomeQuickRoutines(homeView);
         bindHomeRepresentativeTray(homeView);
@@ -950,6 +986,105 @@ public class MainActivity extends AppCompatActivity {
         homeView.findViewById(R.id.homeEmergencyStopButton).setOnClickListener(v -> stopCarryMission());
         homeView.findViewById(R.id.homeRoutineManageButton).setOnClickListener(v -> setScreen("routine"));
         homeView.findViewById(R.id.homeModuleCard).setOnClickListener(v -> openRepresentativeTrayDetail());
+        bindHomeTestMissionButtons(homeView);
+    }
+
+    private void updateTabletHomeCardGrid(View homeView) {
+        if (!tabletLandscape) return;
+
+        int gridWidth = dp(900);
+        int cardHeight = dp(240);
+        View headerRow = homeView.findViewById(R.id.homeHeaderRow);
+        LinearLayout.LayoutParams headerParams = (LinearLayout.LayoutParams) headerRow.getLayoutParams();
+        headerParams.width = gridWidth;
+        headerParams.height = dp(56);
+        headerParams.gravity = Gravity.CENTER_HORIZONTAL;
+        headerRow.setLayoutParams(headerParams);
+
+        View productImage = homeView.findViewById(R.id.homeProductImage);
+        LinearLayout.LayoutParams productParams = (LinearLayout.LayoutParams) productImage.getLayoutParams();
+        productParams.width = dp(280);
+        productParams.height = dp(240);
+        productParams.topMargin = dp(24);
+        productParams.gravity = Gravity.CENTER_HORIZONTAL;
+        productImage.setLayoutParams(productParams);
+
+        int[] rowIds = {
+                R.id.homePrimaryCardRow,
+                R.id.homeSecondaryCardRow
+        };
+        for (int rowId : rowIds) {
+            View row = homeView.findViewById(rowId);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) row.getLayoutParams();
+            params.width = gridWidth;
+            params.gravity = Gravity.CENTER_HORIZONTAL;
+            row.setLayoutParams(params);
+        }
+
+        int[] cardIds = {
+                R.id.homeRecentCard,
+                R.id.homeVoiceCard,
+                R.id.homeRoutineCard,
+                R.id.homeModuleCard
+        };
+        for (int cardId : cardIds) {
+            View card = homeView.findViewById(cardId);
+            setHeight(card, cardHeight);
+            card.setPadding(dp(24), dp(22), dp(24), dp(22));
+        }
+
+        ((LinearLayout) homeView.findViewById(R.id.homeRecentCard))
+                .setGravity(Gravity.CENTER_VERTICAL);
+        ((LinearLayout) homeView.findViewById(R.id.homeVoiceCard))
+                .setGravity(Gravity.NO_GRAVITY);
+        ((LinearLayout) homeView.findViewById(R.id.homeRoutineCard))
+                .setGravity(Gravity.CENTER_VERTICAL);
+        ((LinearLayout) homeView.findViewById(R.id.homeModuleCard))
+                .setGravity(Gravity.CENTER_VERTICAL);
+
+        View voiceButton = homeView.findViewById(R.id.homeVoiceButton);
+        LinearLayout.LayoutParams voiceButtonParams =
+                (LinearLayout.LayoutParams) voiceButton.getLayoutParams();
+        voiceButtonParams.topMargin = dp(38);
+        voiceButton.setLayoutParams(voiceButtonParams);
+
+        View statusCard = homeView.findViewById(R.id.homeStatusCard);
+        LinearLayout.LayoutParams statusParams = (LinearLayout.LayoutParams) statusCard.getLayoutParams();
+        statusParams.width = gridWidth;
+        statusParams.height = dp(96);
+        statusParams.gravity = Gravity.CENTER_HORIZONTAL;
+        statusCard.setLayoutParams(statusParams);
+
+        View testMissionSection = homeView.findViewById(R.id.homeTestMissionSection);
+        LinearLayout.LayoutParams testMissionParams =
+                (LinearLayout.LayoutParams) testMissionSection.getLayoutParams();
+        testMissionParams.width = gridWidth;
+        testMissionParams.gravity = Gravity.CENTER_HORIZONTAL;
+        testMissionSection.setLayoutParams(testMissionParams);
+
+        View emergencyButton = homeView.findViewById(R.id.homeEmergencyStopButton);
+        LinearLayout.LayoutParams emergencyParams = (LinearLayout.LayoutParams) emergencyButton.getLayoutParams();
+        emergencyParams.width = gridWidth;
+        emergencyParams.height = dp(64);
+        emergencyParams.gravity = Gravity.CENTER_HORIZONTAL;
+        emergencyButton.setLayoutParams(emergencyParams);
+    }
+
+    private void bindHomeTestMissionButtons(View homeView) {
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission1Button, 1, "아이방 → 안방");
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission2Button, 2, "안방 → 아이방");
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission3Button, 3, "아이방 → 현관");
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission4Button, 4, "안방 → 현관");
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission5Button, 5, "아이방 → 거실");
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission6Button, 6, "안방 → 거실");
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission7Button, 7, "주차");
+    }
+
+    private void bindHomeTestMissionButton(View homeView, int viewId, int missionId, String label) {
+        View button = homeView.findViewById(viewId);
+        if (button != null) {
+            button.setOnClickListener(v -> startCarryMission(missionId, label));
+        }
     }
 
     private void updateHomeBatteryValue(View homeView) {
@@ -2348,51 +2483,301 @@ public class MainActivity extends AppCompatActivity {
         attachScreen(membersView);
         membersView.findViewById(R.id.membersBackButton).setOnClickListener(v -> setScreen("menu"));
         EditText idInput = membersView.findViewById(R.id.membersIdInput);
-        membersView.findViewById(R.id.membersAddButton).setOnClickListener(v -> {
-            addMember(idInput.getText().toString().trim());
-            idInput.setText("");
-        });
+        membersView.findViewById(R.id.membersAddButton).setOnClickListener(v ->
+                addMember(idInput.getText().toString().trim(), idInput));
         bindMembersList(membersView);
+        if (currentFamilyId.isEmpty()) {
+            recoverCurrentFamilyId(() -> {
+                if ("members".equals(screen)) {
+                    render();
+                }
+            });
+        }
     }
 
-    private void addMember(String memberId) {
+    private void addMember(String memberId, EditText idInput) {
         if (memberId.isEmpty()) {
-            Toast.makeText(this, "구성원의 ID를 입력하세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "\uAD6C\uC131\uC6D0\uC758 \uC544\uC774\uB514\uB97C \uC785\uB825\uD558\uC138\uC694.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (currentFamilyId.isEmpty()) {
-            Toast.makeText(this, "가족 계정 ID가 없습니다.", Toast.LENGTH_SHORT).show();
+            recoverCurrentFamilyId(() -> addMember(memberId, idInput));
             return;
         }
-        db.child("users").child(memberId).addListenerForSingleValueEvent(new ValueEventListener() {
+
+        DatabaseReference usersRef = db.child("users");
+        if (isValidFirebaseKey(memberId)) {
+            usersRef.child(memberId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        addMemberFromUserSnapshot(memberId, snapshot, idInput);
+                    } else {
+                        findMemberByStoredId(memberId, idInput);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    showMemberLookupError(error);
+                }
+            });
+            return;
+        }
+        findMemberByStoredId(memberId, idInput);
+    }
+
+    private void bootstrapKioskAccount() {
+        if (currentUserId.isEmpty() || currentFamilyId.isEmpty()) {
+            recoverDefaultKioskAccount(() -> {
+                if ("members".equals(screen)) {
+                    render();
+                }
+            });
+        }
+    }
+
+    private void recoverDefaultKioskAccount(Runnable onResolved) {
+        db.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String name = stringValue(snapshot.child("name"), "");
-                if (name.trim().isEmpty()) {
-                    Toast.makeText(MainActivity.this, "해당 아이디의 사용자를 찾지 못했습니다.", Toast.LENGTH_SHORT).show();
+                DataSnapshot preferred = null;
+                DataSnapshot firstWithFamily = null;
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String key = child.getKey() == null ? "" : child.getKey().trim();
+                    String storedId = stringValue(child.child("id"), key).trim();
+                    String familyId = stringValue(child.child("familyId"), "").trim();
+                    if (familyId.isEmpty()) {
+                        continue;
+                    }
+                    if ("user1".equalsIgnoreCase(key) || "user1".equalsIgnoreCase(storedId)) {
+                        preferred = child;
+                        break;
+                    }
+                    if (firstWithFamily == null) {
+                        firstWithFamily = child;
+                    }
+                }
+
+                DataSnapshot selected = preferred != null ? preferred : firstWithFamily;
+                if (selected != null && applyRecoveredFamily(selected, "user1", onResolved)) {
                     return;
                 }
-                long now = System.currentTimeMillis();
-                Map<String, Object> values = new HashMap<>();
-                values.put("id", memberId);
-                values.put("name", name.trim());
-                values.put("familyId", currentFamilyId);
-                values.put("createdAt", now);
-                Map<String, Object> updates = new HashMap<>();
-                updates.put("/members/" + memberId, values);
-                updates.put("/familyAccounts/" + currentFamilyId + "/members/" + memberId, values);
-                db.updateChildren(updates)
-                        .addOnSuccessListener(unused -> Toast.makeText(MainActivity.this, "구성원을 추가했습니다.", Toast.LENGTH_SHORT).show())
-                        .addOnFailureListener(error -> Toast.makeText(MainActivity.this, "구성원 추가에 실패했습니다.", Toast.LENGTH_SHORT).show());
+                recoverFamilyDefault(onResolved);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(MainActivity.this, "사용자 정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                recoverFamilyDefault(onResolved);
             }
         });
     }
 
+    private void recoverFamilyDefault(Runnable onResolved) {
+        db.child("familyAccounts").child("family-default")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!snapshot.exists()) {
+                            Toast.makeText(
+                                    MainActivity.this,
+                                    "\uAC00\uC871 \uACC4\uC815 \uC815\uBCF4\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4.",
+                                    Toast.LENGTH_LONG
+                            ).show();
+                            return;
+                        }
+                        saveCurrentUser("user1", "LG Carry", "family-default");
+                        if (onResolved != null) {
+                            onResolved.run();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(
+                                MainActivity.this,
+                                "\uAC00\uC871 \uACC4\uC815 \uC815\uBCF4 \uC870\uD68C \uC2E4\uD328: " + error.getMessage(),
+                                Toast.LENGTH_LONG
+                        ).show();
+                    }
+                });
+    }
+    private void recoverCurrentFamilyId(Runnable onResolved) {
+        String userId = emptyToFallback(currentUserId, "").trim();
+        if (userId.isEmpty()) {
+            recoverDefaultKioskAccount(onResolved);
+            return;
+        }
+
+        if (isValidFirebaseKey(userId)) {
+            db.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (applyRecoveredFamily(snapshot, userId, onResolved)) {
+                        return;
+                    }
+                    recoverCurrentFamilyIdByStoredId(userId, onResolved);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    recoverCurrentFamilyIdByStoredId(userId, onResolved);
+                }
+            });
+            return;
+        }
+        recoverCurrentFamilyIdByStoredId(userId, onResolved);
+    }
+
+    private void recoverCurrentFamilyIdByStoredId(String userId, Runnable onResolved) {
+        db.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String storedId = stringValue(child.child("id"), child.getKey()).trim();
+                    if (storedId.equalsIgnoreCase(userId)
+                            && applyRecoveredFamily(child, userId, onResolved)) {
+                        return;
+                    }
+                }
+                Toast.makeText(
+                        MainActivity.this,
+                        "\uD604\uC7AC \uC0AC\uC6A9\uC790\uC758 \uAC00\uC871 \uACC4\uC815 ID\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4.",
+                        Toast.LENGTH_LONG
+                ).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(
+                        MainActivity.this,
+                        "\uAC00\uC871 \uACC4\uC815 \uC815\uBCF4 \uC870\uD68C \uC2E4\uD328: " + error.getMessage(),
+                        Toast.LENGTH_LONG
+                ).show();
+            }
+        });
+    }
+
+    private boolean applyRecoveredFamily(
+            DataSnapshot snapshot,
+            String fallbackUserId,
+            Runnable onResolved
+    ) {
+        if (snapshot == null || !snapshot.exists()) {
+            return false;
+        }
+        String recoveredFamilyId = stringValue(snapshot.child("familyId"), "").trim();
+        if (recoveredFamilyId.isEmpty()) {
+            return false;
+        }
+        String recoveredUserId = stringValue(snapshot.child("id"), fallbackUserId).trim();
+        String recoveredName = stringValue(snapshot.child("name"), recoveredUserId).trim();
+        saveCurrentUser(recoveredUserId, recoveredName, recoveredFamilyId);
+        if (onResolved != null) {
+            onResolved.run();
+        }
+        return true;
+    }
+    private boolean isValidFirebaseKey(String value) {
+        return value != null
+                && !value.contains(".")
+                && !value.contains("#")
+                && !value.contains("$")
+                && !value.contains("[")
+                && !value.contains("]")
+                && !value.contains("/");
+    }
+
+    private void findMemberByStoredId(String memberId, EditText idInput) {
+        db.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DataSnapshot matchedUser = null;
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String storedId = stringValue(child.child("id"), child.getKey()).trim();
+                    if (storedId.equalsIgnoreCase(memberId.trim())) {
+                        matchedUser = child;
+                        break;
+                    }
+                }
+                if (matchedUser == null) {
+                    Toast.makeText(
+                            MainActivity.this,
+                            "\uD574\uB2F9 \uC544\uC774\uB514\uB85C \uAC00\uC785\uD55C \uC0AC\uC6A9\uC790\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4.",
+                            Toast.LENGTH_LONG
+                    ).show();
+                    return;
+                }
+                addMemberFromUserSnapshot(memberId, matchedUser, idInput);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                showMemberLookupError(error);
+            }
+        });
+    }
+
+    private void showMemberLookupError(DatabaseError error) {
+        String detail = error == null ? "\uC54C \uC218 \uC5C6\uB294 \uC624\uB958" : error.getMessage();
+        Toast.makeText(
+                MainActivity.this,
+                "\uC0AC\uC6A9\uC790 \uC870\uD68C \uC2E4\uD328: " + detail,
+                Toast.LENGTH_LONG
+        ).show();
+    }
+
+    private void addMemberFromUserSnapshot(
+            String requestedMemberId,
+            DataSnapshot snapshot,
+            EditText idInput
+    ) {
+        String userKey = snapshot.getKey() == null ? "" : snapshot.getKey().trim();
+        String storedMemberId = stringValue(snapshot.child("id"), requestedMemberId).trim();
+        String name = stringValue(snapshot.child("name"), "").trim();
+        if (userKey.isEmpty() || !isValidFirebaseKey(userKey) || storedMemberId.isEmpty() || name.isEmpty()) {
+            Toast.makeText(
+                    MainActivity.this,
+                    "\uB4F1\uB85D\uB41C \uC0AC\uC6A9\uC790 \uC815\uBCF4\uAC00 \uC62C\uBC14\uB974\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.",
+                    Toast.LENGTH_LONG
+            ).show();
+            return;
+        }
+
+        for (MemberData member : members) {
+            if (member.key.equals(userKey) || member.id.equalsIgnoreCase(storedMemberId)) {
+                Toast.makeText(MainActivity.this, "\uC774\uBBF8 \uCD94\uAC00\uB41C \uAD6C\uC131\uC6D0\uC785\uB2C8\uB2E4.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        long now = System.currentTimeMillis();
+        Map<String, Object> values = new HashMap<>();
+        values.put("id", storedMemberId);
+        values.put("name", name);
+        values.put("familyId", currentFamilyId);
+        values.put("createdAt", now);
+
+        Map<String, Object> memberUpdates = new HashMap<>();
+        memberUpdates.put("/members/" + userKey, values);
+        memberUpdates.put("/familyAccounts/" + currentFamilyId + "/members/" + userKey, values);
+        db.updateChildren(memberUpdates)
+                .addOnSuccessListener(unused -> {
+                    idInput.setText("");
+                    db.child("users").child(userKey).child("familyId").setValue(currentFamilyId)
+                            .addOnFailureListener(error -> Toast.makeText(
+                                    MainActivity.this,
+                                    "\uAD6C\uC131\uC6D0\uC740 \uCD94\uAC00\uB410\uC9C0\uB9CC \uC0C1\uB300 \uACC4\uC815 \uC5F0\uACB0\uC740 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4: " + error.getMessage(),
+                                    Toast.LENGTH_LONG
+                            ).show());
+                    Toast.makeText(MainActivity.this, "\uAD6C\uC131\uC6D0\uC744 \uCD94\uAC00\uD588\uC2B5\uB2C8\uB2E4.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(error -> Toast.makeText(
+                        MainActivity.this,
+                        "\uAD6C\uC131\uC6D0 \uCD94\uAC00 \uC2E4\uD328: " + error.getMessage(),
+                        Toast.LENGTH_LONG
+                ).show());
+    }
     private void confirmDeleteMember(MemberData member) {
         AlertDialog dialog = new AlertDialog.Builder(this).create();
 
@@ -2491,9 +2876,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void deleteMember(MemberData member) {
         Map<String, Object> updates = new HashMap<>();
-        updates.put("/members/" + member.id, null);
+        updates.put("/members/" + member.key, null);
         if (!currentFamilyId.isEmpty()) {
-            updates.put("/familyAccounts/" + currentFamilyId + "/members/" + member.id, null);
+            updates.put("/familyAccounts/" + currentFamilyId + "/members/" + member.key, null);
         }
         db.updateChildren(updates)
                 .addOnSuccessListener(unused -> Toast.makeText(this, "구성원을 삭제했습니다.", Toast.LENGTH_SHORT).show())
@@ -2922,7 +3307,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void renderMap() {
-        FrameLayout c = inflateFixedCanvas(R.layout.screen_map);
+        View c = LayoutInflater.from(this).inflate(R.layout.screen_map, contentContainer, false);
+        attachScreen(c);
         addBottomNav();
         updateMapPreviewCardSize(c);
         updateMapBasesCardPosition(c);
@@ -3151,6 +3537,8 @@ public class MainActivity extends AppCompatActivity {
     private void bindLogsList(View root, List<LogEntry> entries) {
         LinearLayout list = root.findViewById(R.id.logsList);
         TextView emptyText = root.findViewById(R.id.logsEmptyText);
+        View loadingText = root.findViewById(R.id.logsLoadingText);
+        loadingText.setVisibility(View.GONE);
         list.removeAllViews();
         emptyText.setVisibility(entries.isEmpty() ? View.VISIBLE : View.GONE);
         for (int i = 0; i < entries.size(); i++) {
@@ -3385,32 +3773,53 @@ public class MainActivity extends AppCompatActivity {
     private void attachScreen(View screenView) {
         contentContainer.addView(screenView);
         centerScreen(screenView);
+        polishTabletScreen(screenView);
     }
 
 
     private void centerScreen(View screenView) {
-        int width = ViewGroup.LayoutParams.MATCH_PARENT;
-        if (tabletLandscape && !isWideTabletRoute()) {
-            width = dp(760);
-        }
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                width,
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 Gravity.CENTER_HORIZONTAL
         );
         screenView.setLayoutParams(params);
     }
 
-    private boolean isWideTabletRoute() {
-        return "home".equals(screen)
-                || "voice".equals(screen)
-                || "voiceListening".equals(screen)
-                || "voiceResult".equals(screen)
-                || "modules".equals(screen)
+    private void polishTabletScreen(View screenView) {
+        if (!tabletLandscape) return;
+
+        if (isTabletCenteredContentRoute()) {
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    dp(900),
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    Gravity.CENTER_HORIZONTAL
+            );
+            screenView.setLayoutParams(params);
+        }
+    }
+
+    private boolean isTabletCenteredContentRoute() {
+        return "modules".equals(screen)
+                || "moduleDetail".equals(screen)
+                || "moduleAdd".equals(screen)
+                || "moduleRename".equals(screen)
+                || "itemSearch".equals(screen)
+                || "itemAdd".equals(screen)
                 || "routine".equals(screen)
+                || "routineEdit".equals(screen)
+                || "moduleSelect".equals(screen)
+                || "routineTime".equals(screen)
+                || "reserveTime".equals(screen)
+                || "location".equals(screen)
                 || "menu".equals(screen)
+                || "map".equals(screen)
+                || "members".equals(screen)
+                || "alarm".equals(screen)
+                || "notification".equals(screen)
+                || "notificationLogs".equals(screen)
                 || "logs".equals(screen)
-                || "notificationLogs".equals(screen);
+                || "choice".equals(screen);
     }
 
     private View findOptionalView(View rootView, String idName) {
@@ -3725,6 +4134,19 @@ public class MainActivity extends AppCompatActivity {
     private boolean applyLocalVoiceCommand(String command) {
         if (command == null || command.trim().isEmpty()) return false;
 
+        if (isParkingVoiceCommand(command)) {
+            parsedVoiceMissionId = 7;
+            selectedTrayId = "";
+            selectedModule = "-";
+            recognizedModule = "-";
+            recognizedLocation = "\uC2A4\uD14C\uC774\uC158";
+            recognizedIntent = "RETURN_HOME";
+            recognizedLabel = "PARKING";
+            recognizedMessage = "\uC8FC\uCC28 \uBBF8\uC158\uC73C\uB85C \uC778\uC2DD\uD588\uC2B5\uB2C8\uB2E4.";
+            recognizedConfidence = 1.0;
+            voiceIntentAccepted = true;
+            return true;
+        }
         int destinationStart = voiceDestinationStart(command);
         String traySearchText = destinationStart >= 0 ? command.substring(0, destinationStart) : command;
         TrayData tray = findTrayMentionedInText(traySearchText);
@@ -3740,6 +4162,18 @@ public class MainActivity extends AppCompatActivity {
         recognizedMessage = "음성 인식을 성공했습니다.";
         voiceIntentAccepted = true;
         return true;
+    }
+
+    private boolean isParkingVoiceCommand(String command) {
+        String normalized = normalizeVoiceText(command);
+        return normalized.contains("주차")
+                || normalized.contains("충전소")
+                || normalized.contains("충전위치")
+                || normalized.contains("대기위치")
+                || normalized.contains("스테이션")
+                || normalized.contains("제자리")
+                || normalized.contains("복귀")
+                || normalized.contains("돌아가");
     }
 
     private TrayData findTrayMentionedInText(String text) {
@@ -3825,11 +4259,11 @@ public class MainActivity extends AppCompatActivity {
 
     private String displayLocationFromVoiceLabel(String labelLocation) {
         String normalized = labelLocation.toLowerCase(Locale.ROOT);
-        if ("master_bedroom".equals(normalized)) return "방1";
-        if ("child_room".equals(normalized)) return "방2";
+        if ("master_bedroom".equals(normalized)) return "안방";
+        if ("child_room".equals(normalized)) return "아이방";
         if ("porch".equals(normalized)) return "현관";
-        if ("living_room".equals(normalized)) return "방2";
-        if ("bedroom".equals(normalized)) return "방1";
+        if ("living_room".equals(normalized)) return "거실";
+        if ("bedroom".equals(normalized)) return "침실";
         for (String place : places) {
             if (place.equals(labelLocation)) return place;
         }
@@ -4044,6 +4478,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startCarryMission(int missionId, String commandLabel) {
+        long now = SystemClock.elapsedRealtime();
+        if (isMissionStarting || isMissionRunning) {
+            Log.d(TAG, "skipped start because mission already running: starting=" + isMissionStarting + ", running=" + isMissionRunning + ", mission=" + missionId);
+            Toast.makeText(this, "이미 미션이 실행 중입니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (now - lastMissionStartRequestAt < MISSION_START_DEBOUNCE_MS) {
+            Log.d(TAG, "skipped start by debounce: mission=" + missionId);
+            return;
+        }
+        lastMissionStartRequestAt = now;
+        isMissionStarting = true;
+        Log.d(TAG, "mission start request: mission=" + missionId);
+
         String command = emptyToFallback(commandLabel, "Mission " + missionId + " 테스트");
         Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보내는 중입니다.", Toast.LENGTH_SHORT).show();
         new Thread(() -> {
@@ -4051,18 +4499,33 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject payload = new JSONObject();
                 payload.put("mission", missionId);
                 String response = postMissionJson("/mission/start", payload);
+                Log.d(TAG, "mission start response: " + response);
                 runOnUiThread(() -> {
+                    isMissionStarting = false;
+                    isMissionRunning = true;
+                    setPollingMode("RUNNING");
                     robotMissionState = "RUNNING";
                     robotMissionFrontStatus = "준비중";
                     robotMissionPhaseLabel = "미션 시작 준비";
                     robotMissionPhaseDetail = "Mission " + missionId;
                     updateVisibleHomeRobotState();
                     saveVoiceRecord(command, "sent", response);
-                    Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
+                    //미션 확인 토스트 메시지
                 });
             } catch (Exception e) {
                 logConnectionError("MISSION_START", "/mission/start", "{\"mission\":" + missionId + "}", e);
                 runOnUiThread(() -> {
+                    isMissionStarting = false;
+                    if (isMissionAlreadyRunningError(e)) {
+                        isMissionRunning = true;
+                        setPollingMode("RUNNING");
+                        robotMissionState = "RUNNING";
+                        updateVisibleHomeRobotState();
+                        Log.d(TAG, "MISSION_ALREADY_RUNNING; app state aligned to RUNNING");
+                        Toast.makeText(this, "이미 실행 중인 미션을 추적합니다.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     saveVoiceRecord(command, "fallback", e.getMessage());
                     Toast.makeText(this, "로봇 서버에 연결하지 못했습니다.", Toast.LENGTH_SHORT).show();
                 });
@@ -4146,6 +4609,14 @@ public class MainActivity extends AppCompatActivity {
         return -1;
     }
 
+    private void setPollingMode(String mode) {
+        String nextMode = emptyToFallback(mode, "IDLE").toUpperCase(Locale.ROOT);
+        if (!nextMode.equals(pollingMode)) {
+            pollingMode = nextMode;
+            Log.d(TAG, "polling mode changed: " + pollingMode);
+        }
+    }
+
     private void startBatteryRefresh() {
         batteryRefreshHandler.removeCallbacks(batteryRefreshRunnable);
         batteryRefreshRunnable.run();
@@ -4163,6 +4634,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchMissionStatus() {
         if (missionStatusRequestInFlight) return;
+        if (isMissionRunning) {
+            Log.d(TAG, "skipped poll due to mission running: /mission/status");
+            return;
+        }
+        Log.d(TAG, "status poll: /mission/status");
         missionStatusRequestInFlight = true;
         new Thread(() -> {
             try {
@@ -4170,6 +4646,17 @@ public class MainActivity extends AppCompatActivity {
                 String state = json.optString("state", json.optString("status", robotMissionState));
                 runOnUiThread(() -> {
                     robotMissionState = emptyToFallback(state, "IDLE").toUpperCase(Locale.ROOT);
+                    if (isRobotMovingState(robotMissionState)) {
+                        isMissionRunning = true;
+                        isMissionStarting = false;
+                        setPollingMode("RUNNING");
+                    } else if ("IDLE".equals(robotMissionState) || "STOPPED".equals(robotMissionState)) {
+                        isMissionRunning = false;
+                        isMissionStarting = false;
+                        if (!"FINISHED".equals(pollingMode)) {
+                            setPollingMode("IDLE");
+                        }
+                    }
                     missionStatusRequestInFlight = false;
                     updateVisibleHomeRobotState();
                 });
@@ -4181,6 +4668,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchMissionPhase() {
         if (missionPhaseRequestInFlight) return;
+        Log.d(TAG, "phase poll: /mission/phase");
         missionPhaseRequestInFlight = true;
         new Thread(() -> {
             try {
@@ -4193,7 +4681,7 @@ public class MainActivity extends AppCompatActivity {
                     missionPhaseRequestInFlight = false;
                     if (isMissionPhaseToastCode(code)) {
                         showMissionPhaseToastOnce(code, label);
-                        return;
+                        markMissionFinished(code);
                     }
                     if (isMissionPhaseDisplayCode(code)) {
                         lastMissionPhaseToastCode = "";
@@ -4201,6 +4689,9 @@ public class MainActivity extends AppCompatActivity {
                         robotMissionPhaseLabel = emptyToFallback(label, robotMissionPhaseLabel);
                         robotMissionPhaseDetail = emptyToFallback(detail, robotMissionPhaseDetail);
                         updateVisibleHomeRobotState();
+                        if ("STOPPED".equals(code) || ("IDLE".equals(code) && isMissionRunning)) {
+                            markMissionFinished(code);
+                        }
                     }
                 });
             } catch (Exception e) {
@@ -4279,24 +4770,48 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchRobotBatteryStatus() {
         if (batteryRequestInFlight) return;
+        if (isMissionRunning) {
+            Log.d(TAG, "skipped poll due to mission running: /battery/status");
+            return;
+        }
+        long now = SystemClock.elapsedRealtime();
+        if (lastBatteryRefreshAt > 0 && now - lastBatteryRefreshAt < BATTERY_REFRESH_INTERVAL_MS) {
+            Log.d(TAG, "skipped battery poll by 5min cache");
+            return;
+        }
+        Log.d(TAG, "battery poll: /battery/status");
         batteryRequestInFlight = true;
         new Thread(() -> {
             try {
                 JSONObject json = new JSONObject(getMissionText("/battery/status"));
                 String display = batteryDisplayText(json);
                 runOnUiThread(() -> {
-                    robotBatteryDisplay = display;
+                    if (isBatteryPercentDisplay(display)) {
+                        robotBatteryDisplay = display;
+                        cacheRobotBatteryDisplay(display);
+                        lastBatteryRefreshAt = SystemClock.elapsedRealtime();
+                    } else {
+                        Log.w(TAG, "battery poll returned no percent, keep cached display: " + robotBatteryDisplay + ", raw=" + json);
+                    }
                     batteryRequestInFlight = false;
                     updateVisibleHomeBattery();
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {
-                    robotBatteryDisplay = "--";
+                    Log.w(TAG, "battery poll failed, keep cached display: " + robotBatteryDisplay, e);
                     batteryRequestInFlight = false;
                     updateVisibleHomeBattery();
                 });
             }
         }).start();
+    }
+
+    private void restoreRobotBatteryDisplay() {
+        String cached = getSharedPreferences(RUNTIME_CACHE_PREFS, MODE_PRIVATE)
+                .getString(PREF_ROBOT_BATTERY_DISPLAY, "");
+        if (isBatteryPercentDisplay(cached)) {
+            robotBatteryDisplay = cached;
+        }
     }
 
     private void updateVisibleHomeBattery() {
@@ -4308,23 +4823,131 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String batteryDisplayText(JSONObject json) {
-        if (json.has("percent") && !json.isNull("percent")) {
-            double percent = json.optDouble("percent", -1);
-            if (percent >= 0) {
+        double percent = firstJsonDouble(json,
+                "percent",
+                "percentage",
+                "battery_percent",
+                "batteryPercentage",
+                "level",
+                "battery_level");
+        if (percent >= 0) {
+            if (percent <= 1.0) {
+                percent *= 100.0;
+            }
+            if (percent <= 100.0) {
                 return Math.round(percent) + "%";
             }
         }
 
-        double voltage = -1;
-        if (json.has("voltage") && !json.isNull("voltage")) {
-            voltage = json.optDouble("voltage", -1);
-        } else if (json.has("battery") && !json.isNull("battery")) {
-            voltage = json.optDouble("battery", -1);
+        if (json.has("battery") && !json.isNull("battery")) {
+            Object battery = json.opt("battery");
+            if (battery instanceof JSONObject) {
+                String nestedDisplay = batteryDisplayText((JSONObject) battery);
+                if (!"--".equals(nestedDisplay)) {
+                    return nestedDisplay;
+                }
+            } else {
+                double batteryValue = jsonNumberValue(battery);
+                if (batteryValue >= 0 && batteryValue <= 1.0) {
+                    return Math.round(batteryValue * 100.0) + "%";
+                }
+                if (batteryValue > 1.0 && batteryValue <= 20.0) {
+                    return voltageToPercentText(batteryValue);
+                }
+                if (batteryValue > 20.0 && batteryValue <= 100.0) {
+                    return Math.round(batteryValue) + "%";
+                }
+            }
         }
+
+        double voltage = firstJsonDouble(json, "voltage", "battery_voltage", "batteryVoltage");
         if (voltage >= 0) {
-            return String.format(Locale.KOREA, "%.1fV", voltage);
+            return voltageToPercentText(voltage);
         }
         return "--";
+    }
+
+    private boolean isMissionAlreadyRunningError(Exception e) {
+        String message = e == null ? "" : emptyToFallback(e.getMessage(), "");
+        return message.contains("MISSION_ALREADY_RUNNING") || message.contains("already running") || message.contains("409");
+    }
+
+    private boolean isBatteryPercentDisplay(String display) {
+        if (display == null) {
+            return false;
+        }
+        String text = display.trim();
+        if (!text.endsWith("%")) {
+            return false;
+        }
+        try {
+            int value = Integer.parseInt(text.substring(0, text.length() - 1).trim());
+            return value >= 0 && value <= 100;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    private void markMissionFinished(String reason) {
+        if (!isMissionRunning && !isMissionStarting) {
+            return;
+        }
+        isMissionStarting = false;
+        isMissionRunning = false;
+        setPollingMode("FINISHED");
+        Log.d(TAG, "polling mode changed: FINISHED reason=" + emptyToFallback(reason, ""));
+        fetchMissionStatus();
+        fetchRobotBatteryStatus();
+        setPollingMode("IDLE");
+    }
+
+    private void cacheRobotBatteryDisplay(String display) {
+        if (!isBatteryPercentDisplay(display)) {
+            return;
+        }
+        getSharedPreferences(RUNTIME_CACHE_PREFS, MODE_PRIVATE)
+                .edit()
+                .putString(PREF_ROBOT_BATTERY_DISPLAY, display)
+                .apply();
+    }
+
+    private double firstJsonDouble(JSONObject json, String... keys) {
+        for (String key : keys) {
+            if (json.has(key) && !json.isNull(key)) {
+                double value = jsonNumberValue(json.opt(key));
+                if (value >= 0) {
+                    return value;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private double jsonNumberValue(Object value) {
+        if (value == null) {
+            return -1;
+        }
+        if (value instanceof Number) {
+            double numeric = ((Number) value).doubleValue();
+            return Double.isNaN(numeric) ? -1 : numeric;
+        }
+        String text = String.valueOf(value).trim();
+        if (text.isEmpty() || "null".equalsIgnoreCase(text) || "--".equals(text)) {
+            return -1;
+        }
+        text = text.replace("%", "").replace("V", "").replace("v", "").trim();
+        try {
+            double numeric = Double.parseDouble(text);
+            return Double.isNaN(numeric) ? -1 : numeric;
+        } catch (Exception ignored) {
+            return -1;
+        }
+    }
+
+    private String voltageToPercentText(double voltage) {
+        double percent = (voltage - 10.5) / (12.6 - 10.5) * 100.0;
+        percent = Math.max(0.0, Math.min(100.0, percent));
+        return Math.round(percent) + "%";
     }
 
     private void stopCarryMission() {
@@ -4333,6 +4956,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String response = postMissionWithoutBody("/mission/stop");
                 runOnUiThread(() -> {
+                    markMissionFinished("STOPPED");
                     robotMissionState = "STOPPED";
                     robotMissionFrontStatus = "정지됨";
                     robotMissionPhaseLabel = "사용자 정지 요청";
@@ -4553,11 +5177,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static class MemberData {
+        final String key;
         final String id;
         final String name;
         final long createdAt;
 
-        MemberData(String id, String name, long createdAt) {
+        MemberData(String key, String id, String name, long createdAt) {
+            this.key = key;
             this.id = id;
             this.name = name;
             this.createdAt = createdAt;

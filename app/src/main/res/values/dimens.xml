@@ -3,4 +3,36 @@
     <dimen name="tablet_navigation_rail_width">0dp</dimen>
     <dimen name="tablet_content_gutter">0dp</dimen>
     <dimen name="tablet_content_max_width">0dp</dimen>
+
+    <dimen name="voice_stop_button_width">116dp</dimen>
+    <dimen name="voice_stop_button_height">36dp</dimen>
+    <dimen name="voice_stop_button_top">662dp</dimen>
+
+    <dimen name="voice_result_icon_size">72dp</dimen>
+    <dimen name="voice_result_status_icon_size">34dp</dimen>
+    <dimen name="voice_result_icon_top">96dp</dimen>
+    <dimen name="voice_result_title_top">182dp</dimen>
+    <dimen name="voice_result_card_width">350dp</dimen>
+    <dimen name="voice_result_card_height">195dp</dimen>
+    <dimen name="voice_result_card_top">300dp</dimen>
+    <dimen name="voice_result_content_start">18dp</dimen>
+    <dimen name="voice_result_content_width">314dp</dimen>
+    <dimen name="voice_result_label_height">14dp</dimen>
+    <dimen name="voice_result_label_top">18dp</dimen>
+    <dimen name="voice_result_command_height">48dp</dimen>
+    <dimen name="voice_result_command_top">40dp</dimen>
+    <dimen name="voice_result_divider_top">82dp</dimen>
+    <dimen name="voice_result_row_icon_size">36dp</dimen>
+    <dimen name="voice_result_first_icon_top">101dp</dimen>
+    <dimen name="voice_result_second_icon_top">145dp</dimen>
+    <dimen name="voice_result_row_label_start">66dp</dimen>
+    <dimen name="voice_result_row_label_width">150dp</dimen>
+    <dimen name="voice_result_row_label_height">17dp</dimen>
+    <dimen name="voice_result_first_label_top">110dp</dimen>
+    <dimen name="voice_result_second_label_top">154dp</dimen>
+    <dimen name="voice_result_value_start">218dp</dimen>
+    <dimen name="voice_result_value_width">114dp</dimen>
+    <dimen name="voice_result_value_height">18dp</dimen>
+    <dimen name="voice_result_first_value_top">109dp</dimen>
+    <dimen name="voice_result_second_value_top">153dp</dimen>
 </resources>

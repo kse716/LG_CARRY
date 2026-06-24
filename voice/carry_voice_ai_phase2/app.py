@@ -14,6 +14,26 @@ model = joblib.load(MODEL_PATH)
 mapping = json.loads(MAPPING_PATH.read_text(encoding="utf-8"))
 threshold = float(mapping.get("confidence_threshold", 0.70))
 
+PARKING_KEYWORDS = (
+    "주차",
+    "충전소",
+    "충전 위치",
+    "충전위치",
+    "대기 위치",
+    "대기위치",
+    "스테이션",
+    "station",
+    "자리로",
+    "제자리",
+    "복귀",
+    "돌아가",
+)
+
+
+def is_parking_command(text):
+    normalized = re.sub(r"\s+", "", str(text)).lower()
+    return any(re.sub(r"\s+", "", keyword).lower() in normalized for keyword in PARKING_KEYWORDS)
+
 LOCATION_PHRASES = (
     "\uc548\ubc29 \ucabd\uc73c\ub85c",
     "\uc548\ubc29\ucabd\uc73c\ub85c",
@@ -118,6 +138,22 @@ def voice_intent():
             "accepted": False,
             "message": "\uc74c\uc131 \uc778\uc2dd \uacb0\uacfc\uac00 \ube44\uc5b4 \uc788\uc2b5\ub2c8\ub2e4."
         }), 400
+
+    if is_parking_command(text):
+        return jsonify({
+            "ok": True,
+            "text": text,
+            "mission": 7,
+            "label": "PARKING",
+            "label_location": "station",
+            "confidence": 1.0,
+            "intent": "RETURN_HOME",
+            "targetTrayId": None,
+            "requiresConfirm": True,
+            "confirmText": "주차 위치로 복귀할까요?",
+            "accepted": True,
+            "message": "주차 미션 후보가 생성되었습니다."
+        })
 
     command_text = strip_location_for_command(text)
     probs = model.predict_proba([command_text])[0]

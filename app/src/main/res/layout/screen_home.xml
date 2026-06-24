@@ -21,6 +21,7 @@
         android:paddingBottom="24dp">
 
         <LinearLayout
+            android:id="@+id/homeHeaderRow"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:gravity="center_vertical"
@@ -41,19 +42,19 @@
                 android:includeFontPadding="false"
                 android:text="LG Carry"
                 android:textColor="#14191B"
-                android:textSize="22sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <FrameLayout
                 android:id="@+id/homeBellIcon"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:clickable="true"
                 android:focusable="true">
 
                 <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_bell" />
@@ -61,15 +62,15 @@
 
             <FrameLayout
                 android:id="@+id/homeSettingsIcon"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:layout_marginStart="4dp"
                 android:clickable="true"
                 android:focusable="true">
 
                 <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_settings" />
@@ -77,6 +78,7 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/homeProductImage"
             android:layout_width="170dp"
             android:layout_height="150dp"
             android:layout_gravity="center_horizontal"
@@ -112,6 +114,7 @@
             android:textStyle="bold" />
 
         <LinearLayout
+            android:id="@+id/homeStatusCard"
             android:layout_width="match_parent"
             android:layout_height="74dp"
             android:layout_marginTop="14dp"
@@ -195,6 +198,7 @@
 
 
         <LinearLayout
+            android:id="@+id/homePrimaryCardRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -202,6 +206,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/homeRecentCard"
                 android:layout_width="0dp"
                 android:layout_height="180dp"
                 android:layout_marginEnd="8dp"
@@ -328,6 +333,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/homeVoiceCard"
                 android:layout_width="0dp"
                 android:layout_height="180dp"
                 android:layout_marginStart="8dp"
@@ -386,6 +392,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/homeSecondaryCardRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -393,6 +400,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/homeRoutineCard"
                 android:layout_width="0dp"
                 android:layout_height="180dp"
                 android:layout_marginEnd="8dp"
@@ -585,6 +593,139 @@
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/homeTestMissionSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="임시 미션 테스트"
+                android:textColor="#14191B"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:includeFontPadding="false"
+                android:text="테스트 후 TEMP_TEST_MISSION_BUTTONS 블록만 삭제하면 됩니다."
+                android:textColor="#798385"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/homeTestMission1Button"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_voice_outline_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="1. 아이방 → 안방"
+                android:textColor="#008E84"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/homeTestMission2Button"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_voice_outline_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="2. 안방 → 아이방"
+                android:textColor="#008E84"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/homeTestMission3Button"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_voice_outline_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="3. 아이방 → 현관"
+                android:textColor="#008E84"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/homeTestMission4Button"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_voice_outline_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="4. 안방 → 현관"
+                android:textColor="#008E84"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/homeTestMission5Button"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_voice_outline_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="5. 아이방 → 거실"
+                android:textColor="#008E84"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/homeTestMission6Button"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_voice_outline_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="6. 안방 → 거실"
+                android:textColor="#008E84"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/homeTestMission7Button"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_voice_outline_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="7. 주차"
+                android:textColor="#008E84"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/homeEmergencyStopButton"
             android:layout_width="match_parent"
