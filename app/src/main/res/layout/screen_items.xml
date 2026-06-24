@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="14dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -22,6 +22,7 @@
                 android:layout_height="wrap_content"
                 android:text="CARRY"
                 android:textColor="#C30B45"
+                android:letterSpacing="0.06"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -30,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:text="물품 관리"
                 android:textColor="#111111"
-                android:textSize="30sp"
+                android:textSize="28sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -49,54 +50,58 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="64dp"
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/tray1Button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/bg_card_selected"
             android:gravity="center"
-            android:text="1번&#10;외출"
+            android:text="1번&#10;트레이"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tray2Button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
             android:layout_weight="1"
             android:background="@drawable/bg_card"
             android:gravity="center"
-            android:text="2번&#10;출근"
+            android:text="2번&#10;트레이"
             android:textColor="#111111"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tray3Button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
             android:layout_weight="1"
             android:background="@drawable/bg_card"
             android:gravity="center"
-            android:text="3번&#10;기저귀/물티슈"
+            android:text="3번&#10;트레이"
             android:textColor="#111111"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="215dp"
+        android:layout_height="256dp"
         android:layout_marginTop="14dp"
         android:background="@drawable/bg_card"
         android:orientation="vertical"
-        android:padding="15dp">
+        android:padding="18dp">
 
         <TextView
+            android:id="@+id/selectedTrayLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1번"
@@ -105,45 +110,65 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/selectedTrayTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="외출 모듈"
+            android:layout_marginTop="10dp"
+            android:text="1번 트레이 모듈"
             android:textColor="#111111"
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <TextView
+        <EditText
+            android:id="@+id/trayNameInput"
             android:layout_width="match_parent"
             android:layout_height="46dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/bg_input"
-            android:gravity="center_vertical"
+            android:hint="트레이 이름 설정"
+            android:inputType="text"
             android:paddingStart="18dp"
-            android:text="카테고리 : 외출"
-            android:textColor="#74787F"
+            android:paddingEnd="18dp"
+            android:textColor="#111111"
+            android:textColorHint="#74787F"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/saveTrayNameButton"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_primary_button"
+            android:gravity="center"
+            android:text="모듈 이름 저장"
+            android:textColor="#FFFFFF"
             android:textSize="13sp"
             android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
-            <TextView
+            <EditText
+                android:id="@+id/itemNameInput"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/bg_input"
-                android:gravity="center_vertical"
+                android:hint="물품 추가"
+                android:inputType="text"
                 android:paddingStart="18dp"
-                android:text="물품 추가"
-                android:textColor="#74787F"
+                android:paddingEnd="18dp"
+                android:textColor="#111111"
+                android:textColorHint="#74787F"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/addItemButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="12dp"
@@ -158,39 +183,98 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="176dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:background="@drawable/bg_card"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="18dp">
 
-        <TextView
+        <EditText
+            android:id="@+id/itemSearchInput"
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:background="@drawable/bg_input"
-            android:gravity="center_vertical"
+            android:hint="물품 이름으로 보관 트레이 검색"
+            android:inputType="text"
             android:paddingStart="18dp"
-            android:text="검색 현재 칸 물품 검색"
-            android:textColor="#74787F"
+            android:paddingEnd="18dp"
+            android:textColor="#111111"
+            android:textColorHint="#74787F"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/itemSearchResultText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="립밤 : 2일 전 등록"
-            android:textColor="#74787F"
-            android:textSize="15sp"
+            android:layout_marginTop="14dp"
+            android:text="물품 이름을 입력하면 DB에서 보관 트레이를 찾아요."
+            android:textColor="#111111"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/itemListText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="검색하면 물품의 트레이 번호와 등록 시점을 보여줘요."
+            android:textColor="#74787F"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:id="@+id/itemListContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="안경 : 3일 전 등록"
-            android:textColor="#74787F"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:orientation="vertical" />
+
+        <View
+            android:id="@+id/itemSearchDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="14dp"
+            android:background="#E6E7EA"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/itemSearchActionRow"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/editSearchItemButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bg_primary_button"
+                android:drawableLeft="@drawable/ic_edit_white"
+                android:drawablePadding="6dp"
+                android:drawableStart="@drawable/ic_edit_white"
+                android:gravity="center"
+                android:text="수정"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/deleteSearchItemButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card_selected"
+                android:drawableLeft="@drawable/ic_trash_white"
+                android:drawablePadding="6dp"
+                android:drawableStart="@drawable/ic_trash_white"
+                android:gravity="center"
+                android:text="삭제"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
