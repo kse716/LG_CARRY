@@ -1,7 +1,25 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.google.services)
+    alias(libs.plugins.google.services) apply false
 }
+
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
+}
+
+fun localProperty(name: String): String = localProperties.getProperty(name, "")
+
+fun buildConfigString(value: String): String =
+    "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
 
 android {
     namespace = "com.example.dx_carry"
@@ -19,6 +37,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "VOICE_INTENT_API_URLS", buildConfigString(localProperty("VOICE_INTENT_API_URLS")))
+        buildConfigField("String", "MISSION_API_BASE_URLS", buildConfigString(localProperty("MISSION_API_BASE_URLS")))
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {

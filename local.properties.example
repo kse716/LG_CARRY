@@ -1,0 +1,8 @@
+# Copy this file to local.properties and fill in local-only values.
+# Keep local.properties out of Git.
+
+# Comma-separated full voice intent API URLs.
+VOICE_INTENT_API_URLS=https://example.com/api/ai/voice-intent
+
+# Comma-separated mission API base URLs.
+MISSION_API_BASE_URLS=https://example.com

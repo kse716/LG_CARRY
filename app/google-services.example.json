@@ -1,14 +1,14 @@
 {
   "project_info": {
-    "project_number": "638787561839",
-    "firebase_url": "https://lgdxcarry-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "lgdxcarry",
-    "storage_bucket": "lgdxcarry.firebasestorage.app"
+    "project_number": "YOUR_FIREBASE_PROJECT_NUMBER",
+    "firebase_url": "https://YOUR_FIREBASE_PROJECT_ID-default-rtdb.REGION.firebasedatabase.app",
+    "project_id": "YOUR_FIREBASE_PROJECT_ID",
+    "storage_bucket": "YOUR_FIREBASE_PROJECT_ID.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:638787561839:android:c43216644d1a1dc89ca09a",
+        "mobilesdk_app_id": "YOUR_FIREBASE_ANDROID_APP_ID",
         "android_client_info": {
           "package_name": "com.example.dx_carry"
         }
@@ -16,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDvO2MFdonSYESoaB-ryIZLmo7ITmxzq-I"
+          "current_key": "YOUR_FIREBASE_WEB_API_KEY"
         }
       ],
       "services": {

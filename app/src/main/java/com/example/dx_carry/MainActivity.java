@@ -99,23 +99,29 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_RECORD_AUDIO = 1001;
     private static final int REQUEST_POST_NOTIFICATIONS = 1002;
     private static final String NOTIFICATION_CHANNEL_ID = "carry_notifications";
-    private static final String[] VOICE_INTENT_API_URLS = {
-            "http://10.206.188.83:5000/api/ai/voice-intent",
-            "http://10.37.161.133:5000/api/ai/voice-intent",
-            "http://192.168.0.21:5000/api/ai/voice-intent",
-            "http://192.168.219.56:5000/api/ai/voice-intent"
-    };
-    private static final String[] MISSION_API_BASE_URLS = {
-            "http://10.206.188.133:5001",
-            "http://10.37.161.133:5001",
-            "http://192.168.0.21:5001"
-    };
+    private static final String[] VOICE_INTENT_API_URLS = splitConfigList(BuildConfig.VOICE_INTENT_API_URLS);
+    private static final String[] MISSION_API_BASE_URLS = splitConfigList(BuildConfig.MISSION_API_BASE_URLS);
     private static final long BATTERY_REFRESH_INTERVAL_MS = 60_000L;
     private static final long MISSION_STATUS_REFRESH_INTERVAL_MS = 5_000L;
     private static final long MISSION_PHASE_REFRESH_INTERVAL_MS = 1_000L;
     private static final long MISSION_START_DEBOUNCE_MS = 2_000L;
     private static final String RUNTIME_CACHE_PREFS = "carryRuntimeCache";
     private static final String PREF_ROBOT_BATTERY_DISPLAY = "robotBatteryDisplay";
+
+    private static String[] splitConfigList(String rawValue) {
+        if (rawValue == null || rawValue.trim().isEmpty()) {
+            return new String[0];
+        }
+        String[] parts = rawValue.split(",");
+        List<String> values = new ArrayList<>();
+        for (String part : parts) {
+            String value = part.trim();
+            if (!value.isEmpty()) {
+                values.add(value);
+            }
+        }
+        return values.toArray(new String[0]);
+    }
 
     private LinearLayout appRoot;
     private FrameLayout contentContainer;
