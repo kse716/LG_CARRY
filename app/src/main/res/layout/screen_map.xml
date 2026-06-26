@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/mapCanvas"
+    android:id="@+id/mapScroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F7F9F9">
+    android:background="#F7F9F9"
+    android:clipToPadding="false"
+    android:fillViewport="true">
+
+    <FrameLayout
+        android:id="@+id/mapCanvas"
+        android:layout_width="match_parent"
+        android:layout_height="1100dp"
+        android:background="#F7F9F9">
 
     <FrameLayout
         android:id="@+id/mapBackButton"
@@ -117,8 +125,9 @@
             android:id="@+id/mapAddBaseButton"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginLeft="320dp"
+            android:layout_gravity="top|end"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/bg_chip_soft">
 
             <ImageView
@@ -166,7 +175,8 @@
             android:id="@+id/mapBaseLivingChevron"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_marginLeft="316dp"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="67dp">
 
             <ImageView
@@ -216,7 +226,8 @@
             android:id="@+id/mapBaseDoorChevron"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_marginLeft="316dp"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="122dp">
 
             <ImageView
@@ -266,7 +277,8 @@
             android:id="@+id/mapBaseBedChevron"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_marginLeft="316dp"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="177dp">
 
             <ImageView
@@ -280,4 +292,5 @@
         </FrameLayout>
     </FrameLayout>
 
-</FrameLayout>
+    </FrameLayout>
+</ScrollView>

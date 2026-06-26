@@ -30,7 +30,7 @@
         android:layout_marginTop="18dp"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
-        android:text="물건 추가"
+        android:text="물품 추가"
         android:textColor="#12181B"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -42,7 +42,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginTop="78dp"
         android:includeFontPadding="false"
-        android:text="물건 이름"
+        android:text="물품 이름"
         android:textColor="#798385"
         android:textSize="13sp"
         android:textStyle="bold" />
@@ -56,7 +56,7 @@
         android:layout_marginTop="108dp"
         android:background="@drawable/bg_input"
         android:gravity="center_vertical"
-        android:hint="물건명 입력"
+        android:hint="물품명 입력"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:singleLine="true"
@@ -72,7 +72,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginTop="176dp"
         android:includeFontPadding="false"
-        android:text="자주 추가하는 물건"
+        android:text="자주 추가하는 물품"
         android:textColor="#798385"
         android:textSize="13sp"
         android:textStyle="bold" />

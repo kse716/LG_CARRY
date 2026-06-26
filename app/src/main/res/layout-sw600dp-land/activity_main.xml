@@ -3,7 +3,7 @@
     android:id="@+id/appRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F7F9F9"
+    android:background="#F3F7F6"
     android:fitsSystemWindows="false"
     android:orientation="horizontal">
 
@@ -12,7 +12,7 @@
         android:layout_width="@dimen/tablet_navigation_rail_width"
         android:layout_height="match_parent"
         android:background="#FFFFFF"
-        android:elevation="8dp" />
+        android:elevation="10dp" />
 
     <FrameLayout
         android:layout_width="0dp"
@@ -27,6 +27,6 @@
             android:layout_width="@dimen/tablet_content_max_width"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:background="#F7F9F9" />
+            android:background="#F3F7F6" />
     </FrameLayout>
 </LinearLayout>

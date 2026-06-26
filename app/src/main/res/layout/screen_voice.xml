@@ -44,7 +44,7 @@
         <View
             android:layout_width="280dp"
             android:layout_height="280dp"
-            android:layout_marginStart="55dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="160dp"
             android:background="@drawable/bg_voice_circle_idle_outer"
             android:visibility="gone" />
@@ -52,7 +52,7 @@
         <View
             android:layout_width="216dp"
             android:layout_height="216dp"
-            android:layout_marginStart="87dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="192dp"
             android:background="@drawable/bg_voice_circle_idle_mid"
             android:visibility="gone" />
@@ -60,7 +60,7 @@
         <View
             android:layout_width="156dp"
             android:layout_height="156dp"
-            android:layout_marginStart="117dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="234dp"
             android:background="@drawable/bg_voice_circle_idle_inner"
             android:visibility="gone" />
@@ -68,7 +68,7 @@
         <ImageView
             android:layout_width="190dp"
             android:layout_height="64dp"
-            android:layout_marginStart="100dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="268dp"
             android:alpha="0.95"
             android:contentDescription="@null"
@@ -79,7 +79,7 @@
             android:id="@+id/voiceIdleMic"
             android:layout_width="112dp"
             android:layout_height="112dp"
-            android:layout_marginStart="139dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="244dp"
             android:background="@drawable/bg_voice_mic_button"
             android:clickable="true"
@@ -143,7 +143,7 @@
         <View
             android:layout_width="300dp"
             android:layout_height="300dp"
-            android:layout_marginStart="45dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="138dp"
             android:background="@drawable/bg_voice_circle_idle_outer"
             android:visibility="gone" />
@@ -151,7 +151,7 @@
         <View
             android:layout_width="244dp"
             android:layout_height="244dp"
-            android:layout_marginStart="73dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="166dp"
             android:background="@drawable/bg_voice_circle_idle_mid"
             android:visibility="gone" />
@@ -159,7 +159,7 @@
         <View
             android:layout_width="188dp"
             android:layout_height="188dp"
-            android:layout_marginStart="101dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="194dp"
             android:background="@drawable/bg_voice_circle_idle_inner"
             android:visibility="gone" />
@@ -168,7 +168,7 @@
             android:id="@+id/voiceMicPulseRing"
             android:layout_width="132dp"
             android:layout_height="132dp"
-            android:layout_marginStart="129dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="234dp"
             android:alpha="0"
             android:background="@drawable/bg_voice_mic_pulse_ring"
@@ -177,7 +177,7 @@
         <ImageView
             android:layout_width="190dp"
             android:layout_height="64dp"
-            android:layout_marginStart="100dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="256dp"
             android:alpha="0.95"
             android:contentDescription="@null"
@@ -188,7 +188,7 @@
             android:id="@+id/voiceListeningMic"
             android:layout_width="112dp"
             android:layout_height="112dp"
-            android:layout_marginStart="139dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="244dp"
             android:background="@drawable/bg_voice_mic_button"
             android:clickable="true"
@@ -207,7 +207,7 @@
             android:id="@+id/voiceBars"
             android:layout_width="116dp"
             android:layout_height="50dp"
-            android:layout_marginStart="137dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="406dp"
             android:gravity="center"
             android:orientation="horizontal">
@@ -253,10 +253,10 @@
 
         <TextView
             android:id="@+id/voiceStopButton"
-            android:layout_width="116dp"
-            android:layout_height="36dp"
-            android:layout_marginStart="137dp"
-            android:layout_marginTop="662dp"
+            android:layout_width="@dimen/voice_stop_button_width"
+            android:layout_height="@dimen/voice_stop_button_height"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="@dimen/voice_stop_button_top"
             android:background="@drawable/bg_voice_outline_button_pill"
             android:gravity="center"
             android:includeFontPadding="false"
@@ -274,16 +274,16 @@
 
         <FrameLayout
             android:id="@+id/voiceResultCheckIcon"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="@dimen/voice_result_icon_size"
+            android:layout_height="@dimen/voice_result_icon_size"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="96dp"
+            android:layout_marginTop="@dimen/voice_result_icon_top"
             android:background="@drawable/bg_voice_circle_teal">
 
             <ImageView
                 android:id="@+id/voiceResultStatusIcon"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
+                android:layout_width="@dimen/voice_result_status_icon_size"
+                android:layout_height="@dimen/voice_result_status_icon_size"
                 android:layout_gravity="center"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_check_white" />
@@ -295,7 +295,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginTop="182dp"
+            android:layout_marginTop="@dimen/voice_result_title_top"
             android:gravity="center"
             android:includeFontPadding="false"
             android:maxLines="2"
@@ -305,19 +305,19 @@
             android:textStyle="bold" />
 
         <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="195dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="300dp"
+            android:id="@+id/voiceResultCard"
+            android:layout_width="@dimen/voice_result_card_width"
+            android:layout_height="@dimen/voice_result_card_height"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="@dimen/voice_result_card_top"
             android:background="@drawable/bg_card"
             android:elevation="3dp">
 
             <TextView
-                android:layout_width="314dp"
-                android:layout_height="14dp"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="18dp"
+                android:layout_width="@dimen/voice_result_content_width"
+                android:layout_height="@dimen/voice_result_label_height"
+                android:layout_marginStart="@dimen/voice_result_content_start"
+                android:layout_marginTop="@dimen/voice_result_label_top"
                 android:gravity="start"
                 android:includeFontPadding="false"
                 android:text="인식한 명령"
@@ -327,10 +327,10 @@
 
             <TextView
                 android:id="@+id/voiceResultCommand"
-                android:layout_width="314dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="40dp"
+                android:layout_width="@dimen/voice_result_content_width"
+                android:layout_height="@dimen/voice_result_command_height"
+                android:layout_marginStart="@dimen/voice_result_content_start"
+                android:layout_marginTop="@dimen/voice_result_command_top"
                 android:gravity="start"
                 android:includeFontPadding="false"
                 android:maxLines="2"
@@ -339,18 +339,18 @@
                 android:textStyle="bold" />
 
             <View
-                android:layout_width="314dp"
+                android:layout_width="@dimen/voice_result_content_width"
                 android:layout_height="1dp"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="82dp"
+                android:layout_marginStart="@dimen/voice_result_content_start"
+                android:layout_marginTop="@dimen/voice_result_divider_top"
                 android:background="#E2E7E7" />
 
             <FrameLayout
                 android:id="@+id/voiceResultModuleIcon"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="101dp"
+                android:layout_width="@dimen/voice_result_row_icon_size"
+                android:layout_height="@dimen/voice_result_row_icon_size"
+                android:layout_marginStart="@dimen/voice_result_content_start"
+                android:layout_marginTop="@dimen/voice_result_first_icon_top"
                 android:background="@drawable/bg_voice_soft_circle">
 
                 <ImageView
@@ -363,10 +363,10 @@
             </FrameLayout>
 
             <TextView
-                android:layout_width="150dp"
-                android:layout_height="17dp"
-                android:layout_marginStart="66dp"
-                android:layout_marginTop="110dp"
+                android:layout_width="@dimen/voice_result_row_label_width"
+                android:layout_height="@dimen/voice_result_row_label_height"
+                android:layout_marginStart="@dimen/voice_result_row_label_start"
+                android:layout_marginTop="@dimen/voice_result_first_label_top"
                 android:gravity="start"
                 android:includeFontPadding="false"
                 android:text="가져올 트레이"
@@ -376,10 +376,10 @@
 
             <TextView
                 android:id="@+id/voiceResultModule"
-                android:layout_width="114dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="218dp"
-                android:layout_marginTop="109dp"
+                android:layout_width="@dimen/voice_result_value_width"
+                android:layout_height="@dimen/voice_result_value_height"
+                android:layout_marginStart="@dimen/voice_result_value_start"
+                android:layout_marginTop="@dimen/voice_result_first_value_top"
                 android:gravity="end"
                 android:includeFontPadding="false"
                 android:textColor="#008E84"
@@ -388,10 +388,10 @@
 
             <FrameLayout
                 android:id="@+id/voiceResultLocationIcon"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="145dp"
+                android:layout_width="@dimen/voice_result_row_icon_size"
+                android:layout_height="@dimen/voice_result_row_icon_size"
+                android:layout_marginStart="@dimen/voice_result_content_start"
+                android:layout_marginTop="@dimen/voice_result_second_icon_top"
                 android:background="@drawable/bg_voice_soft_circle">
 
                 <ImageView
@@ -403,10 +403,10 @@
             </FrameLayout>
 
             <TextView
-                android:layout_width="150dp"
-                android:layout_height="17dp"
-                android:layout_marginStart="66dp"
-                android:layout_marginTop="154dp"
+                android:layout_width="@dimen/voice_result_row_label_width"
+                android:layout_height="@dimen/voice_result_row_label_height"
+                android:layout_marginStart="@dimen/voice_result_row_label_start"
+                android:layout_marginTop="@dimen/voice_result_second_label_top"
                 android:gravity="start"
                 android:includeFontPadding="false"
                 android:text="가져갈 장소"
@@ -416,10 +416,10 @@
 
             <TextView
                 android:id="@+id/voiceResultLocation"
-                android:layout_width="114dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="218dp"
-                android:layout_marginTop="153dp"
+                android:layout_width="@dimen/voice_result_value_width"
+                android:layout_height="@dimen/voice_result_value_height"
+                android:layout_marginStart="@dimen/voice_result_value_start"
+                android:layout_marginTop="@dimen/voice_result_second_value_top"
                 android:gravity="end"
                 android:includeFontPadding="false"
                 android:textColor="#008E84"
@@ -465,7 +465,8 @@
             android:layout_marginEnd="20dp"
             android:layout_marginTop="624dp"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -574,11 +575,12 @@
 
         <TextView
             android:id="@+id/voiceEmergencyStopButton"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="44dp"
+            android:layout_gravity="top|end"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginTop="764dp"
+            android:layout_marginTop="640dp"
             android:background="@drawable/bg_emergency_stop_button"
             android:gravity="center"
             android:includeFontPadding="false"
@@ -586,5 +588,6 @@
             android:textColor="#FFFFFF"
             android:textSize="15sp"
             android:textStyle="bold" />
+
     </FrameLayout>
 </FrameLayout>
