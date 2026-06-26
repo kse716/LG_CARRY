@@ -1,1 +1,0 @@
-{"name":"Carry Voice","description":"음성 인식 및 임시 명령 분류를 제공하는 Carry 로봇 지원 애플리케이션","requestFramePermissions":[],"majorCapabilities":["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]}

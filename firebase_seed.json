@@ -1,0 +1,188 @@
+{
+  "notificationSettings": {
+    "pushEnabled": true,
+    "moveCompleteEnabled": true,
+    "batteryLowEnabled": true,
+    "push": true,
+    "move": true,
+    "battery": true
+  },
+  "users": {
+    "local-user": {
+      "id": "local-user",
+      "name": "LG Carry",
+      "familyId": "family-default",
+      "createdAt": 1781760000000
+    }
+  },
+  "members": {
+    "local-user": {
+      "id": "local-user",
+      "name": "LG Carry",
+      "familyId": "family-default",
+      "createdAt": 1781760000000
+    }
+  },
+  "familyAccounts": {
+    "family-default": {
+      "id": "family-default",
+      "createdAt": 1781760000000,
+      "members": {
+        "local-user": {
+          "id": "local-user",
+          "name": "LG Carry",
+          "familyId": "family-default",
+          "createdAt": 1781760000000
+        }
+      }
+    }
+  },
+  "locations": {
+    "child_room": {
+      "id": "child_room",
+      "name": "아이방",
+      "label": "아이방",
+      "location": "아이방",
+      "x": 0,
+      "y": 0,
+      "userId": "local-user",
+      "mapId": "default_map"
+    },
+    "master_bedroom": {
+      "id": "master_bedroom",
+      "name": "안방",
+      "label": "안방",
+      "location": "안방",
+      "x": 0,
+      "y": 0,
+      "userId": "local-user",
+      "mapId": "default_map"
+    },
+    "living_room": {
+      "id": "living_room",
+      "name": "거실",
+      "label": "거실",
+      "location": "거실",
+      "x": 0,
+      "y": 0,
+      "userId": "local-user",
+      "mapId": "default_map"
+    },
+    "entrance": {
+      "id": "entrance",
+      "name": "현관",
+      "label": "현관",
+      "location": "현관",
+      "x": 0,
+      "y": 0,
+      "userId": "local-user",
+      "mapId": "default_map"
+    }
+  },
+  "trays": {
+    "tray1": {
+      "name": "육아 트레이",
+      "location": "아이방",
+      "representative": true,
+      "createdBy": "LG Carry",
+      "createdById": "local-user",
+      "createdAt": 1781760000000,
+      "updatedBy": "LG Carry",
+      "updatedById": "local-user",
+      "updatedAt": 1781760000000,
+      "items": {
+        "item1": {
+          "itemName": "기저귀",
+          "trayId": "tray1",
+          "createdBy": "LG Carry",
+          "createdById": "local-user",
+          "createdAt": 1781760000000
+        },
+        "item2": {
+          "itemName": "물티슈",
+          "trayId": "tray1",
+          "createdBy": "LG Carry",
+          "createdById": "local-user",
+          "createdAt": 1781760000000
+        },
+        "item3": {
+          "itemName": "장난감",
+          "trayId": "tray1",
+          "createdBy": "LG Carry",
+          "createdById": "local-user",
+          "createdAt": 1781760000000
+        }
+      }
+    },
+    "tray2": {
+      "name": "출근 트레이",
+      "location": "안방",
+      "representative": false,
+      "createdBy": "LG Carry",
+      "createdById": "local-user",
+      "createdAt": 1781760000000,
+      "updatedBy": "LG Carry",
+      "updatedById": "local-user",
+      "updatedAt": 1781760000000,
+      "items": {
+        "item1": {
+          "itemName": "차키",
+          "trayId": "tray2",
+          "createdBy": "LG Carry",
+          "createdById": "local-user",
+          "createdAt": 1781760000000
+        },
+        "item2": {
+          "itemName": "마스크",
+          "trayId": "tray2",
+          "createdBy": "LG Carry",
+          "createdById": "local-user",
+          "createdAt": 1781760000000
+        },
+        "item3": {
+          "itemName": "교통카드",
+          "trayId": "tray2",
+          "createdBy": "LG Carry",
+          "createdById": "local-user",
+          "createdAt": 1781760000000
+        }
+      }
+    }
+  },
+  "routines": {
+    "routine1": {
+      "title": "육아 트레이 안방 전달",
+      "name": "육아 트레이 안방 전달",
+      "trayId": "tray1",
+      "trayName": "육아 트레이",
+      "hour": 7,
+      "minute": 30,
+      "time": "07:30",
+      "place": "안방",
+      "location": "안방",
+      "destination": "안방",
+      "quickSlot": 1,
+      "enabled": true,
+      "updatedBy": "LG Carry",
+      "updatedById": "local-user",
+      "updatedAt": 1781760000000
+    },
+    "routine2": {
+      "title": "출근 트레이 거실 전달",
+      "name": "출근 트레이 거실 전달",
+      "trayId": "tray2",
+      "trayName": "출근 트레이",
+      "hour": 8,
+      "minute": 0,
+      "time": "08:00",
+      "place": "거실",
+      "location": "거실",
+      "destination": "거실",
+      "quickSlot": 2,
+      "enabled": true,
+      "updatedBy": "LG Carry",
+      "updatedById": "local-user",
+      "updatedAt": 1781760000000
+    }
+  }
+}

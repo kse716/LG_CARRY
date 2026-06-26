@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomNav"
+    android:layout_width="match_parent"
+    android:layout_height="78dp"
+    android:background="@drawable/bg_bottom_nav"
+    android:elevation="8dp"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/bottomNavHome"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:duplicateParentState="true"
+            android:src="@drawable/ic_bottom_home"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_marginTop="2dp"
+            android:duplicateParentState="true"
+            android:gravity="center"
+            android:text="홈"
+            android:textColor="@color/bottom_nav_text"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomNavModules"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:duplicateParentState="true"
+            android:src="@drawable/ic_bottom_box"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_marginTop="2dp"
+            android:duplicateParentState="true"
+            android:gravity="center"
+            android:text="트레이"
+            android:textColor="@color/bottom_nav_text"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomNavRoutine"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:duplicateParentState="true"
+            android:src="@drawable/ic_bottom_play_circle"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_marginTop="2dp"
+            android:duplicateParentState="true"
+            android:gravity="center"
+            android:text="루틴"
+            android:textColor="@color/bottom_nav_text"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomNavMenu"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:duplicateParentState="true"
+            android:src="@drawable/ic_bottom_menu"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_marginTop="2dp"
+            android:duplicateParentState="true"
+            android:gravity="center"
+            android:text="메뉴"
+            android:textColor="@color/bottom_nav_text"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/routineEditCanvas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9F9">
+
+    <FrameLayout
+        android:id="@+id/routineEditBackButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="18dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="start|center_vertical"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_chevron_left" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/routineEditTitle"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="18dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="루틴 추가/편집"
+        android:textColor="#12181B"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="78dp"
+        android:layout_marginEnd="20dp"
+        android:includeFontPadding="false"
+        android:text="루틴 이름"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/routineEditNameInput"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="108dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_input"
+        android:gravity="center_vertical"
+        android:hint="루틴 이름 입력"
+        android:includeFontPadding="false"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:singleLine="true"
+        android:textColor="#14191B"
+        android:textColorHint="#9AA3A5"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/routineEditUpdatedText"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="166dp"
+        android:layout_marginEnd="20dp"
+        android:includeFontPadding="false"
+        android:textColor="#798385"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="178dp"
+        android:layout_marginEnd="20dp"
+        android:includeFontPadding="false"
+        android:text="이동 설정"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:id="@+id/routineEditMoveCard"
+        android:layout_width="match_parent"
+        android:layout_height="113dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="208dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_card">
+
+        <FrameLayout
+            android:id="@+id/routineEditTrayRow"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="180dp"
+                android:layout_height="17dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:includeFontPadding="false"
+                android:text="가져올 트레이"
+                android:textColor="#14191B"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/routineEditTrayValue"
+                android:layout_width="120dp"
+                android:layout_height="17dp"
+                android:layout_gravity="end|top"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="34dp"
+                android:gravity="end"
+                android:includeFontPadding="false"
+                android:textColor="#14191B"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="end|top"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="14dp"
+                android:contentDescription="@null"
+                android:rotation="180"
+                android:src="@drawable/ic_chevron_left"
+                app:tint="#14191B" />
+        </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="56dp"
+            android:background="#E2E7E7" />
+
+        <FrameLayout
+            android:id="@+id/routineEditTimeRow"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="57dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="180dp"
+                android:layout_height="17dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:includeFontPadding="false"
+                android:text="트레이 이동 시간"
+                android:textColor="#14191B"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/routineEditTimeValue"
+                android:layout_width="120dp"
+                android:layout_height="17dp"
+                android:layout_gravity="end|top"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="34dp"
+                android:gravity="end"
+                android:includeFontPadding="false"
+                android:textColor="#14191B"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="end|top"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="14dp"
+                android:contentDescription="@null"
+                android:rotation="180"
+                android:src="@drawable/ic_chevron_left"
+                app:tint="#14191B" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="339dp"
+        android:layout_marginEnd="20dp"
+        android:includeFontPadding="false"
+        android:text="이동할 거점"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:id="@+id/routinePlaceRow"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="366dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_card"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:id="@+id/routinePlaceValue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="48dp"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:textColor="#14191B"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@null"
+            android:rotation="180"
+            android:src="@drawable/ic_chevron_left"
+            app:tint="#14191B" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/routineEditHelpText"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="436dp"
+        android:layout_marginEnd="20dp"
+        android:includeFontPadding="false"
+        android:text="설정한 시간에 CARRY가 선택한 트레이를 지정한 장소로 이동시킵니다."
+        android:textColor="#798385"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/routineEditSaveButton"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="478dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_voice_primary_button"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="저장"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+</FrameLayout>

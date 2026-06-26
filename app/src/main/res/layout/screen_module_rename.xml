@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/moduleRenameCanvas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9F9">
+
+    <FrameLayout
+        android:id="@+id/moduleRenameBackButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="18dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="start|center_vertical"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_chevron_left" />
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="18dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="트레이 수정"
+        android:textColor="#12181B"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="78dp"
+        android:layout_marginEnd="20dp"
+        android:includeFontPadding="false"
+        android:text="모듈 이름"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/moduleRenameNameInput"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="108dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_input"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:singleLine="true"
+        android:textColor="#14191B"
+        android:textColorHint="#9AA3A5"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="176dp"
+        android:layout_marginEnd="20dp"
+        android:includeFontPadding="false"
+        android:text="보관 위치"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:id="@+id/moduleRenameLocationRow"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="206dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_input"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:id="@+id/moduleRenameLocationValue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="48dp"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:textColor="#798385"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="274dp"
+        android:layout_marginEnd="20dp"
+        android:includeFontPadding="false"
+        android:text="트레이를 알아보기 쉬운 이름으로 변경하세요. 기존 기능은 유지됩니다."
+        android:textColor="#798385"
+        android:textSize="11sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/moduleRenameSaveButton"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="316dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_voice_primary_button"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="저장"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+</FrameLayout>

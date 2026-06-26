@@ -1,144 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/appRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    android:background="#F7F9F9"
+    android:fitsSystemWindows="false">
 
-    <ScrollView
-        android:id="@+id/contentScroll"
-        android:layout_width="0dp"
+    <FrameLayout
+        android:id="@+id/contentContainer"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:fillViewport="true"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="96dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_weight="1" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="22dp">
-
-            <include
-                android:id="@+id/authScreen"
-                layout="@layout/screen_auth" />
-
-            <include
-                android:id="@+id/homeScreen"
-                layout="@layout/screen_home"
-                android:visibility="gone" />
-
-            <include
-                android:id="@+id/callScreen"
-                layout="@layout/screen_call"
-                android:visibility="gone" />
-
-            <include
-                android:id="@+id/itemsScreen"
-                layout="@layout/screen_items"
-                android:visibility="gone" />
-
-            <include
-                android:id="@+id/routineScreen"
-                layout="@layout/screen_routine"
-                android:visibility="gone" />
-
-            <include
-                android:id="@+id/settingsScreen"
-                layout="@layout/screen_settings"
-                android:visibility="gone" />
-
-            <include
-                android:id="@+id/executionLogScreen"
-                layout="@layout/screen_execution_log"
-                android:visibility="gone" />
-
-            <include
-                android:id="@+id/storageHistoryScreen"
-                layout="@layout/screen_storage_history"
-                android:visibility="gone" />
-        </LinearLayout>
-    </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/bottomNav"
-        android:layout_width="0dp"
-        android:layout_height="62dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="14dp"
-        android:background="@drawable/bg_nav"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/navHome"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="&#54856;"
-            android:textColor="#C30B45"
-            android:textSize="13sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/navCall"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="&#54840;&#52636;"
-            android:textColor="#8A8D94"
-            android:textSize="13sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/navItems"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="&#47932;&#54408;"
-            android:textColor="#8A8D94"
-            android:textSize="13sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/navRoutine"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="&#47336;&#54004;"
-            android:textColor="#8A8D94"
-            android:textSize="13sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/navSettings"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="&#49444;&#51221;"
-            android:textColor="#8A8D94"
-            android:textSize="13sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <FrameLayout
+        android:id="@+id/bottomNavContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

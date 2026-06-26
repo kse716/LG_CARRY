@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/loginCanvas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_login_figma">
+
+    <ImageView
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="96dp"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        android:src="@drawable/carry_product" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="31dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:layout_marginTop="224dp"
+        android:gravity="center"
+        android:text="LG ThinQ Carry"
+        android:textColor="#12181B"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:layout_marginTop="263dp"
+        android:gravity="center"
+        android:text="스마트 트레이 이동 로봇과 함께 시작하세요"
+        android:textColor="#6F797B"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:layout_marginTop="319dp"
+        android:background="@drawable/bg_input">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_login_user" />
+
+        <EditText
+            android:id="@+id/loginIdInput"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginLeft="62dp"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:hint="아이디"
+            android:padding="0dp"
+            android:singleLine="true"
+            android:textColor="#12181B"
+            android:textColorHint="#7F898B"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:layout_marginTop="385dp"
+        android:background="@drawable/bg_input">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_login_lock" />
+
+        <EditText
+            android:id="@+id/loginPasswordInputXml"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginLeft="62dp"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:hint="비밀번호"
+            android:padding="0dp"
+            android:singleLine="true"
+            android:textColor="#12181B"
+            android:textColorHint="#7F898B"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/loginSubmitButton"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:layout_marginTop="463dp"
+        android:background="@drawable/bg_card_selected"
+        android:gravity="center"
+        android:text="로그인"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/loginSignupButton"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:layout_marginTop="529dp"
+        android:background="@drawable/bg_login_outline_button"
+        android:gravity="center"
+        android:text="회원가입"
+        android:textColor="#009688"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:layout_marginTop="601dp"
+        android:gravity="center"
+        android:text="비밀번호를 잊으셨나요?"
+        android:textColor="#7C878A"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+</FrameLayout>
