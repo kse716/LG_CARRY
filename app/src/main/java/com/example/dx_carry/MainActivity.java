@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
     private final boolean[] routineVisible = {true, true, true};
     private int selectedRoutineHour = 7;
     private int selectedRoutineMinute = 30;
+    private final boolean[] selectedRoutineDays = {false, false, false, false, false, false, false};
     private int selectedReserveHour = 10;
     private int selectedReserveMinute = 0;
     private int selectedRoutinePlaceIndex = 0;
@@ -156,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
     private double recognizedConfidence = 0.0;
     private boolean voiceIntentAccepted = false;
     private boolean voiceIntentAnalyzing = false;
+    private int voiceRecognitionSessionId = 0;
     private int parsedVoiceMissionId = -1;
     private AnimatorSet voiceMicPulseAnimator;
     private SpeechRecognizer speechRecognizer;
@@ -389,8 +391,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setScreen(String nextScreen) {
+        boolean leavingVoice = isVoiceScreen(screen) && !isVoiceScreen(nextScreen);
+        boolean restartingVoice = "voice".equals(nextScreen) && !"voice".equals(screen);
+        if (leavingVoice || restartingVoice) {
+            invalidateVoiceRecognitionSession();
+        }
         screen = nextScreen;
         render();
+    }
+
+    private boolean isVoiceScreen(String targetScreen) {
+        return "voice".equals(targetScreen)
+                || "voiceListening".equals(targetScreen)
+                || "voiceResult".equals(targetScreen);
     }
 
     private void listenToPlaces() {
@@ -1252,7 +1265,7 @@ public class MainActivity extends AppCompatActivity {
 
         View.OnClickListener startOrFinishClick = v -> {
             if (voiceState == 1) {
-                stopSpeechRecognition();
+                invalidateVoiceRecognitionSession();
                 setVoiceRecognitionFailed();
                 setScreen("voiceResult");
             } else {
@@ -1266,7 +1279,7 @@ public class MainActivity extends AppCompatActivity {
         listeningMic.setSelected(true);
         listeningMic.setOnClickListener(startOrFinishClick);
         voiceView.findViewById(R.id.voiceStopButton).setOnClickListener(v -> {
-            stopSpeechRecognition();
+            invalidateVoiceRecognitionSession();
             setVoiceRecognitionFailed();
             setScreen("voiceResult");
         });
@@ -1843,6 +1856,7 @@ public class MainActivity extends AppCompatActivity {
         String updatedBy = stringValue(snapshot.child("updatedBy"), "");
         String updatedById = stringValue(snapshot.child("updatedById"), "");
         Long updatedAt = snapshot.child("updatedAt").getValue(Long.class);
+        boolean[] days = parseRoutineDays(snapshot.child("days"));
         return new RoutineData(
                 id,
                 emptyToFallback(title, defaultRoutineTitle(id)),
@@ -1855,8 +1869,26 @@ public class MainActivity extends AppCompatActivity {
                 quickSlot == null ? 0 : quickSlot,
                 updatedBy,
                 updatedById,
-                updatedAt == null ? 0 : updatedAt
+                updatedAt == null ? 0 : updatedAt,
+                days
         );
+    }
+
+    private boolean[] parseRoutineDays(DataSnapshot snapshot) {
+        boolean[] allDays = {true, true, true, true, true, true, true};
+        if (snapshot == null || !snapshot.exists()) return allDays;
+
+        boolean[] parsed = new boolean[7];
+        boolean found = false;
+        String[] keys = {"sun", "mon", "tue", "wed", "thu", "fri", "sat"};
+        for (int i = 0; i < keys.length; i++) {
+            Boolean enabled = snapshot.child(keys[i]).getValue(Boolean.class);
+            if (enabled != null) {
+                parsed[i] = enabled;
+                found = true;
+            }
+        }
+        return found ? parsed : allDays;
     }
 
     private int[] parseRoutineTime(String time) {
@@ -1909,6 +1941,7 @@ public class MainActivity extends AppCompatActivity {
         selectedModule = tray.name;
         selectedRoutineHour = 7;
         selectedRoutineMinute = 30;
+        setAllRoutineDays(false);
         selectedRoutinePlaceIndex = 0;
         routinePlaceExpanded = false;
         setScreen("routineEdit");
@@ -2300,6 +2333,7 @@ public class MainActivity extends AppCompatActivity {
             selectedModule = routine.trayName;
             selectedRoutineHour = routine.hour;
             selectedRoutineMinute = routine.minute;
+            copyRoutineDays(routine.days);
             selectedRoutinePlaceIndex = placeIndex(routine.place);
             routinePlaceExpanded = false;
             setScreen("routineEdit");
@@ -2351,13 +2385,24 @@ public class MainActivity extends AppCompatActivity {
     private void renderRoutineEdit() {
         RoutineData routine = selectedRoutine();
         View editView = LayoutInflater.from(this).inflate(R.layout.screen_routine_edit, contentContainer, false);
-        attachScreen(editView);
+        ScrollView scrollView = new ScrollView(this);
+        scrollView.setFillViewport(true);
+        scrollView.setClipToPadding(false);
+        scrollView.setPadding(0, 0, 0, dp(28));
+        scrollView.addView(editView, new ScrollView.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                dp(720)
+        ));
+        attachScreen(scrollView);
 
         EditText nameInput = editView.findViewById(R.id.routineEditNameInput);
         nameInput.setText(routine.title);
         nameInput.setSelection(nameInput.getText().length());
         ((TextView) editView.findViewById(R.id.routineEditTrayValue)).setText(selectedTray().name);
-        ((TextView) editView.findViewById(R.id.routineEditTimeValue)).setText("매일 " + formatDialTime(selectedRoutineHour, selectedRoutineMinute));
+        ((TextView) editView.findViewById(R.id.routineEditTimeValue)).setText(
+                routineDaysShortText() + " " + formatDialTime(selectedRoutineHour, selectedRoutineMinute)
+        );
+        bindRoutineDaySelector(editView);
         TextView updatedText = editView.findViewById(R.id.routineEditUpdatedText);
         if (updatedText != null) {
             updatedText.setText("");
@@ -2385,6 +2430,7 @@ public class MainActivity extends AppCompatActivity {
         values.put("hour", selectedRoutineHour);
         values.put("minute", selectedRoutineMinute);
         values.put("time", formatDialTime(selectedRoutineHour, selectedRoutineMinute));
+        values.put("days", routineDaysForStorage());
         values.put("place", place);
         values.put("location", place);
         values.put("destination", place);
@@ -2398,6 +2444,97 @@ public class MainActivity extends AppCompatActivity {
                     routinePlaceExpanded = false;
                     setScreen("routine");
                 });
+    }
+
+    private void bindRoutineDaySelector(View root) {
+        int[] ids = {
+                R.id.routineDaySunday,
+                R.id.routineDayMonday,
+                R.id.routineDayTuesday,
+                R.id.routineDayWednesday,
+                R.id.routineDayThursday,
+                R.id.routineDayFriday,
+                R.id.routineDaySaturday
+        };
+        TextView summary = root.findViewById(R.id.routineEditDaysSummary);
+        TextView timeValue = root.findViewById(R.id.routineEditTimeValue);
+        for (int i = 0; i < ids.length; i++) {
+            final int index = i;
+            TextView day = root.findViewById(ids[i]);
+            updateRoutineDayStyle(day, i);
+            day.setOnClickListener(v -> {
+                selectedRoutineDays[index] = !selectedRoutineDays[index];
+                updateRoutineDayStyle(day, index);
+                summary.setText(routineDaysSummary());
+                timeValue.setText(routineDaysShortText() + " " + formatDialTime(selectedRoutineHour, selectedRoutineMinute));
+            });
+        }
+        summary.setText(routineDaysSummary());
+    }
+
+    private void updateRoutineDayStyle(TextView day, int index) {
+        boolean selected = selectedRoutineDays[index];
+        day.setBackgroundResource(selected ? R.drawable.bg_routine_day_selected : android.R.color.transparent);
+        if (selected) {
+            day.setTextColor(Color.WHITE);
+        } else if (index == 0) {
+            day.setTextColor(0xFFD64A43);
+        } else if (index == 6) {
+            day.setTextColor(0xFF2878C8);
+        } else {
+            day.setTextColor(0xFF14191B);
+        }
+        day.setContentDescription(day.getText() + "요일 " + (selected ? "선택됨" : "선택 안 됨"));
+    }
+
+    private int selectedRoutineDayCount() {
+        int count = 0;
+        for (boolean selected : selectedRoutineDays) {
+            if (selected) count++;
+        }
+        return count;
+    }
+
+    private String routineDaysSummary() {
+        if (selectedRoutineDayCount() == 0) return "요일을 선택해 주세요";
+        return selectedRoutineDayCount() == 7 ? "매일" : "매주 " + selectedRoutineDayNames(", ");
+    }
+
+    private String routineDaysShortText() {
+        if (selectedRoutineDayCount() == 0) return "요일 미선택";
+        return selectedRoutineDayCount() == 7 ? "매일" : "매주 " + selectedRoutineDayNames("·");
+    }
+
+    private String selectedRoutineDayNames(String separator) {
+        String[] names = {"일", "월", "화", "수", "목", "금", "토"};
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < selectedRoutineDays.length; i++) {
+            if (!selectedRoutineDays[i]) continue;
+            if (builder.length() > 0) builder.append(separator);
+            builder.append(names[i]);
+        }
+        return builder.toString();
+    }
+
+    private Map<String, Object> routineDaysForStorage() {
+        String[] keys = {"sun", "mon", "tue", "wed", "thu", "fri", "sat"};
+        Map<String, Object> days = new HashMap<>();
+        for (int i = 0; i < keys.length; i++) {
+            days.put(keys[i], selectedRoutineDays[i]);
+        }
+        return days;
+    }
+
+    private void copyRoutineDays(boolean[] source) {
+        for (int i = 0; i < selectedRoutineDays.length; i++) {
+            selectedRoutineDays[i] = source == null || source.length <= i || source[i];
+        }
+    }
+
+    private void setAllRoutineDays(boolean selected) {
+        for (int i = 0; i < selectedRoutineDays.length; i++) {
+            selectedRoutineDays[i] = selected;
+        }
     }
 
     private void renderModuleSelect() {
@@ -3925,7 +4062,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startSpeechRecognition() {
+        final int sessionId = ++voiceRecognitionSessionId;
         stopSpeechRecognition();
+        final boolean[] terminalResultDelivered = {false};
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override public void onReadyForSpeech(Bundle params) {}
@@ -3934,15 +4073,27 @@ public class MainActivity extends AppCompatActivity {
             @Override public void onBufferReceived(byte[] buffer) {}
             @Override public void onEndOfSpeech() {}
             @Override public void onError(int error) {
+                if (terminalResultDelivered[0]
+                        || sessionId != voiceRecognitionSessionId
+                        || !"voiceListening".equals(screen)) {
+                    return;
+                }
+                terminalResultDelivered[0] = true;
                 setVoiceRecognitionFailed();
                 setScreen("voiceResult");
             }
             @Override public void onResults(Bundle results) {
+                if (terminalResultDelivered[0]
+                        || sessionId != voiceRecognitionSessionId
+                        || !"voiceListening".equals(screen)) {
+                    return;
+                }
+                terminalResultDelivered[0] = true;
                 ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 if (matches != null && !matches.isEmpty()) {
                     recognizedCommand = matches.get(0);
                     inferVoiceTarget(recognizedCommand);
-                    postVoiceIntent(recognizedCommand);
+                    postVoiceIntent(recognizedCommand, sessionId);
                 } else {
                     setVoiceRecognitionFailed();
                 }
@@ -3964,6 +4115,12 @@ public class MainActivity extends AppCompatActivity {
             speechRecognizer.destroy();
             speechRecognizer = null;
         }
+    }
+
+    private void invalidateVoiceRecognitionSession() {
+        voiceRecognitionSessionId++;
+        voiceIntentAnalyzing = false;
+        stopSpeechRecognition();
     }
 
     private void setSampleVoiceResult() {
@@ -4159,7 +4316,7 @@ public class MainActivity extends AppCompatActivity {
         recognizedLocation = destination;
         recognizedIntent = "CALL_TRAY";
         recognizedLabel = "LOCAL_TRAY_NAME";
-        recognizedMessage = "음성 인식을 성공했습니다.";
+        recognizedMessage = "음성 인식에 성공했습니다.";
         voiceIntentAccepted = true;
         return true;
     }
@@ -4376,7 +4533,7 @@ public class MainActivity extends AppCompatActivity {
                 + " | error=" + message, error);
     }
 
-    private void postVoiceIntent(String command) {
+    private void postVoiceIntent(String command, int sessionId) {
         voiceIntentAnalyzing = true;
         new Thread(() -> {
             try {
@@ -4384,6 +4541,7 @@ public class MainActivity extends AppCompatActivity {
                 payload.put("text", command);
                 JSONObject json = new JSONObject(postVoiceIntentPayload(payload));
                 runOnUiThread(() -> {
+                    if (sessionId != voiceRecognitionSessionId) return;
                     voiceIntentAnalyzing = false;
                     applyVoiceIntentResult(json);
                     saveVoiceRecord(command, voiceIntentAccepted ? "recognized" : "rejected", json.toString());
@@ -4397,6 +4555,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 logConnectionError("VOICE_INTENT", "", "{\"text\":\"" + emptyToFallback(command, "") + "\"}", e);
                 runOnUiThread(() -> {
+                    if (sessionId != voiceRecognitionSessionId) return;
                     voiceIntentAnalyzing = false;
                     if (!applyLocalVoiceCommand(command)) {
                         recognizedModule = "-";
@@ -4546,7 +4705,7 @@ public class MainActivity extends AppCompatActivity {
         return missionIdForDrawerDestination(drawer, destination);
     }
 
-    private int missionIdForDrawerDestination(int drawer, int destination) {
+    private int missionIdForDrawerDestination(int drawer, int destination) {  
         if (drawer == 1 && destination == 1) return 1;
         if (drawer == 2 && destination == 2) return 2;
         if (drawer == 1 && destination == 3) return 3;
@@ -5122,6 +5281,7 @@ public class MainActivity extends AppCompatActivity {
         final String updatedBy;
         final String updatedById;
         final long updatedAt;
+        final boolean[] days;
         boolean enabled;
         int quickSlot;
 
@@ -5134,6 +5294,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         RoutineData(String id, String title, String trayId, String trayName, int hour, int minute, String place, boolean enabled, int quickSlot, String updatedBy, String updatedById, long updatedAt) {
+            this(id, title, trayId, trayName, hour, minute, place, enabled, quickSlot, updatedBy, updatedById, updatedAt, allDays());
+        }
+
+        RoutineData(String id, String title, String trayId, String trayName, int hour, int minute, String place, boolean enabled, int quickSlot, String updatedBy, String updatedById, long updatedAt, boolean[] days) {
             this.id = id;
             this.title = title;
             this.trayId = trayId;
@@ -5146,6 +5310,11 @@ public class MainActivity extends AppCompatActivity {
             this.updatedBy = updatedBy;
             this.updatedById = updatedById;
             this.updatedAt = updatedAt;
+            this.days = days == null ? allDays() : days.clone();
+        }
+
+        private static boolean[] allDays() {
+            return new boolean[]{true, true, true, true, true, true, true};
         }
     }
 
@@ -5233,5 +5402,3 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-
-
