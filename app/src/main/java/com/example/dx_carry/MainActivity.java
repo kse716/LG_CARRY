@@ -6,21 +6,26 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,20 +78,44 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "DXCarry";
     private static final int APP_BACKGROUND = 0xFFF7F9F9;
+    private static final float TABLET_FONT_SCALE = 1.20f;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        Configuration configuration = new Configuration(
+                newBase.getResources().getConfiguration()
+        );
+
+        if (configuration.smallestScreenWidthDp >= 600) {
+            configuration.fontScale *= TABLET_FONT_SCALE;
+            super.attachBaseContext(newBase.createConfigurationContext(configuration));
+            return;
+        }
+
+        super.attachBaseContext(newBase);
+    }
     private static final int REQUEST_RECORD_AUDIO = 1001;
     private static final int REQUEST_POST_NOTIFICATIONS = 1002;
     private static final String NOTIFICATION_CHANNEL_ID = "carry_notifications";
     private static final String[] VOICE_INTENT_API_URLS = {
-            "http://10.37.161.133:5000/voice/parse",
-            "http://192.168.0.21:5000/voice/parse"
+            "http://10.206.188.83:5000/api/ai/voice-intent",
+            "http://10.37.161.133:5000/api/ai/voice-intent",
+            "http://192.168.0.21:5000/api/ai/voice-intent",
+            "http://192.168.219.56:5000/api/ai/voice-intent"
     };
     private static final String[] MISSION_API_BASE_URLS = {
-            "http://10.37.161.133:5001"
+            "http://10.206.188.133:5001",
+            "http://10.37.161.133:5001",
+            "http://192.168.0.21:5001"
     };
     private static final long BATTERY_REFRESH_INTERVAL_MS = 60_000L;
     private static final long MISSION_STATUS_REFRESH_INTERVAL_MS = 5_000L;
     private static final long MISSION_PHASE_REFRESH_INTERVAL_MS = 1_000L;
+    private static final long MISSION_START_DEBOUNCE_MS = 2_000L;
+    private static final String RUNTIME_CACHE_PREFS = "carryRuntimeCache";
+    private static final String PREF_ROBOT_BATTERY_DISPLAY = "robotBatteryDisplay";
 
     private LinearLayout appRoot;
     private FrameLayout contentContainer;
@@ -109,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
     private final boolean[] routineVisible = {true, true, true};
     private int selectedRoutineHour = 7;
     private int selectedRoutineMinute = 30;
+    private final boolean[] selectedRoutineDays = {false, false, false, false, false, false, false};
     private int selectedReserveHour = 10;
     private int selectedReserveMinute = 0;
     private int selectedRoutinePlaceIndex = 0;
@@ -126,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
     private String recognizedMessage = "";
     private double recognizedConfidence = 0.0;
     private boolean voiceIntentAccepted = false;
+    private boolean voiceIntentAnalyzing = false;
+    private int voiceRecognitionSessionId = 0;
     private int parsedVoiceMissionId = -1;
     private AnimatorSet voiceMicPulseAnimator;
     private SpeechRecognizer speechRecognizer;
@@ -138,9 +170,14 @@ public class MainActivity extends AppCompatActivity {
     private boolean batteryLowNotified = false;
     private int selectedNotificationSoundIndex = 0;
     private String notificationLogFilter = "today";
+    private boolean isMissionStarting = false;
+    private boolean isMissionRunning = false;
+    private long lastMissionStartRequestAt = 0L;
+    private String pollingMode = "IDLE";
     private final Handler batteryRefreshHandler = new Handler(Looper.getMainLooper());
     private String robotBatteryDisplay = "--";
     private boolean batteryRequestInFlight = false;
+    private long lastBatteryRefreshAt = 0L;
     private final Runnable batteryRefreshRunnable = new Runnable() {
         @Override
         public void run() {
@@ -161,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
     private final Handler missionPhaseHandler = new Handler(Looper.getMainLooper());
     private String robotMissionFrontStatus = "대기중";
     private String robotMissionPhaseLabel = "대기 중";
-    private String robotMissionPhaseDetail = "충전 스테이션 대기 중";
+    private String robotMissionPhaseDetail = "스테이션 대기 중";
     private String lastMissionPhaseToastCode = "";
     private boolean missionPhaseRequestInFlight = false;
     private final Runnable missionPhaseRunnable = new Runnable() {
@@ -176,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        lockOrientationForSupportedFormFactor();
         setContentView(R.layout.activity_main);
 
         getWindow().setStatusBarColor(APP_BACKGROUND);
@@ -193,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
 
         db = FirebaseDatabase.getInstance().getReference();
         restoreCurrentUser();
+        bootstrapKioskAccount();
         addFallbackPlaces();
         listenToPlaces();
         listenToTrays();
@@ -201,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannel();
         listenToNotificationSettings();
         listenToBatteryLevel();
+        restoreRobotBatteryDisplay();
         startBatteryRefresh();
         startMissionStatusRefresh();
         startMissionPhaseRefresh();
@@ -213,6 +253,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         render();
+    }
+
+    private void lockOrientationForSupportedFormFactor() {
+        Configuration configuration = getResources().getConfiguration();
+        boolean tablet = configuration.smallestScreenWidthDp >= 600;
+        setRequestedOrientation(tablet
+                ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
 
@@ -343,8 +391,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setScreen(String nextScreen) {
+        boolean leavingVoice = isVoiceScreen(screen) && !isVoiceScreen(nextScreen);
+        boolean restartingVoice = "voice".equals(nextScreen) && !"voice".equals(screen);
+        if (leavingVoice || restartingVoice) {
+            invalidateVoiceRecognitionSession();
+        }
         screen = nextScreen;
         render();
+    }
+
+    private boolean isVoiceScreen(String targetScreen) {
+        return "voice".equals(targetScreen)
+                || "voiceListening".equals(targetScreen)
+                || "voiceResult".equals(targetScreen);
     }
 
     private void listenToPlaces() {
@@ -436,7 +495,10 @@ public class MainActivity extends AppCompatActivity {
                 trays.clear();
                 representativeTrayId = "";
                 for (DataSnapshot traySnapshot : snapshot.getChildren()) {
-                    trays.add(parseTray(traySnapshot));
+                    TrayData tray = parseTray(traySnapshot);
+                    if (isSupportedMissionTray(tray)) {
+                        trays.add(tray);
+                    }
                 }
                 if (trays.isEmpty()) {
                     addFallbackTrays();
@@ -471,12 +533,12 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 members.clear();
                 for (DataSnapshot memberSnapshot : snapshot.getChildren()) {
-                    String id = memberSnapshot.getKey() == null ? "" : memberSnapshot.getKey();
+                    String key = memberSnapshot.getKey() == null ? "" : memberSnapshot.getKey();
                     String name = stringValue(memberSnapshot.child("name"), "");
-                    String memberId = stringValue(memberSnapshot.child("id"), id);
+                    String memberId = stringValue(memberSnapshot.child("id"), key);
                     Long createdAt = memberSnapshot.child("createdAt").getValue(Long.class);
-                    if (!memberId.isEmpty() && !name.trim().isEmpty()) {
-                        members.add(new MemberData(memberId, name.trim(), createdAt == null ? 0 : createdAt));
+                    if (!key.isEmpty() && !memberId.isEmpty() && !name.trim().isEmpty()) {
+                        members.add(new MemberData(key, memberId, name.trim(), createdAt == null ? 0 : createdAt));
                     }
                 }
                 if ("members".equals(screen) || "moduleDetail".equals(screen)) {
@@ -587,8 +649,35 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+    private boolean isSupportedMissionTray(TrayData tray) {
+        if (tray == null) return false;
+        String text = normalizeVoiceText(tray.id + " " + tray.name + " " + tray.location);
+        return text.contains("tray1")
+                || text.contains("tray2")
+                || text.contains("baby")
+                || text.contains("commute")
+                || text.contains("육아")
+                || text.contains("출근")
+                || text.contains("아이방")
+                || text.contains("안방");
+    }
+
     private void addFallbackTrays() {
         trays.clear();
+        if (System.currentTimeMillis() >= 0) {
+            TrayData babyTray = new TrayData("tray1", "육아 트레이", "아이방", true);
+            babyTray.items.add("기저귀");
+            babyTray.items.add("물티슈");
+            babyTray.items.add("장난감");
+            TrayData commuteTray = new TrayData("tray2", "출근 트레이", "안방");
+            commuteTray.items.add("차키");
+            commuteTray.items.add("마스크");
+            commuteTray.items.add("교통카드");
+            trays.add(babyTray);
+            trays.add(commuteTray);
+            representativeTrayId = babyTray.id;
+            return;
+        }
         TrayData tray1 = new TrayData("tray1", "아이방 서랍", "아이방", true);
         tray1.items.add("리모컨");
         tray1.items.add("안경");
@@ -676,12 +765,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String defaultTrayName(String trayId) {
+        if (System.currentTimeMillis() >= 0) {
+            return "tray2".equals(trayId) ? "출근 트레이" : "육아 트레이";
+        }
         if ("tray2".equals(trayId)) return "2번 트레이";
         if ("tray3".equals(trayId)) return "3번 트레이";
         return "1번 트레이";
     }
 
     private String defaultTrayLocation(String trayId) {
+        if (System.currentTimeMillis() >= 0) {
+            return "tray2".equals(trayId) ? "안방" : "아이방";
+        }
         if ("tray2".equals(trayId)) return "현관";
         if ("tray3".equals(trayId)) return "안방";
         return "아이방";
@@ -773,6 +868,10 @@ public class MainActivity extends AppCompatActivity {
             default:
                 renderLogin();
                 break;
+        }
+
+        if (tabletLandscape && !"login".equals(screen) && !"signup".equals(screen)) {
+            addBottomNav();
         }
     }
 
@@ -883,6 +982,7 @@ public class MainActivity extends AppCompatActivity {
         View homeView = LayoutInflater.from(this).inflate(R.layout.screen_home, contentContainer, false);
         attachScreen(homeView);
         addBottomNav();
+        updateTabletHomeCardGrid(homeView);
 
         bindHomeQuickRoutines(homeView);
         bindHomeRepresentativeTray(homeView);
@@ -899,6 +999,105 @@ public class MainActivity extends AppCompatActivity {
         homeView.findViewById(R.id.homeEmergencyStopButton).setOnClickListener(v -> stopCarryMission());
         homeView.findViewById(R.id.homeRoutineManageButton).setOnClickListener(v -> setScreen("routine"));
         homeView.findViewById(R.id.homeModuleCard).setOnClickListener(v -> openRepresentativeTrayDetail());
+        bindHomeTestMissionButtons(homeView);
+    }
+
+    private void updateTabletHomeCardGrid(View homeView) {
+        if (!tabletLandscape) return;
+
+        int gridWidth = dp(900);
+        int cardHeight = dp(240);
+        View headerRow = homeView.findViewById(R.id.homeHeaderRow);
+        LinearLayout.LayoutParams headerParams = (LinearLayout.LayoutParams) headerRow.getLayoutParams();
+        headerParams.width = gridWidth;
+        headerParams.height = dp(56);
+        headerParams.gravity = Gravity.CENTER_HORIZONTAL;
+        headerRow.setLayoutParams(headerParams);
+
+        View productImage = homeView.findViewById(R.id.homeProductImage);
+        LinearLayout.LayoutParams productParams = (LinearLayout.LayoutParams) productImage.getLayoutParams();
+        productParams.width = dp(280);
+        productParams.height = dp(240);
+        productParams.topMargin = dp(24);
+        productParams.gravity = Gravity.CENTER_HORIZONTAL;
+        productImage.setLayoutParams(productParams);
+
+        int[] rowIds = {
+                R.id.homePrimaryCardRow,
+                R.id.homeSecondaryCardRow
+        };
+        for (int rowId : rowIds) {
+            View row = homeView.findViewById(rowId);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) row.getLayoutParams();
+            params.width = gridWidth;
+            params.gravity = Gravity.CENTER_HORIZONTAL;
+            row.setLayoutParams(params);
+        }
+
+        int[] cardIds = {
+                R.id.homeRecentCard,
+                R.id.homeVoiceCard,
+                R.id.homeRoutineCard,
+                R.id.homeModuleCard
+        };
+        for (int cardId : cardIds) {
+            View card = homeView.findViewById(cardId);
+            setHeight(card, cardHeight);
+            card.setPadding(dp(24), dp(22), dp(24), dp(22));
+        }
+
+        ((LinearLayout) homeView.findViewById(R.id.homeRecentCard))
+                .setGravity(Gravity.CENTER_VERTICAL);
+        ((LinearLayout) homeView.findViewById(R.id.homeVoiceCard))
+                .setGravity(Gravity.NO_GRAVITY);
+        ((LinearLayout) homeView.findViewById(R.id.homeRoutineCard))
+                .setGravity(Gravity.CENTER_VERTICAL);
+        ((LinearLayout) homeView.findViewById(R.id.homeModuleCard))
+                .setGravity(Gravity.CENTER_VERTICAL);
+
+        View voiceButton = homeView.findViewById(R.id.homeVoiceButton);
+        LinearLayout.LayoutParams voiceButtonParams =
+                (LinearLayout.LayoutParams) voiceButton.getLayoutParams();
+        voiceButtonParams.topMargin = dp(38);
+        voiceButton.setLayoutParams(voiceButtonParams);
+
+        View statusCard = homeView.findViewById(R.id.homeStatusCard);
+        LinearLayout.LayoutParams statusParams = (LinearLayout.LayoutParams) statusCard.getLayoutParams();
+        statusParams.width = gridWidth;
+        statusParams.height = dp(96);
+        statusParams.gravity = Gravity.CENTER_HORIZONTAL;
+        statusCard.setLayoutParams(statusParams);
+
+        View testMissionSection = homeView.findViewById(R.id.homeTestMissionSection);
+        LinearLayout.LayoutParams testMissionParams =
+                (LinearLayout.LayoutParams) testMissionSection.getLayoutParams();
+        testMissionParams.width = gridWidth;
+        testMissionParams.gravity = Gravity.CENTER_HORIZONTAL;
+        testMissionSection.setLayoutParams(testMissionParams);
+
+        View emergencyButton = homeView.findViewById(R.id.homeEmergencyStopButton);
+        LinearLayout.LayoutParams emergencyParams = (LinearLayout.LayoutParams) emergencyButton.getLayoutParams();
+        emergencyParams.width = gridWidth;
+        emergencyParams.height = dp(64);
+        emergencyParams.gravity = Gravity.CENTER_HORIZONTAL;
+        emergencyButton.setLayoutParams(emergencyParams);
+    }
+
+    private void bindHomeTestMissionButtons(View homeView) {
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission1Button, 1, "아이방 → 안방");
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission2Button, 2, "안방 → 아이방");
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission3Button, 3, "아이방 → 현관");
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission4Button, 4, "안방 → 현관");
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission5Button, 5, "아이방 → 거실");
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission6Button, 6, "안방 → 거실");
+        bindHomeTestMissionButton(homeView, R.id.homeTestMission7Button, 7, "주차");
+    }
+
+    private void bindHomeTestMissionButton(View homeView, int viewId, int missionId, String label) {
+        View button = homeView.findViewById(viewId);
+        if (button != null) {
+            button.setOnClickListener(v -> startCarryMission(missionId, label));
+        }
     }
 
     private void updateHomeBatteryValue(View homeView) {
@@ -1066,7 +1265,7 @@ public class MainActivity extends AppCompatActivity {
 
         View.OnClickListener startOrFinishClick = v -> {
             if (voiceState == 1) {
-                stopSpeechRecognition();
+                invalidateVoiceRecognitionSession();
                 setVoiceRecognitionFailed();
                 setScreen("voiceResult");
             } else {
@@ -1080,14 +1279,14 @@ public class MainActivity extends AppCompatActivity {
         listeningMic.setSelected(true);
         listeningMic.setOnClickListener(startOrFinishClick);
         voiceView.findViewById(R.id.voiceStopButton).setOnClickListener(v -> {
-            stopSpeechRecognition();
+            invalidateVoiceRecognitionSession();
             setVoiceRecognitionFailed();
             setScreen("voiceResult");
         });
         voiceView.findViewById(R.id.voiceRetryButton).setOnClickListener(v -> setScreen("voice"));
         voiceView.findViewById(R.id.voiceExecuteButton).setOnClickListener(v -> {
-            if (!voiceIntentAccepted) {
-                Toast.makeText(this, emptyToFallback(recognizedMessage, "명령을 다시 말해주세요."), Toast.LENGTH_SHORT).show();
+            if (voiceIntentAnalyzing) {
+                Toast.makeText(this, "명령을 분석하는 중입니다.", Toast.LENGTH_SHORT).show();
                 return;
             }
             startCarryMissionFromVoice();
@@ -1116,12 +1315,19 @@ public class MainActivity extends AppCompatActivity {
             ImageView resultStatusIcon = voiceView.findViewById(R.id.voiceResultStatusIcon);
             boolean speechRecognitionFailed = recognizedCommand == null || recognizedCommand.trim().isEmpty();
             boolean commandRejected = !voiceIntentAccepted;
-            if (commandRejected) {
+            if (voiceIntentAnalyzing) {
+                resultTitle.setVisibility(View.VISIBLE);
+                resultTitle.setText("음성 인식 중");
+                resultCheckIcon.setVisibility(View.VISIBLE);
+                resultStatusIcon.setImageResource(R.drawable.ic_search_white);
+                executeButton.setVisibility(View.GONE);
+                ((TextView) voiceView.findViewById(R.id.voiceResultCommand)).setText(recognizedCommand);
+            } else if (commandRejected) {
                 resultTitle.setVisibility(View.VISIBLE);
                 resultTitle.setText(speechRecognitionFailed ? "\uC74C\uC131 \uC778\uC2DD \uC2E4\uD328" : "\uBA85\uB839 \uC778\uC2DD \uC2E4\uD328");
                 resultCheckIcon.setVisibility(View.VISIBLE);
                 resultStatusIcon.setImageResource(R.drawable.ic_x_white);
-                executeButton.setVisibility(View.GONE);
+                executeButton.setVisibility(speechRecognitionFailed ? View.GONE : View.VISIBLE);
                 ((TextView) voiceView.findViewById(R.id.voiceResultCommand)).setText(
                         speechRecognitionFailed ? recognizedMessage : recognizedCommand
                 );
@@ -1450,7 +1656,7 @@ public class MainActivity extends AppCompatActivity {
         detailView.findViewById(R.id.moduleDetailBackButton).setOnClickListener(v -> setScreen("modules"));
         ((TextView) detailView.findViewById(R.id.moduleDetailTitle)).setText(tray.name);
         ((TextView) detailView.findViewById(R.id.moduleDetailTrayName)).setText(tray.name);
-        ((TextView) detailView.findViewById(R.id.moduleDetailTrayLocation)).setText("현재 위치 · " + tray.location + trayUpdatedSuffix(tray));
+        ((TextView) detailView.findViewById(R.id.moduleDetailTrayLocation)).setText("현재 위치 · " + tray.location);
         ((TextView) detailView.findViewById(R.id.moduleDetailItemCount)).setText("보관 물품 " + tray.items.size() + "개");
         bindModuleDetailItems(detailView, tray);
         EditText itemInput = detailView.findViewById(R.id.moduleDetailItemInput);
@@ -1650,6 +1856,7 @@ public class MainActivity extends AppCompatActivity {
         String updatedBy = stringValue(snapshot.child("updatedBy"), "");
         String updatedById = stringValue(snapshot.child("updatedById"), "");
         Long updatedAt = snapshot.child("updatedAt").getValue(Long.class);
+        boolean[] days = parseRoutineDays(snapshot.child("days"));
         return new RoutineData(
                 id,
                 emptyToFallback(title, defaultRoutineTitle(id)),
@@ -1662,8 +1869,26 @@ public class MainActivity extends AppCompatActivity {
                 quickSlot == null ? 0 : quickSlot,
                 updatedBy,
                 updatedById,
-                updatedAt == null ? 0 : updatedAt
+                updatedAt == null ? 0 : updatedAt,
+                days
         );
+    }
+
+    private boolean[] parseRoutineDays(DataSnapshot snapshot) {
+        boolean[] allDays = {true, true, true, true, true, true, true};
+        if (snapshot == null || !snapshot.exists()) return allDays;
+
+        boolean[] parsed = new boolean[7];
+        boolean found = false;
+        String[] keys = {"sun", "mon", "tue", "wed", "thu", "fri", "sat"};
+        for (int i = 0; i < keys.length; i++) {
+            Boolean enabled = snapshot.child(keys[i]).getValue(Boolean.class);
+            if (enabled != null) {
+                parsed[i] = enabled;
+                found = true;
+            }
+        }
+        return found ? parsed : allDays;
     }
 
     private int[] parseRoutineTime(String time) {
@@ -1716,6 +1941,7 @@ public class MainActivity extends AppCompatActivity {
         selectedModule = tray.name;
         selectedRoutineHour = 7;
         selectedRoutineMinute = 30;
+        setAllRoutineDays(false);
         selectedRoutinePlaceIndex = 0;
         routinePlaceExpanded = false;
         setScreen("routineEdit");
@@ -2083,8 +2309,8 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) card.findViewById(R.id.routineTitleText)).setText(routine.title);
         TextView updatedText = card.findViewById(R.id.routineUpdatedText);
         if (updatedText != null) {
-            updatedText.setText(routineUpdatedText(routine));
-            updatedText.setVisibility(routine.updatedAt > 0 ? View.VISIBLE : View.GONE);
+            updatedText.setText("");
+            updatedText.setVisibility(View.GONE);
         }
         ((TextView) card.findViewById(R.id.routineTrayText)).setText(routine.trayName);
         ((TextView) card.findViewById(R.id.routineTimeText)).setText(formatDialTime(routine.hour, routine.minute));
@@ -2107,6 +2333,7 @@ public class MainActivity extends AppCompatActivity {
             selectedModule = routine.trayName;
             selectedRoutineHour = routine.hour;
             selectedRoutineMinute = routine.minute;
+            copyRoutineDays(routine.days);
             selectedRoutinePlaceIndex = placeIndex(routine.place);
             routinePlaceExpanded = false;
             setScreen("routineEdit");
@@ -2158,17 +2385,28 @@ public class MainActivity extends AppCompatActivity {
     private void renderRoutineEdit() {
         RoutineData routine = selectedRoutine();
         View editView = LayoutInflater.from(this).inflate(R.layout.screen_routine_edit, contentContainer, false);
-        attachScreen(editView);
+        ScrollView scrollView = new ScrollView(this);
+        scrollView.setFillViewport(true);
+        scrollView.setClipToPadding(false);
+        scrollView.setPadding(0, 0, 0, dp(28));
+        scrollView.addView(editView, new ScrollView.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                dp(720)
+        ));
+        attachScreen(scrollView);
 
         EditText nameInput = editView.findViewById(R.id.routineEditNameInput);
         nameInput.setText(routine.title);
         nameInput.setSelection(nameInput.getText().length());
         ((TextView) editView.findViewById(R.id.routineEditTrayValue)).setText(selectedTray().name);
-        ((TextView) editView.findViewById(R.id.routineEditTimeValue)).setText("매일 " + formatDialTime(selectedRoutineHour, selectedRoutineMinute));
+        ((TextView) editView.findViewById(R.id.routineEditTimeValue)).setText(
+                routineDaysShortText() + " " + formatDialTime(selectedRoutineHour, selectedRoutineMinute)
+        );
+        bindRoutineDaySelector(editView);
         TextView updatedText = editView.findViewById(R.id.routineEditUpdatedText);
         if (updatedText != null) {
-            updatedText.setText(routineUpdatedText(routine));
-            updatedText.setVisibility(routine.updatedAt > 0 ? View.VISIBLE : View.GONE);
+            updatedText.setText("");
+            updatedText.setVisibility(View.GONE);
         }
         bindRoutinePlace(editView);
 
@@ -2192,6 +2430,7 @@ public class MainActivity extends AppCompatActivity {
         values.put("hour", selectedRoutineHour);
         values.put("minute", selectedRoutineMinute);
         values.put("time", formatDialTime(selectedRoutineHour, selectedRoutineMinute));
+        values.put("days", routineDaysForStorage());
         values.put("place", place);
         values.put("location", place);
         values.put("destination", place);
@@ -2207,12 +2446,95 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private String routineUpdatedText(RoutineData routine) {
-        if (routine.updatedBy == null || routine.updatedBy.trim().isEmpty() || routine.updatedAt <= 0) {
-            return "";
+    private void bindRoutineDaySelector(View root) {
+        int[] ids = {
+                R.id.routineDaySunday,
+                R.id.routineDayMonday,
+                R.id.routineDayTuesday,
+                R.id.routineDayWednesday,
+                R.id.routineDayThursday,
+                R.id.routineDayFriday,
+                R.id.routineDaySaturday
+        };
+        TextView summary = root.findViewById(R.id.routineEditDaysSummary);
+        TextView timeValue = root.findViewById(R.id.routineEditTimeValue);
+        for (int i = 0; i < ids.length; i++) {
+            final int index = i;
+            TextView day = root.findViewById(ids[i]);
+            updateRoutineDayStyle(day, i);
+            day.setOnClickListener(v -> {
+                selectedRoutineDays[index] = !selectedRoutineDays[index];
+                updateRoutineDayStyle(day, index);
+                summary.setText(routineDaysSummary());
+                timeValue.setText(routineDaysShortText() + " " + formatDialTime(selectedRoutineHour, selectedRoutineMinute));
+            });
         }
-        String updatedTime = new SimpleDateFormat("MM.dd HH:mm", Locale.KOREA).format(new Date(routine.updatedAt));
-        return "마지막 수정 " + routine.updatedBy + " " + updatedTime;
+        summary.setText(routineDaysSummary());
+    }
+
+    private void updateRoutineDayStyle(TextView day, int index) {
+        boolean selected = selectedRoutineDays[index];
+        day.setBackgroundResource(selected ? R.drawable.bg_routine_day_selected : android.R.color.transparent);
+        if (selected) {
+            day.setTextColor(Color.WHITE);
+        } else if (index == 0) {
+            day.setTextColor(0xFFD64A43);
+        } else if (index == 6) {
+            day.setTextColor(0xFF2878C8);
+        } else {
+            day.setTextColor(0xFF14191B);
+        }
+        day.setContentDescription(day.getText() + "요일 " + (selected ? "선택됨" : "선택 안 됨"));
+    }
+
+    private int selectedRoutineDayCount() {
+        int count = 0;
+        for (boolean selected : selectedRoutineDays) {
+            if (selected) count++;
+        }
+        return count;
+    }
+
+    private String routineDaysSummary() {
+        if (selectedRoutineDayCount() == 0) return "요일을 선택해 주세요";
+        return selectedRoutineDayCount() == 7 ? "매일" : "매주 " + selectedRoutineDayNames(", ");
+    }
+
+    private String routineDaysShortText() {
+        if (selectedRoutineDayCount() == 0) return "요일 미선택";
+        return selectedRoutineDayCount() == 7 ? "매일" : "매주 " + selectedRoutineDayNames("·");
+    }
+
+    private String selectedRoutineDayNames(String separator) {
+        String[] names = {"일", "월", "화", "수", "목", "금", "토"};
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < selectedRoutineDays.length; i++) {
+            if (!selectedRoutineDays[i]) continue;
+            if (builder.length() > 0) builder.append(separator);
+            builder.append(names[i]);
+        }
+        return builder.toString();
+    }
+
+    private Map<String, Object> routineDaysForStorage() {
+        String[] keys = {"sun", "mon", "tue", "wed", "thu", "fri", "sat"};
+        Map<String, Object> days = new HashMap<>();
+        for (int i = 0; i < keys.length; i++) {
+            days.put(keys[i], selectedRoutineDays[i]);
+        }
+        return days;
+    }
+
+    private void copyRoutineDays(boolean[] source) {
+        for (int i = 0; i < selectedRoutineDays.length; i++) {
+            selectedRoutineDays[i] = source == null || source.length <= i || source[i];
+        }
+    }
+
+    private void setAllRoutineDays(boolean selected) {
+        for (int i = 0; i < selectedRoutineDays.length; i++) {
+            selectedRoutineDays[i] = selected;
+        }
     }
 
     private void renderModuleSelect() {
@@ -2293,64 +2615,306 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String trayUpdatedSuffix(TrayData tray) {
-        if (tray.updatedBy == null || tray.updatedBy.trim().isEmpty() || tray.updatedAt <= 0) {
-            return "";
-        }
-        String updatedTime = new SimpleDateFormat("MM.dd HH:mm", Locale.KOREA).format(new Date(tray.updatedAt));
-        return " · 마지막 수정 " + tray.updatedBy + " " + updatedTime;
-    }
-
     private void renderMembers() {
         View membersView = LayoutInflater.from(this).inflate(R.layout.screen_members, contentContainer, false);
         attachScreen(membersView);
         membersView.findViewById(R.id.membersBackButton).setOnClickListener(v -> setScreen("menu"));
         EditText idInput = membersView.findViewById(R.id.membersIdInput);
-        membersView.findViewById(R.id.membersAddButton).setOnClickListener(v -> {
-            addMember(idInput.getText().toString().trim());
-            idInput.setText("");
-        });
+        membersView.findViewById(R.id.membersAddButton).setOnClickListener(v ->
+                addMember(idInput.getText().toString().trim(), idInput));
         bindMembersList(membersView);
+        if (currentFamilyId.isEmpty()) {
+            recoverCurrentFamilyId(() -> {
+                if ("members".equals(screen)) {
+                    render();
+                }
+            });
+        }
     }
 
-    private void addMember(String memberId) {
+    private void addMember(String memberId, EditText idInput) {
         if (memberId.isEmpty()) {
-            Toast.makeText(this, "구성원의 ID를 입력하세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "\uAD6C\uC131\uC6D0\uC758 \uC544\uC774\uB514\uB97C \uC785\uB825\uD558\uC138\uC694.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (currentFamilyId.isEmpty()) {
-            Toast.makeText(this, "가족 계정 ID가 없습니다.", Toast.LENGTH_SHORT).show();
+            recoverCurrentFamilyId(() -> addMember(memberId, idInput));
             return;
         }
-        db.child("users").child(memberId).addListenerForSingleValueEvent(new ValueEventListener() {
+
+        DatabaseReference usersRef = db.child("users");
+        if (isValidFirebaseKey(memberId)) {
+            usersRef.child(memberId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        addMemberFromUserSnapshot(memberId, snapshot, idInput);
+                    } else {
+                        findMemberByStoredId(memberId, idInput);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    showMemberLookupError(error);
+                }
+            });
+            return;
+        }
+        findMemberByStoredId(memberId, idInput);
+    }
+
+    private void bootstrapKioskAccount() {
+        if (currentUserId.isEmpty() || currentFamilyId.isEmpty()) {
+            recoverDefaultKioskAccount(() -> {
+                if ("members".equals(screen)) {
+                    render();
+                }
+            });
+        }
+    }
+
+    private void recoverDefaultKioskAccount(Runnable onResolved) {
+        db.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String name = stringValue(snapshot.child("name"), "");
-                if (name.trim().isEmpty()) {
-                    Toast.makeText(MainActivity.this, "해당 아이디의 사용자를 찾지 못했습니다.", Toast.LENGTH_SHORT).show();
+                DataSnapshot preferred = null;
+                DataSnapshot firstWithFamily = null;
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String key = child.getKey() == null ? "" : child.getKey().trim();
+                    String storedId = stringValue(child.child("id"), key).trim();
+                    String familyId = stringValue(child.child("familyId"), "").trim();
+                    if (familyId.isEmpty()) {
+                        continue;
+                    }
+                    if ("user1".equalsIgnoreCase(key) || "user1".equalsIgnoreCase(storedId)) {
+                        preferred = child;
+                        break;
+                    }
+                    if (firstWithFamily == null) {
+                        firstWithFamily = child;
+                    }
+                }
+
+                DataSnapshot selected = preferred != null ? preferred : firstWithFamily;
+                if (selected != null && applyRecoveredFamily(selected, "user1", onResolved)) {
                     return;
                 }
-                long now = System.currentTimeMillis();
-                Map<String, Object> values = new HashMap<>();
-                values.put("id", memberId);
-                values.put("name", name.trim());
-                values.put("familyId", currentFamilyId);
-                values.put("createdAt", now);
-                Map<String, Object> updates = new HashMap<>();
-                updates.put("/members/" + memberId, values);
-                updates.put("/familyAccounts/" + currentFamilyId + "/members/" + memberId, values);
-                db.updateChildren(updates)
-                        .addOnSuccessListener(unused -> Toast.makeText(MainActivity.this, "구성원을 추가했습니다.", Toast.LENGTH_SHORT).show())
-                        .addOnFailureListener(error -> Toast.makeText(MainActivity.this, "구성원 추가에 실패했습니다.", Toast.LENGTH_SHORT).show());
+                recoverFamilyDefault(onResolved);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(MainActivity.this, "사용자 정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                recoverFamilyDefault(onResolved);
             }
         });
     }
 
+    private void recoverFamilyDefault(Runnable onResolved) {
+        db.child("familyAccounts").child("family-default")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!snapshot.exists()) {
+                            Toast.makeText(
+                                    MainActivity.this,
+                                    "\uAC00\uC871 \uACC4\uC815 \uC815\uBCF4\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4.",
+                                    Toast.LENGTH_LONG
+                            ).show();
+                            return;
+                        }
+                        saveCurrentUser("user1", "LG Carry", "family-default");
+                        if (onResolved != null) {
+                            onResolved.run();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(
+                                MainActivity.this,
+                                "\uAC00\uC871 \uACC4\uC815 \uC815\uBCF4 \uC870\uD68C \uC2E4\uD328: " + error.getMessage(),
+                                Toast.LENGTH_LONG
+                        ).show();
+                    }
+                });
+    }
+    private void recoverCurrentFamilyId(Runnable onResolved) {
+        String userId = emptyToFallback(currentUserId, "").trim();
+        if (userId.isEmpty()) {
+            recoverDefaultKioskAccount(onResolved);
+            return;
+        }
+
+        if (isValidFirebaseKey(userId)) {
+            db.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (applyRecoveredFamily(snapshot, userId, onResolved)) {
+                        return;
+                    }
+                    recoverCurrentFamilyIdByStoredId(userId, onResolved);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    recoverCurrentFamilyIdByStoredId(userId, onResolved);
+                }
+            });
+            return;
+        }
+        recoverCurrentFamilyIdByStoredId(userId, onResolved);
+    }
+
+    private void recoverCurrentFamilyIdByStoredId(String userId, Runnable onResolved) {
+        db.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String storedId = stringValue(child.child("id"), child.getKey()).trim();
+                    if (storedId.equalsIgnoreCase(userId)
+                            && applyRecoveredFamily(child, userId, onResolved)) {
+                        return;
+                    }
+                }
+                Toast.makeText(
+                        MainActivity.this,
+                        "\uD604\uC7AC \uC0AC\uC6A9\uC790\uC758 \uAC00\uC871 \uACC4\uC815 ID\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4.",
+                        Toast.LENGTH_LONG
+                ).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(
+                        MainActivity.this,
+                        "\uAC00\uC871 \uACC4\uC815 \uC815\uBCF4 \uC870\uD68C \uC2E4\uD328: " + error.getMessage(),
+                        Toast.LENGTH_LONG
+                ).show();
+            }
+        });
+    }
+
+    private boolean applyRecoveredFamily(
+            DataSnapshot snapshot,
+            String fallbackUserId,
+            Runnable onResolved
+    ) {
+        if (snapshot == null || !snapshot.exists()) {
+            return false;
+        }
+        String recoveredFamilyId = stringValue(snapshot.child("familyId"), "").trim();
+        if (recoveredFamilyId.isEmpty()) {
+            return false;
+        }
+        String recoveredUserId = stringValue(snapshot.child("id"), fallbackUserId).trim();
+        String recoveredName = stringValue(snapshot.child("name"), recoveredUserId).trim();
+        saveCurrentUser(recoveredUserId, recoveredName, recoveredFamilyId);
+        if (onResolved != null) {
+            onResolved.run();
+        }
+        return true;
+    }
+    private boolean isValidFirebaseKey(String value) {
+        return value != null
+                && !value.contains(".")
+                && !value.contains("#")
+                && !value.contains("$")
+                && !value.contains("[")
+                && !value.contains("]")
+                && !value.contains("/");
+    }
+
+    private void findMemberByStoredId(String memberId, EditText idInput) {
+        db.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DataSnapshot matchedUser = null;
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String storedId = stringValue(child.child("id"), child.getKey()).trim();
+                    if (storedId.equalsIgnoreCase(memberId.trim())) {
+                        matchedUser = child;
+                        break;
+                    }
+                }
+                if (matchedUser == null) {
+                    Toast.makeText(
+                            MainActivity.this,
+                            "\uD574\uB2F9 \uC544\uC774\uB514\uB85C \uAC00\uC785\uD55C \uC0AC\uC6A9\uC790\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4.",
+                            Toast.LENGTH_LONG
+                    ).show();
+                    return;
+                }
+                addMemberFromUserSnapshot(memberId, matchedUser, idInput);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                showMemberLookupError(error);
+            }
+        });
+    }
+
+    private void showMemberLookupError(DatabaseError error) {
+        String detail = error == null ? "\uC54C \uC218 \uC5C6\uB294 \uC624\uB958" : error.getMessage();
+        Toast.makeText(
+                MainActivity.this,
+                "\uC0AC\uC6A9\uC790 \uC870\uD68C \uC2E4\uD328: " + detail,
+                Toast.LENGTH_LONG
+        ).show();
+    }
+
+    private void addMemberFromUserSnapshot(
+            String requestedMemberId,
+            DataSnapshot snapshot,
+            EditText idInput
+    ) {
+        String userKey = snapshot.getKey() == null ? "" : snapshot.getKey().trim();
+        String storedMemberId = stringValue(snapshot.child("id"), requestedMemberId).trim();
+        String name = stringValue(snapshot.child("name"), "").trim();
+        if (userKey.isEmpty() || !isValidFirebaseKey(userKey) || storedMemberId.isEmpty() || name.isEmpty()) {
+            Toast.makeText(
+                    MainActivity.this,
+                    "\uB4F1\uB85D\uB41C \uC0AC\uC6A9\uC790 \uC815\uBCF4\uAC00 \uC62C\uBC14\uB974\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.",
+                    Toast.LENGTH_LONG
+            ).show();
+            return;
+        }
+
+        for (MemberData member : members) {
+            if (member.key.equals(userKey) || member.id.equalsIgnoreCase(storedMemberId)) {
+                Toast.makeText(MainActivity.this, "\uC774\uBBF8 \uCD94\uAC00\uB41C \uAD6C\uC131\uC6D0\uC785\uB2C8\uB2E4.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        long now = System.currentTimeMillis();
+        Map<String, Object> values = new HashMap<>();
+        values.put("id", storedMemberId);
+        values.put("name", name);
+        values.put("familyId", currentFamilyId);
+        values.put("createdAt", now);
+
+        Map<String, Object> memberUpdates = new HashMap<>();
+        memberUpdates.put("/members/" + userKey, values);
+        memberUpdates.put("/familyAccounts/" + currentFamilyId + "/members/" + userKey, values);
+        db.updateChildren(memberUpdates)
+                .addOnSuccessListener(unused -> {
+                    idInput.setText("");
+                    db.child("users").child(userKey).child("familyId").setValue(currentFamilyId)
+                            .addOnFailureListener(error -> Toast.makeText(
+                                    MainActivity.this,
+                                    "\uAD6C\uC131\uC6D0\uC740 \uCD94\uAC00\uB410\uC9C0\uB9CC \uC0C1\uB300 \uACC4\uC815 \uC5F0\uACB0\uC740 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4: " + error.getMessage(),
+                                    Toast.LENGTH_LONG
+                            ).show());
+                    Toast.makeText(MainActivity.this, "\uAD6C\uC131\uC6D0\uC744 \uCD94\uAC00\uD588\uC2B5\uB2C8\uB2E4.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(error -> Toast.makeText(
+                        MainActivity.this,
+                        "\uAD6C\uC131\uC6D0 \uCD94\uAC00 \uC2E4\uD328: " + error.getMessage(),
+                        Toast.LENGTH_LONG
+                ).show());
+    }
     private void confirmDeleteMember(MemberData member) {
         AlertDialog dialog = new AlertDialog.Builder(this).create();
 
@@ -2449,9 +3013,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void deleteMember(MemberData member) {
         Map<String, Object> updates = new HashMap<>();
-        updates.put("/members/" + member.id, null);
+        updates.put("/members/" + member.key, null);
         if (!currentFamilyId.isEmpty()) {
-            updates.put("/familyAccounts/" + currentFamilyId + "/members/" + member.id, null);
+            updates.put("/familyAccounts/" + currentFamilyId + "/members/" + member.key, null);
         }
         db.updateChildren(updates)
                 .addOnSuccessListener(unused -> Toast.makeText(this, "구성원을 삭제했습니다.", Toast.LENGTH_SHORT).show())
@@ -2880,7 +3444,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void renderMap() {
-        FrameLayout c = inflateFixedCanvas(R.layout.screen_map);
+        View c = LayoutInflater.from(this).inflate(R.layout.screen_map, contentContainer, false);
+        attachScreen(c);
         addBottomNav();
         updateMapPreviewCardSize(c);
         updateMapBasesCardPosition(c);
@@ -3109,6 +3674,8 @@ public class MainActivity extends AppCompatActivity {
     private void bindLogsList(View root, List<LogEntry> entries) {
         LinearLayout list = root.findViewById(R.id.logsList);
         TextView emptyText = root.findViewById(R.id.logsEmptyText);
+        View loadingText = root.findViewById(R.id.logsLoadingText);
+        loadingText.setVisibility(View.GONE);
         list.removeAllViews();
         emptyText.setVisibility(entries.isEmpty() ? View.VISIBLE : View.GONE);
         for (int i = 0; i < entries.size(); i++) {
@@ -3343,32 +3910,53 @@ public class MainActivity extends AppCompatActivity {
     private void attachScreen(View screenView) {
         contentContainer.addView(screenView);
         centerScreen(screenView);
+        polishTabletScreen(screenView);
     }
 
 
     private void centerScreen(View screenView) {
-        int width = ViewGroup.LayoutParams.MATCH_PARENT;
-        if (tabletLandscape && !isWideTabletRoute()) {
-            width = dp(760);
-        }
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                width,
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 Gravity.CENTER_HORIZONTAL
         );
         screenView.setLayoutParams(params);
     }
 
-    private boolean isWideTabletRoute() {
-        return "home".equals(screen)
-                || "voice".equals(screen)
-                || "voiceListening".equals(screen)
-                || "voiceResult".equals(screen)
-                || "modules".equals(screen)
+    private void polishTabletScreen(View screenView) {
+        if (!tabletLandscape) return;
+
+        if (isTabletCenteredContentRoute()) {
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    dp(900),
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    Gravity.CENTER_HORIZONTAL
+            );
+            screenView.setLayoutParams(params);
+        }
+    }
+
+    private boolean isTabletCenteredContentRoute() {
+        return "modules".equals(screen)
+                || "moduleDetail".equals(screen)
+                || "moduleAdd".equals(screen)
+                || "moduleRename".equals(screen)
+                || "itemSearch".equals(screen)
+                || "itemAdd".equals(screen)
                 || "routine".equals(screen)
+                || "routineEdit".equals(screen)
+                || "moduleSelect".equals(screen)
+                || "routineTime".equals(screen)
+                || "reserveTime".equals(screen)
+                || "location".equals(screen)
                 || "menu".equals(screen)
+                || "map".equals(screen)
+                || "members".equals(screen)
+                || "alarm".equals(screen)
+                || "notification".equals(screen)
+                || "notificationLogs".equals(screen)
                 || "logs".equals(screen)
-                || "notificationLogs".equals(screen);
+                || "choice".equals(screen);
     }
 
     private View findOptionalView(View rootView, String idName) {
@@ -3474,7 +4062,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startSpeechRecognition() {
+        final int sessionId = ++voiceRecognitionSessionId;
         stopSpeechRecognition();
+        final boolean[] terminalResultDelivered = {false};
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override public void onReadyForSpeech(Bundle params) {}
@@ -3483,15 +4073,27 @@ public class MainActivity extends AppCompatActivity {
             @Override public void onBufferReceived(byte[] buffer) {}
             @Override public void onEndOfSpeech() {}
             @Override public void onError(int error) {
+                if (terminalResultDelivered[0]
+                        || sessionId != voiceRecognitionSessionId
+                        || !"voiceListening".equals(screen)) {
+                    return;
+                }
+                terminalResultDelivered[0] = true;
                 setVoiceRecognitionFailed();
                 setScreen("voiceResult");
             }
             @Override public void onResults(Bundle results) {
+                if (terminalResultDelivered[0]
+                        || sessionId != voiceRecognitionSessionId
+                        || !"voiceListening".equals(screen)) {
+                    return;
+                }
+                terminalResultDelivered[0] = true;
                 ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 if (matches != null && !matches.isEmpty()) {
                     recognizedCommand = matches.get(0);
                     inferVoiceTarget(recognizedCommand);
-                    postVoiceIntent(recognizedCommand);
+                    postVoiceIntent(recognizedCommand, sessionId);
                 } else {
                     setVoiceRecognitionFailed();
                 }
@@ -3515,6 +4117,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void invalidateVoiceRecognitionSession() {
+        voiceRecognitionSessionId++;
+        voiceIntentAnalyzing = false;
+        stopSpeechRecognition();
+    }
+
     private void setSampleVoiceResult() {
         recognizedCommand = "거실에 있는 트레이 가져와줘";
         recognizedModule = selectedTray().name;
@@ -3524,6 +4132,7 @@ public class MainActivity extends AppCompatActivity {
         recognizedMessage = "";
         recognizedConfidence = 0.0;
         voiceIntentAccepted = true;
+        voiceIntentAnalyzing = false;
     }
 
     private void setVoiceRecognitionFailed() {
@@ -3535,6 +4144,7 @@ public class MainActivity extends AppCompatActivity {
         recognizedMessage = "\uC74C\uC131 \uC778\uC2DD\uC5D0 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4.";
         recognizedConfidence = 0.0;
         voiceIntentAccepted = false;
+        voiceIntentAnalyzing = false;
         parsedVoiceMissionId = -1;
     }
 
@@ -3547,6 +4157,7 @@ public class MainActivity extends AppCompatActivity {
         recognizedMessage = "";
         recognizedConfidence = 0.0;
         voiceIntentAccepted = false;
+        voiceIntentAnalyzing = false;
         parsedVoiceMissionId = -1;
     }
 
@@ -3574,7 +4185,7 @@ public class MainActivity extends AppCompatActivity {
             parsedVoiceMissionId = json.optInt("mission", -1);
             recognizedIntent = "CARRY";
             recognizedLabel = json.optString("label", "");
-            recognizedMessage = json.optString("message", "명령 후보가 생성되었습니다.");
+            recognizedMessage = json.optString("message", "");
             recognizedModule = emptyToFallback(json.optString("source_label", ""), "-");
             if (!"-".equals(recognizedModule)) {
                 recognizedModule = recognizedModule + " 서랍";
@@ -3621,6 +4232,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             recognizedLocation = "-";
         }
+
+        parsedVoiceMissionId = missionIdForVoiceIntent(targetTrayId, labelLocation);
     }
 
     private TrayData trayForVoiceTarget(String targetTrayId, String label) {
@@ -3638,6 +4251,7 @@ public class MainActivity extends AppCompatActivity {
             return tray != null ? tray : findTrayByItemKeywords("기저귀", "물티슈", "젖병", "장난감");
         }
         if (target.contains("medicine") || normalizedLabel.contains("MEDICINE")) {
+            if (System.currentTimeMillis() >= 0) return null;
             TrayData tray = findTrayByNameOrIdKeywords("약", "복약", "medicine", "TRAY_MEDICINE");
             return tray != null ? tray : findTrayByItemKeywords("비타민", "영양제", "혈압", "당뇨", "안경", "돋보기");
         }
@@ -3677,6 +4291,19 @@ public class MainActivity extends AppCompatActivity {
     private boolean applyLocalVoiceCommand(String command) {
         if (command == null || command.trim().isEmpty()) return false;
 
+        if (isParkingVoiceCommand(command)) {
+            parsedVoiceMissionId = 7;
+            selectedTrayId = "";
+            selectedModule = "-";
+            recognizedModule = "-";
+            recognizedLocation = "\uC2A4\uD14C\uC774\uC158";
+            recognizedIntent = "RETURN_HOME";
+            recognizedLabel = "PARKING";
+            recognizedMessage = "\uC8FC\uCC28 \uBBF8\uC158\uC73C\uB85C \uC778\uC2DD\uD588\uC2B5\uB2C8\uB2E4.";
+            recognizedConfidence = 1.0;
+            voiceIntentAccepted = true;
+            return true;
+        }
         int destinationStart = voiceDestinationStart(command);
         String traySearchText = destinationStart >= 0 ? command.substring(0, destinationStart) : command;
         TrayData tray = findTrayMentionedInText(traySearchText);
@@ -3689,9 +4316,21 @@ public class MainActivity extends AppCompatActivity {
         recognizedLocation = destination;
         recognizedIntent = "CALL_TRAY";
         recognizedLabel = "LOCAL_TRAY_NAME";
-        recognizedMessage = "명령 후보가 생성되었습니다.";
+        recognizedMessage = "음성 인식에 성공했습니다.";
         voiceIntentAccepted = true;
         return true;
+    }
+
+    private boolean isParkingVoiceCommand(String command) {
+        String normalized = normalizeVoiceText(command);
+        return normalized.contains("주차")
+                || normalized.contains("충전소")
+                || normalized.contains("충전위치")
+                || normalized.contains("대기위치")
+                || normalized.contains("스테이션")
+                || normalized.contains("제자리")
+                || normalized.contains("복귀")
+                || normalized.contains("돌아가");
     }
 
     private TrayData findTrayMentionedInText(String text) {
@@ -3777,9 +4416,11 @@ public class MainActivity extends AppCompatActivity {
 
     private String displayLocationFromVoiceLabel(String labelLocation) {
         String normalized = labelLocation.toLowerCase(Locale.ROOT);
+        if ("master_bedroom".equals(normalized)) return "안방";
+        if ("child_room".equals(normalized)) return "아이방";
         if ("porch".equals(normalized)) return "현관";
-        if ("living_room".equals(normalized)) return "방2";
-        if ("bedroom".equals(normalized)) return "방1";
+        if ("living_room".equals(normalized)) return "거실";
+        if ("bedroom".equals(normalized)) return "침실";
         for (String place : places) {
             if (place.equals(labelLocation)) return place;
         }
@@ -3884,13 +4525,24 @@ public class MainActivity extends AppCompatActivity {
         return value == null ? fallback : value;
     }
 
-    private void postVoiceIntent(String command) {
+    private void logConnectionError(String stage, String url, String payload, Exception error) {
+        String message = error == null ? "" : emptyToFallback(error.getMessage(), error.toString());
+        Log.e(TAG, stage + " failed"
+                + " | url=" + emptyToFallback(url, "-")
+                + " | payload=" + emptyToFallback(payload, "-")
+                + " | error=" + message, error);
+    }
+
+    private void postVoiceIntent(String command, int sessionId) {
+        voiceIntentAnalyzing = true;
         new Thread(() -> {
             try {
                 JSONObject payload = new JSONObject();
                 payload.put("text", command);
                 JSONObject json = new JSONObject(postVoiceIntentPayload(payload));
                 runOnUiThread(() -> {
+                    if (sessionId != voiceRecognitionSessionId) return;
+                    voiceIntentAnalyzing = false;
                     applyVoiceIntentResult(json);
                     saveVoiceRecord(command, voiceIntentAccepted ? "recognized" : "rejected", json.toString());
                     if ("voiceResult".equals(screen)) {
@@ -3901,7 +4553,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             } catch (Exception e) {
+                logConnectionError("VOICE_INTENT", "", "{\"text\":\"" + emptyToFallback(command, "") + "\"}", e);
                 runOnUiThread(() -> {
+                    if (sessionId != voiceRecognitionSessionId) return;
+                    voiceIntentAnalyzing = false;
                     if (!applyLocalVoiceCommand(command)) {
                         recognizedModule = "-";
                         recognizedLocation = "-";
@@ -3947,11 +4602,14 @@ public class MainActivity extends AppCompatActivity {
                     while ((line = reader.readLine()) != null) response.append(line);
                 }
                 if (response.length() == 0) {
-                    throw new IllegalStateException("Empty voice intent response");
+                    throw new IllegalStateException("Voice API empty response from " + apiUrl);
+                }
+                if (statusCode >= 400) {
+                    throw new IllegalStateException("Voice API error " + statusCode + " from " + apiUrl + ": " + response);
                 }
                 return response.toString();
             } catch (Exception e) {
-                lastError = e;
+                lastError = new IllegalStateException("Voice API request failed: " + apiUrl + " / " + e.getMessage(), e);
             } finally {
                 if (conn != null) conn.disconnect();
             }
@@ -3962,12 +4620,37 @@ public class MainActivity extends AppCompatActivity {
     private void startCarryMissionFromVoice() {
         int missionId = parsedVoiceMissionId > 0 ? parsedVoiceMissionId : missionIdForVoiceCommand();
         if (missionId <= 0) {
+            logConnectionError(
+                    "MISSION_MAPPING",
+                    "",
+                    "command=" + emptyToFallback(recognizedCommand, "")
+                            + ", intent=" + emptyToFallback(recognizedIntent, "")
+                            + ", label=" + emptyToFallback(recognizedLabel, "")
+                            + ", module=" + emptyToFallback(recognizedModule, "")
+                            + ", location=" + emptyToFallback(recognizedLocation, ""),
+                    new IllegalStateException("Mission id mapping failed")
+            );
+            Toast.makeText(this, "Carry를 실행합니다.", Toast.LENGTH_SHORT).show();
             return;
         }
         startCarryMission(missionId, recognizedCommand);
     }
 
     private void startCarryMission(int missionId, String commandLabel) {
+        long now = SystemClock.elapsedRealtime();
+        if (isMissionStarting || isMissionRunning) {
+            Log.d(TAG, "skipped start because mission already running: starting=" + isMissionStarting + ", running=" + isMissionRunning + ", mission=" + missionId);
+            Toast.makeText(this, "이미 미션이 실행 중입니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (now - lastMissionStartRequestAt < MISSION_START_DEBOUNCE_MS) {
+            Log.d(TAG, "skipped start by debounce: mission=" + missionId);
+            return;
+        }
+        lastMissionStartRequestAt = now;
+        isMissionStarting = true;
+        Log.d(TAG, "mission start request: mission=" + missionId);
+
         String command = emptyToFallback(commandLabel, "Mission " + missionId + " 테스트");
         Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보내는 중입니다.", Toast.LENGTH_SHORT).show();
         new Thread(() -> {
@@ -3975,17 +4658,33 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject payload = new JSONObject();
                 payload.put("mission", missionId);
                 String response = postMissionJson("/mission/start", payload);
+                Log.d(TAG, "mission start response: " + response);
                 runOnUiThread(() -> {
+                    isMissionStarting = false;
+                    isMissionRunning = true;
+                    setPollingMode("RUNNING");
                     robotMissionState = "RUNNING";
                     robotMissionFrontStatus = "준비중";
                     robotMissionPhaseLabel = "미션 시작 준비";
                     robotMissionPhaseDetail = "Mission " + missionId;
                     updateVisibleHomeRobotState();
                     saveVoiceRecord(command, "sent", response);
-                    Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "Mission " + missionId + " 실행 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
+                    //미션 확인 토스트 메시지
                 });
             } catch (Exception e) {
+                logConnectionError("MISSION_START", "/mission/start", "{\"mission\":" + missionId + "}", e);
                 runOnUiThread(() -> {
+                    isMissionStarting = false;
+                    if (isMissionAlreadyRunningError(e)) {
+                        isMissionRunning = true;
+                        setPollingMode("RUNNING");
+                        robotMissionState = "RUNNING";
+                        updateVisibleHomeRobotState();
+                        Log.d(TAG, "MISSION_ALREADY_RUNNING; app state aligned to RUNNING");
+                        Toast.makeText(this, "이미 실행 중인 미션을 추적합니다.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     saveVoiceRecord(command, "fallback", e.getMessage());
                     Toast.makeText(this, "로봇 서버에 연결하지 못했습니다.", Toast.LENGTH_SHORT).show();
                 });
@@ -3997,12 +4696,39 @@ public class MainActivity extends AppCompatActivity {
         int drawer = drawerIdForVoiceText(recognizedCommand + " " + recognizedModule + " " + recognizedLabel);
         int destination = destinationIdForVoiceText(recognizedCommand + " " + recognizedLocation);
 
-        if (drawer == 1 && destination == 2) return 1;
-        if (drawer == 2 && destination == 1) return 2;
+        return missionIdForDrawerDestination(drawer, destination);
+    }
+
+    private int missionIdForVoiceIntent(String targetTrayId, String labelLocation) {
+        int drawer = drawerIdForVoiceTarget(targetTrayId, recognizedLabel);
+        int destination = destinationIdForVoiceLabel(labelLocation);
+        return missionIdForDrawerDestination(drawer, destination);
+    }
+
+    private int missionIdForDrawerDestination(int drawer, int destination) {  
+        if (drawer == 1 && destination == 1) return 1;
+        if (drawer == 2 && destination == 2) return 2;
         if (drawer == 1 && destination == 3) return 3;
         if (drawer == 2 && destination == 3) return 4;
         if (drawer == 1 && destination == 4) return 5;
         if (drawer == 2 && destination == 4) return 6;
+        return -1;
+    }
+
+    private int drawerIdForVoiceTarget(String targetTrayId, String label) {
+        String target = emptyToFallback(targetTrayId, "").toLowerCase(Locale.ROOT);
+        String normalizedLabel = emptyToFallback(label, "").toUpperCase(Locale.ROOT);
+        if (target.contains("baby") || normalizedLabel.contains("BABY")) return 1;
+        if (target.contains("commute") || normalizedLabel.contains("COMMUTE")) return 2;
+        return -1;
+    }
+
+    private int destinationIdForVoiceLabel(String labelLocation) {
+        String normalized = emptyToFallback(labelLocation, "").toLowerCase(Locale.ROOT);
+        if (normalized.equals("master_bedroom") || normalized.equals("bedroom")) return 1;
+        if (normalized.equals("child_room")) return 2;
+        if (normalized.equals("porch") || normalized.equals("entrance")) return 3;
+        if (normalized.equals("living_room")) return 4;
         return -1;
     }
 
@@ -4042,6 +4768,14 @@ public class MainActivity extends AppCompatActivity {
         return -1;
     }
 
+    private void setPollingMode(String mode) {
+        String nextMode = emptyToFallback(mode, "IDLE").toUpperCase(Locale.ROOT);
+        if (!nextMode.equals(pollingMode)) {
+            pollingMode = nextMode;
+            Log.d(TAG, "polling mode changed: " + pollingMode);
+        }
+    }
+
     private void startBatteryRefresh() {
         batteryRefreshHandler.removeCallbacks(batteryRefreshRunnable);
         batteryRefreshRunnable.run();
@@ -4059,6 +4793,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchMissionStatus() {
         if (missionStatusRequestInFlight) return;
+        if (isMissionRunning) {
+            Log.d(TAG, "skipped poll due to mission running: /mission/status");
+            return;
+        }
+        Log.d(TAG, "status poll: /mission/status");
         missionStatusRequestInFlight = true;
         new Thread(() -> {
             try {
@@ -4066,6 +4805,17 @@ public class MainActivity extends AppCompatActivity {
                 String state = json.optString("state", json.optString("status", robotMissionState));
                 runOnUiThread(() -> {
                     robotMissionState = emptyToFallback(state, "IDLE").toUpperCase(Locale.ROOT);
+                    if (isRobotMovingState(robotMissionState)) {
+                        isMissionRunning = true;
+                        isMissionStarting = false;
+                        setPollingMode("RUNNING");
+                    } else if ("IDLE".equals(robotMissionState) || "STOPPED".equals(robotMissionState)) {
+                        isMissionRunning = false;
+                        isMissionStarting = false;
+                        if (!"FINISHED".equals(pollingMode)) {
+                            setPollingMode("IDLE");
+                        }
+                    }
                     missionStatusRequestInFlight = false;
                     updateVisibleHomeRobotState();
                 });
@@ -4077,6 +4827,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchMissionPhase() {
         if (missionPhaseRequestInFlight) return;
+        Log.d(TAG, "phase poll: /mission/phase");
         missionPhaseRequestInFlight = true;
         new Thread(() -> {
             try {
@@ -4089,7 +4840,7 @@ public class MainActivity extends AppCompatActivity {
                     missionPhaseRequestInFlight = false;
                     if (isMissionPhaseToastCode(code)) {
                         showMissionPhaseToastOnce(code, label);
-                        return;
+                        markMissionFinished(code);
                     }
                     if (isMissionPhaseDisplayCode(code)) {
                         lastMissionPhaseToastCode = "";
@@ -4097,6 +4848,9 @@ public class MainActivity extends AppCompatActivity {
                         robotMissionPhaseLabel = emptyToFallback(label, robotMissionPhaseLabel);
                         robotMissionPhaseDetail = emptyToFallback(detail, robotMissionPhaseDetail);
                         updateVisibleHomeRobotState();
+                        if ("STOPPED".equals(code) || ("IDLE".equals(code) && isMissionRunning)) {
+                            markMissionFinished(code);
+                        }
                     }
                 });
             } catch (Exception e) {
@@ -4151,7 +4905,7 @@ public class MainActivity extends AppCompatActivity {
         }
         View detailView = contentContainer.findViewById(R.id.homeRobotPhaseDetail);
         if (detailView instanceof TextView) {
-            ((TextView) detailView).setText(emptyToFallback(robotMissionPhaseDetail, "충전 스테이션 대기 중"));
+            ((TextView) detailView).setText(emptyToFallback(robotMissionPhaseDetail, "스테이션 대기 중"));
         }
     }
 
@@ -4175,24 +4929,48 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchRobotBatteryStatus() {
         if (batteryRequestInFlight) return;
+        if (isMissionRunning) {
+            Log.d(TAG, "skipped poll due to mission running: /battery/status");
+            return;
+        }
+        long now = SystemClock.elapsedRealtime();
+        if (lastBatteryRefreshAt > 0 && now - lastBatteryRefreshAt < BATTERY_REFRESH_INTERVAL_MS) {
+            Log.d(TAG, "skipped battery poll by 5min cache");
+            return;
+        }
+        Log.d(TAG, "battery poll: /battery/status");
         batteryRequestInFlight = true;
         new Thread(() -> {
             try {
                 JSONObject json = new JSONObject(getMissionText("/battery/status"));
                 String display = batteryDisplayText(json);
                 runOnUiThread(() -> {
-                    robotBatteryDisplay = display;
+                    if (isBatteryPercentDisplay(display)) {
+                        robotBatteryDisplay = display;
+                        cacheRobotBatteryDisplay(display);
+                        lastBatteryRefreshAt = SystemClock.elapsedRealtime();
+                    } else {
+                        Log.w(TAG, "battery poll returned no percent, keep cached display: " + robotBatteryDisplay + ", raw=" + json);
+                    }
                     batteryRequestInFlight = false;
                     updateVisibleHomeBattery();
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {
-                    robotBatteryDisplay = "--";
+                    Log.w(TAG, "battery poll failed, keep cached display: " + robotBatteryDisplay, e);
                     batteryRequestInFlight = false;
                     updateVisibleHomeBattery();
                 });
             }
         }).start();
+    }
+
+    private void restoreRobotBatteryDisplay() {
+        String cached = getSharedPreferences(RUNTIME_CACHE_PREFS, MODE_PRIVATE)
+                .getString(PREF_ROBOT_BATTERY_DISPLAY, "");
+        if (isBatteryPercentDisplay(cached)) {
+            robotBatteryDisplay = cached;
+        }
     }
 
     private void updateVisibleHomeBattery() {
@@ -4204,23 +4982,131 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String batteryDisplayText(JSONObject json) {
-        if (json.has("percent") && !json.isNull("percent")) {
-            double percent = json.optDouble("percent", -1);
-            if (percent >= 0) {
+        double percent = firstJsonDouble(json,
+                "percent",
+                "percentage",
+                "battery_percent",
+                "batteryPercentage",
+                "level",
+                "battery_level");
+        if (percent >= 0) {
+            if (percent <= 1.0) {
+                percent *= 100.0;
+            }
+            if (percent <= 100.0) {
                 return Math.round(percent) + "%";
             }
         }
 
-        double voltage = -1;
-        if (json.has("voltage") && !json.isNull("voltage")) {
-            voltage = json.optDouble("voltage", -1);
-        } else if (json.has("battery") && !json.isNull("battery")) {
-            voltage = json.optDouble("battery", -1);
+        if (json.has("battery") && !json.isNull("battery")) {
+            Object battery = json.opt("battery");
+            if (battery instanceof JSONObject) {
+                String nestedDisplay = batteryDisplayText((JSONObject) battery);
+                if (!"--".equals(nestedDisplay)) {
+                    return nestedDisplay;
+                }
+            } else {
+                double batteryValue = jsonNumberValue(battery);
+                if (batteryValue >= 0 && batteryValue <= 1.0) {
+                    return Math.round(batteryValue * 100.0) + "%";
+                }
+                if (batteryValue > 1.0 && batteryValue <= 20.0) {
+                    return voltageToPercentText(batteryValue);
+                }
+                if (batteryValue > 20.0 && batteryValue <= 100.0) {
+                    return Math.round(batteryValue) + "%";
+                }
+            }
         }
+
+        double voltage = firstJsonDouble(json, "voltage", "battery_voltage", "batteryVoltage");
         if (voltage >= 0) {
-            return String.format(Locale.KOREA, "%.1fV", voltage);
+            return voltageToPercentText(voltage);
         }
         return "--";
+    }
+
+    private boolean isMissionAlreadyRunningError(Exception e) {
+        String message = e == null ? "" : emptyToFallback(e.getMessage(), "");
+        return message.contains("MISSION_ALREADY_RUNNING") || message.contains("already running") || message.contains("409");
+    }
+
+    private boolean isBatteryPercentDisplay(String display) {
+        if (display == null) {
+            return false;
+        }
+        String text = display.trim();
+        if (!text.endsWith("%")) {
+            return false;
+        }
+        try {
+            int value = Integer.parseInt(text.substring(0, text.length() - 1).trim());
+            return value >= 0 && value <= 100;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    private void markMissionFinished(String reason) {
+        if (!isMissionRunning && !isMissionStarting) {
+            return;
+        }
+        isMissionStarting = false;
+        isMissionRunning = false;
+        setPollingMode("FINISHED");
+        Log.d(TAG, "polling mode changed: FINISHED reason=" + emptyToFallback(reason, ""));
+        fetchMissionStatus();
+        fetchRobotBatteryStatus();
+        setPollingMode("IDLE");
+    }
+
+    private void cacheRobotBatteryDisplay(String display) {
+        if (!isBatteryPercentDisplay(display)) {
+            return;
+        }
+        getSharedPreferences(RUNTIME_CACHE_PREFS, MODE_PRIVATE)
+                .edit()
+                .putString(PREF_ROBOT_BATTERY_DISPLAY, display)
+                .apply();
+    }
+
+    private double firstJsonDouble(JSONObject json, String... keys) {
+        for (String key : keys) {
+            if (json.has(key) && !json.isNull(key)) {
+                double value = jsonNumberValue(json.opt(key));
+                if (value >= 0) {
+                    return value;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private double jsonNumberValue(Object value) {
+        if (value == null) {
+            return -1;
+        }
+        if (value instanceof Number) {
+            double numeric = ((Number) value).doubleValue();
+            return Double.isNaN(numeric) ? -1 : numeric;
+        }
+        String text = String.valueOf(value).trim();
+        if (text.isEmpty() || "null".equalsIgnoreCase(text) || "--".equals(text)) {
+            return -1;
+        }
+        text = text.replace("%", "").replace("V", "").replace("v", "").trim();
+        try {
+            double numeric = Double.parseDouble(text);
+            return Double.isNaN(numeric) ? -1 : numeric;
+        } catch (Exception ignored) {
+            return -1;
+        }
+    }
+
+    private String voltageToPercentText(double voltage) {
+        double percent = (voltage - 10.5) / (12.6 - 10.5) * 100.0;
+        percent = Math.max(0.0, Math.min(100.0, percent));
+        return Math.round(percent) + "%";
     }
 
     private void stopCarryMission() {
@@ -4229,6 +5115,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String response = postMissionWithoutBody("/mission/stop");
                 runOnUiThread(() -> {
+                    markMissionFinished("STOPPED");
                     robotMissionState = "STOPPED";
                     robotMissionFrontStatus = "정지됨";
                     robotMissionPhaseLabel = "사용자 정지 요청";
@@ -4238,6 +5125,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "긴급 정지 명령을 보냈습니다.", Toast.LENGTH_SHORT).show();
                 });
             } catch (Exception e) {
+                logConnectionError("MISSION_STOP", "/mission/stop", "", e);
                 runOnUiThread(() -> {
                     saveVoiceRecord("긴급 정지", "fallback", e.getMessage());
                     Toast.makeText(this, "긴급 정지 요청에 실패했습니다.", Toast.LENGTH_SHORT).show();
@@ -4252,7 +5140,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 return postJson(baseUrl + path, payload);
             } catch (Exception e) {
-                lastError = e;
+                lastError = new IllegalStateException("Mission API request failed: " + baseUrl + path + " / " + e.getMessage(), e);
             }
         }
         throw lastError == null ? new IllegalStateException("Mission API unavailable") : lastError;
@@ -4264,7 +5152,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 return postWithoutBody(baseUrl + path);
             } catch (Exception e) {
-                lastError = e;
+                lastError = new IllegalStateException("Mission API request failed: " + baseUrl + path + " / " + e.getMessage(), e);
             }
         }
         throw lastError == null ? new IllegalStateException("Mission API unavailable") : lastError;
@@ -4276,7 +5164,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 return getText(baseUrl + path);
             } catch (Exception e) {
-                lastError = e;
+                lastError = new IllegalStateException("Mission API request failed: " + baseUrl + path + " / " + e.getMessage(), e);
             }
         }
         throw lastError == null ? new IllegalStateException("Mission API unavailable") : lastError;
@@ -4393,6 +5281,7 @@ public class MainActivity extends AppCompatActivity {
         final String updatedBy;
         final String updatedById;
         final long updatedAt;
+        final boolean[] days;
         boolean enabled;
         int quickSlot;
 
@@ -4405,6 +5294,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         RoutineData(String id, String title, String trayId, String trayName, int hour, int minute, String place, boolean enabled, int quickSlot, String updatedBy, String updatedById, long updatedAt) {
+            this(id, title, trayId, trayName, hour, minute, place, enabled, quickSlot, updatedBy, updatedById, updatedAt, allDays());
+        }
+
+        RoutineData(String id, String title, String trayId, String trayName, int hour, int minute, String place, boolean enabled, int quickSlot, String updatedBy, String updatedById, long updatedAt, boolean[] days) {
             this.id = id;
             this.title = title;
             this.trayId = trayId;
@@ -4417,6 +5310,11 @@ public class MainActivity extends AppCompatActivity {
             this.updatedBy = updatedBy;
             this.updatedById = updatedById;
             this.updatedAt = updatedAt;
+            this.days = days == null ? allDays() : days.clone();
+        }
+
+        private static boolean[] allDays() {
+            return new boolean[]{true, true, true, true, true, true, true};
         }
     }
 
@@ -4448,11 +5346,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static class MemberData {
+        final String key;
         final String id;
         final String name;
         final long createdAt;
 
-        MemberData(String id, String name, long createdAt) {
+        MemberData(String key, String id, String name, long createdAt) {
+            this.key = key;
             this.id = id;
             this.name = name;
             this.createdAt = createdAt;
@@ -4502,5 +5402,3 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-
-

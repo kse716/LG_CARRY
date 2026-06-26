@@ -4,67 +4,153 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    android:gravity="center"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingTop="28dp"
-    android:paddingBottom="28dp">
+    android:paddingStart="14dp"
+    android:paddingTop="26dp"
+    android:paddingEnd="14dp"
+    android:paddingBottom="24dp">
 
     <ImageView
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:layout_marginBottom="34dp"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:layout_marginBottom="28dp"
         android:contentDescription="LG CARRY"
         android:scaleType="fitCenter"
         android:src="@mipmap/ic_launcher_test" />
 
     <LinearLayout
         android:id="@+id/bottomNavHome"
-        android:layout_width="88dp"
-        android:layout_height="82dp"
+        android:layout_width="92dp"
+        android:layout_height="76dp"
+        android:background="@drawable/bg_tablet_nav_item"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical">
-        <ImageView android:layout_width="28dp" android:layout_height="28dp" android:contentDescription="@null" android:duplicateParentState="true" android:src="@drawable/ic_bottom_home" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:duplicateParentState="true" android:text="홈" android:textColor="@color/bottom_nav_text" android:textSize="13sp" android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:contentDescription="@null"
+            android:duplicateParentState="true"
+            android:src="@drawable/ic_bottom_home" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:duplicateParentState="true"
+            android:includeFontPadding="false"
+            android:text="홈"
+            android:textColor="@color/bottom_nav_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/bottomNavModules"
-        android:layout_width="88dp"
-        android:layout_height="82dp"
+        android:layout_width="92dp"
+        android:layout_height="76dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_tablet_nav_item"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical">
-        <ImageView android:layout_width="28dp" android:layout_height="28dp" android:contentDescription="@null" android:duplicateParentState="true" android:src="@drawable/ic_bottom_box" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:duplicateParentState="true" android:text="모듈" android:textColor="@color/bottom_nav_text" android:textSize="13sp" android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:contentDescription="@null"
+            android:duplicateParentState="true"
+            android:src="@drawable/ic_bottom_box" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:duplicateParentState="true"
+            android:includeFontPadding="false"
+            android:text="트레이"
+            android:textColor="@color/bottom_nav_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/bottomNavRoutine"
-        android:layout_width="88dp"
-        android:layout_height="82dp"
+        android:layout_width="92dp"
+        android:layout_height="76dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_tablet_nav_item"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical">
-        <ImageView android:layout_width="28dp" android:layout_height="28dp" android:contentDescription="@null" android:duplicateParentState="true" android:src="@drawable/ic_bottom_play_circle" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:duplicateParentState="true" android:text="루틴" android:textColor="@color/bottom_nav_text" android:textSize="13sp" android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:contentDescription="@null"
+            android:duplicateParentState="true"
+            android:src="@drawable/ic_bottom_play_circle" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:duplicateParentState="true"
+            android:includeFontPadding="false"
+            android:text="루틴"
+            android:textColor="@color/bottom_nav_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/bottomNavMenu"
-        android:layout_width="88dp"
-        android:layout_height="82dp"
+        android:layout_width="92dp"
+        android:layout_height="76dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_tablet_nav_item"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical">
-        <ImageView android:layout_width="28dp" android:layout_height="28dp" android:contentDescription="@null" android:duplicateParentState="true" android:src="@drawable/ic_bottom_menu" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:duplicateParentState="true" android:text="메뉴" android:textColor="@color/bottom_nav_text" android:textSize="13sp" android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:contentDescription="@null"
+            android:duplicateParentState="true"
+            android:src="@drawable/ic_bottom_menu" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:duplicateParentState="true"
+            android:includeFontPadding="false"
+            android:text="메뉴"
+            android:textColor="@color/bottom_nav_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
-    <Space android:layout_width="1dp" android:layout_height="0dp" android:layout_weight="1" />
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CARRY" android:textColor="#008E84" android:textSize="12sp" android:textStyle="bold" />
+    <Space
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@drawable/bg_tablet_brand_pill"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="CARRY"
+        android:textColor="#00756D"
+        android:textSize="12sp"
+        android:textStyle="bold" />
 </LinearLayout>

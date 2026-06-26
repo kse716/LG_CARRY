@@ -196,10 +196,185 @@
     </FrameLayout>
 
     <TextView
+        android:id="@+id/routineEditRepeatLabel"
         android:layout_width="match_parent"
         android:layout_height="16dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="339dp"
+        android:layout_marginEnd="20dp"
+        android:includeFontPadding="false"
+        android:text="반복 요일"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/routineEditDaysCard"
+        android:layout_width="match_parent"
+        android:layout_height="116dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="366dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_card"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <TextView
+            android:id="@+id/routineEditDaysSummary"
+            android:layout_width="match_parent"
+            android:layout_height="22dp"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:text="매일"
+            android:textColor="#14191B"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="7">
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/routineDaySunday"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="일"
+                    android:textColor="#D64A43"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/routineDayMonday"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="월"
+                    android:textColor="#14191B"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/routineDayTuesday"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="화"
+                    android:textColor="#14191B"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/routineDayWednesday"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="수"
+                    android:textColor="#14191B"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/routineDayThursday"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="목"
+                    android:textColor="#14191B"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/routineDayFriday"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="금"
+                    android:textColor="#14191B"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/routineDaySaturday"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="토"
+                    android:textColor="#2878C8"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="500dp"
         android:layout_marginEnd="20dp"
         android:includeFontPadding="false"
         android:text="이동할 거점"
@@ -212,7 +387,7 @@
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="366dp"
+        android:layout_marginTop="527dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/bg_card"
         android:clickable="true"
@@ -246,7 +421,7 @@
         android:layout_width="match_parent"
         android:layout_height="34dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="436dp"
+        android:layout_marginTop="597dp"
         android:layout_marginEnd="20dp"
         android:includeFontPadding="false"
         android:text="설정한 시간에 CARRY가 선택한 트레이를 지정한 장소로 이동시킵니다."
@@ -259,7 +434,7 @@
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="478dp"
+        android:layout_marginTop="639dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/bg_voice_primary_button"
         android:gravity="center"
