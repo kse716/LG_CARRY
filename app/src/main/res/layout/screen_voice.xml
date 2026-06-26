@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/voiceScreenRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9F9">
+
+    <FrameLayout
+        android:id="@+id/voiceBackIcon"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="18dp"
+        android:clickable="true"
+        android:focusable="true" >
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_chevron_left"
+            android:layout_gravity="start|center_vertical"
+            android:contentDescription="@null" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/voiceTitle"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="18dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="음성 호출"
+        android:textColor="#12181B"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:id="@+id/voiceIdleGroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:layout_width="280dp"
+            android:layout_height="280dp"
+            android:layout_marginStart="55dp"
+            android:layout_marginTop="160dp"
+            android:background="@drawable/bg_voice_circle_idle_outer"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="216dp"
+            android:layout_height="216dp"
+            android:layout_marginStart="87dp"
+            android:layout_marginTop="192dp"
+            android:background="@drawable/bg_voice_circle_idle_mid"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="156dp"
+            android:layout_height="156dp"
+            android:layout_marginStart="117dp"
+            android:layout_marginTop="234dp"
+            android:background="@drawable/bg_voice_circle_idle_inner"
+            android:visibility="gone" />
+
+        <ImageView
+            android:layout_width="190dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="268dp"
+            android:alpha="0.95"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_voice_wave_rose"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/voiceIdleMic"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            android:layout_marginStart="139dp"
+            android:layout_marginTop="244dp"
+            android:background="@drawable/bg_voice_mic_button"
+            android:clickable="true"
+            android:elevation="8dp"
+            android:focusable="true" >
+
+            <ImageView
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_mic" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="22dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="420dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="버튼을 눌러 말해보세요"
+            android:textColor="#14191B"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="452dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="예: 책상에 있는 트레이 가져와줘"
+            android:textColor="#798385"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="664dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="마이크를 탭하면 시작합니다"
+            android:textColor="#798385"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/voiceListeningGroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginStart="45dp"
+            android:layout_marginTop="138dp"
+            android:background="@drawable/bg_voice_circle_idle_outer"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="244dp"
+            android:layout_height="244dp"
+            android:layout_marginStart="73dp"
+            android:layout_marginTop="166dp"
+            android:background="@drawable/bg_voice_circle_idle_mid"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="188dp"
+            android:layout_height="188dp"
+            android:layout_marginStart="101dp"
+            android:layout_marginTop="194dp"
+            android:background="@drawable/bg_voice_circle_idle_inner"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/voiceMicPulseRing"
+            android:layout_width="132dp"
+            android:layout_height="132dp"
+            android:layout_marginStart="129dp"
+            android:layout_marginTop="234dp"
+            android:alpha="0"
+            android:background="@drawable/bg_voice_mic_pulse_ring"
+            android:visibility="gone" />
+
+        <ImageView
+            android:layout_width="190dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="256dp"
+            android:alpha="0.95"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_voice_wave_rose"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/voiceListeningMic"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            android:layout_marginStart="139dp"
+            android:layout_marginTop="244dp"
+            android:background="@drawable/bg_voice_mic_button"
+            android:clickable="true"
+            android:elevation="8dp"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_mic" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/voiceBars"
+            android:layout_width="116dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="137dp"
+            android:layout_marginTop="406dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <View android:layout_width="6dp" android:layout_height="14dp" android:layout_marginEnd="4dp" android:background="@drawable/bg_voice_circle_teal" />
+            <View android:layout_width="6dp" android:layout_height="28dp" android:layout_marginEnd="4dp" android:background="@drawable/bg_voice_circle_teal" />
+            <View android:layout_width="6dp" android:layout_height="42dp" android:layout_marginEnd="4dp" android:background="@drawable/bg_voice_circle_teal" />
+            <View android:layout_width="6dp" android:layout_height="30dp" android:layout_marginEnd="4dp" android:background="@drawable/bg_voice_circle_teal" />
+            <View android:layout_width="6dp" android:layout_height="18dp" android:layout_marginEnd="4dp" android:background="@drawable/bg_voice_circle_teal" />
+            <View android:layout_width="6dp" android:layout_height="36dp" android:layout_marginEnd="4dp" android:background="@drawable/bg_voice_circle_teal" />
+            <View android:layout_width="6dp" android:layout_height="50dp" android:layout_marginEnd="4dp" android:background="@drawable/bg_voice_circle_teal" />
+            <View android:layout_width="6dp" android:layout_height="34dp" android:layout_marginEnd="4dp" android:background="@drawable/bg_voice_circle_teal" />
+            <View android:layout_width="6dp" android:layout_height="24dp" android:layout_marginEnd="4dp" android:background="@drawable/bg_voice_circle_teal" />
+            <View android:layout_width="6dp" android:layout_height="40dp" android:layout_marginEnd="4dp" android:background="@drawable/bg_voice_circle_teal" />
+            <View android:layout_width="6dp" android:layout_height="16dp" android:background="@drawable/bg_voice_circle_teal" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="470dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="듣고 있어요..."
+            android:textColor="#008E84"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="502dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="명령을 말한 뒤 잠시 기다리세요"
+            android:textColor="#798385"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/voiceStopButton"
+            android:layout_width="116dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="137dp"
+            android:layout_marginTop="662dp"
+            android:background="@drawable/bg_voice_outline_button_pill"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="말하기 종료"
+            android:textColor="#008E84"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/voiceResultGroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:id="@+id/voiceResultCheckIcon"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="96dp"
+            android:background="@drawable/bg_voice_circle_teal">
+
+            <ImageView
+                android:id="@+id/voiceResultStatusIcon"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_check_white" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/voiceResultTitle"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="182dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="2"
+            android:text="인식 완료"
+            android:textColor="#14191B"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="195dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="300dp"
+            android:background="@drawable/bg_card"
+            android:elevation="3dp">
+
+            <TextView
+                android:layout_width="314dp"
+                android:layout_height="14dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="18dp"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:text="인식한 명령"
+                android:textColor="#798385"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/voiceResultCommand"
+                android:layout_width="314dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="40dp"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:maxLines="2"
+                android:textColor="#14191B"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="314dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="82dp"
+                android:background="#E2E7E7" />
+
+            <FrameLayout
+                android:id="@+id/voiceResultModuleIcon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="101dp"
+                android:background="@drawable/bg_voice_soft_circle">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_box"
+                    app:tint="#008E84" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="17dp"
+                android:layout_marginStart="66dp"
+                android:layout_marginTop="110dp"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:text="가져올 트레이"
+                android:textColor="#798385"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/voiceResultModule"
+                android:layout_width="114dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="218dp"
+                android:layout_marginTop="109dp"
+                android:gravity="end"
+                android:includeFontPadding="false"
+                android:textColor="#008E84"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:id="@+id/voiceResultLocationIcon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="145dp"
+                android:background="@drawable/bg_voice_soft_circle">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_pin" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="17dp"
+                android:layout_marginStart="66dp"
+                android:layout_marginTop="154dp"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:text="가져갈 장소"
+                android:textColor="#798385"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/voiceResultLocation"
+                android:layout_width="114dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="218dp"
+                android:layout_marginTop="153dp"
+                android:gravity="end"
+                android:includeFontPadding="false"
+                android:textColor="#008E84"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/voiceExecuteButton"
+            android:layout_width="157dp"
+            android:layout_height="52dp"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="513dp"
+            android:background="@drawable/bg_voice_primary_button"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="CARRY 실행하기"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/voiceRetryButton"
+            android:layout_width="116dp"
+            android:layout_height="48dp"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="575dp"
+            android:background="@drawable/bg_voice_outline_button"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="다시 말하기"
+            android:textColor="#008E84"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/voiceMissionTestButtons"
+            android:layout_width="match_parent"
+            android:layout_height="128dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="624dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/voiceMissionOneButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="아이방 서랍 → 안방"
+                    android:textColor="#008E84"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/voiceMissionTwoButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="안방 서랍 → 아이방"
+                    android:textColor="#008E84"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_marginTop="7dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/voiceMissionThreeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="아이방 서랍 → 현관"
+                    android:textColor="#008E84"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/voiceMissionFourButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="안방 서랍 → 현관"
+                    android:textColor="#008E84"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_marginTop="7dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/voiceMissionFiveButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="아이방 서랍 → 거실"
+                    android:textColor="#008E84"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/voiceMissionSixButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="안방 서랍 → 거실"
+                    android:textColor="#008E84"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/voiceEmergencyStopButton"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="764dp"
+            android:background="@drawable/bg_emergency_stop_button"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="긴급 정지"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+</FrameLayout>

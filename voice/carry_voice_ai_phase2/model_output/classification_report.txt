@@ -1,15 +1,9 @@
-Accuracy: 0.9645
-
                     precision    recall  f1-score   support
 
-    CALL_TRAY_BABY     0.9697    1.0000    0.9846        32
-   CALL_TRAY_HOBBY     0.9459    1.0000    0.9722        35
-CALL_TRAY_MEDICINE     1.0000    1.0000    1.0000        35
-       RETURN_HOME     1.0000    1.0000    1.0000        16
-      STATUS_CHECK     1.0000    0.8667    0.9286        15
-              STOP     1.0000    0.9375    0.9677        16
-           UNKNOWN     0.8500    0.8500    0.8500        20
+    CALL_TRAY_BABY     1.0000    1.0000    1.0000        83
+ CALL_TRAY_COMMUTE     1.0000    1.0000    1.0000       109
+CALL_TRAY_MEDICINE     1.0000    1.0000    1.0000       105
 
-          accuracy                         0.9645       169
-         macro avg     0.9665    0.9506    0.9576       169
-      weighted avg     0.9653    0.9645    0.9642       169
+          accuracy                         1.0000       297
+         macro avg     1.0000    1.0000    1.0000       297
+      weighted avg     1.0000    1.0000    1.0000       297

@@ -1,0 +1,42 @@
+<!--
+  ~ Copyright (C) 2026 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="21dp"
+    android:height="21dp"
+    android:viewportWidth="21"
+    android:viewportHeight="21">
+  <path
+      android:pathData="M10.5,1.75C9.804,1.75 9.136,2.027 8.644,2.519C8.152,3.011 7.875,3.679 7.875,4.375V10.5C7.875,11.196 8.152,11.864 8.644,12.356C9.136,12.848 9.804,13.125 10.5,13.125C11.196,13.125 11.864,12.848 12.356,12.356C12.848,11.864 13.125,11.196 13.125,10.5V4.375C13.125,3.679 12.848,3.011 12.356,2.519C11.864,2.027 11.196,1.75 10.5,1.75Z"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.925"
+      android:fillColor="#00000000"
+      android:strokeColor="#14191B"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M16.625,8.75V10.5C16.625,12.125 15.98,13.682 14.831,14.831C13.682,15.98 12.125,16.625 10.5,16.625C8.876,16.625 7.318,15.98 6.169,14.831C5.02,13.682 4.375,12.125 4.375,10.5V8.75"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.925"
+      android:fillColor="#00000000"
+      android:strokeColor="#14191B"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M10.5,16.625V19.25"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.925"
+      android:fillColor="#00000000"
+      android:strokeColor="#14191B"
+      android:strokeLineCap="round"/>
+</vector>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/itemAddCanvas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9F9">
+
+    <FrameLayout
+        android:id="@+id/itemAddBackButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="18dp"
+        android:clickable="true"
+        android:focusable="true" >
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_chevron_left"
+            android:layout_gravity="start|center_vertical"
+            android:contentDescription="@null" />
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="18dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="물건 추가"
+        android:textColor="#12181B"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="78dp"
+        android:includeFontPadding="false"
+        android:text="물건 이름"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/itemAddNameInput"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="108dp"
+        android:background="@drawable/bg_input"
+        android:gravity="center_vertical"
+        android:hint="물건명 입력"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:singleLine="true"
+        android:textColor="#14191B"
+        android:textColorHint="#9AA3A5"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="176dp"
+        android:includeFontPadding="false"
+        android:text="자주 추가하는 물건"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <TextView android:id="@+id/itemChipRemote" android:layout_width="78dp" android:layout_height="32dp" android:layout_marginStart="20dp" android:layout_marginEnd="20dp"
+        android:layout_marginTop="206dp" android:background="@drawable/bg_chip_soft" android:gravity="center" android:text="+ 리모컨" android:textColor="#303B3D" android:textSize="12sp" android:textStyle="bold" />
+    <TextView android:id="@+id/itemChipMedicine" android:layout_width="78dp" android:layout_height="32dp" android:layout_marginStart="106dp" android:layout_marginTop="206dp" android:background="@drawable/bg_chip_soft" android:gravity="center" android:text="+ 상비약" android:textColor="#303B3D" android:textSize="12sp" android:textStyle="bold" />
+    <TextView android:id="@+id/itemChipGlasses" android:layout_width="66dp" android:layout_height="32dp" android:layout_marginStart="192dp" android:layout_marginTop="206dp" android:background="@drawable/bg_chip_soft" android:gravity="center" android:text="+ 안경" android:textColor="#303B3D" android:textSize="12sp" android:textStyle="bold" />
+    <TextView android:id="@+id/itemChipKey" android:layout_width="66dp" android:layout_height="32dp" android:layout_marginStart="266dp" android:layout_marginTop="206dp" android:background="@drawable/bg_chip_soft" android:gravity="center" android:text="+ 열쇠" android:textColor="#303B3D" android:textSize="12sp" android:textStyle="bold" />
+    <TextView android:id="@+id/itemChipCharger" android:layout_width="78dp" android:layout_height="32dp" android:layout_marginStart="20dp" android:layout_marginEnd="20dp"
+        android:layout_marginTop="246dp" android:background="@drawable/bg_chip_soft" android:gravity="center" android:text="+ 충전기" android:textColor="#303B3D" android:textSize="12sp" android:textStyle="bold" />
+    <TextView android:id="@+id/itemChipMask" android:layout_width="78dp" android:layout_height="32dp" android:layout_marginStart="106dp" android:layout_marginTop="246dp" android:background="@drawable/bg_chip_soft" android:gravity="center" android:text="+ 마스크" android:textColor="#303B3D" android:textSize="12sp" android:textStyle="bold" />
+    <TextView android:id="@+id/itemChipVitamin" android:layout_width="78dp" android:layout_height="32dp" android:layout_marginStart="192dp" android:layout_marginTop="246dp" android:background="@drawable/bg_chip_soft" android:gravity="center" android:text="+ 영양제" android:textColor="#303B3D" android:textSize="12sp" android:textStyle="bold" />
+    <TextView android:id="@+id/itemChipTumbler" android:layout_width="78dp" android:layout_height="32dp" android:layout_marginStart="278dp" android:layout_marginTop="246dp" android:background="@drawable/bg_chip_soft" android:gravity="center" android:text="+ 텀블러" android:textColor="#303B3D" android:textSize="12sp" android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/itemAddSaveButton"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="312dp"
+        android:background="@drawable/bg_voice_primary_button"
+        android:gravity="center"
+        android:text="+ 트레이에 추가"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+</FrameLayout>

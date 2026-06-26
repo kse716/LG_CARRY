@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/membersCanvas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9F9">
+
+    <FrameLayout
+        android:id="@+id/membersBackButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="18dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="start|center_vertical"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_chevron_left" />
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="18dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="가족 계정 구성원"
+        android:textColor="#12181B"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/membersCurrentText"
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="84dp"
+        android:layout_marginEnd="20dp"
+        android:includeFontPadding="false"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="normal" />
+
+    <EditText
+        android:id="@+id/membersIdInput"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="118dp"
+        android:layout_marginEnd="112dp"
+        android:background="@drawable/bg_input"
+        android:gravity="center_vertical"
+        android:hint="로그인 아이디 입력"
+        android:includeFontPadding="false"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:singleLine="true"
+        android:textColor="#14191B"
+        android:textColorHint="#9AA3A5"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/membersAddButton"
+        android:layout_width="84dp"
+        android:layout_height="54dp"
+        android:layout_gravity="end|top"
+        android:layout_marginTop="118dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_voice_primary_button"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="추가"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="20dp"
+        android:includeFontPadding="false"
+        android:text="구성원 목록"
+        android:textColor="#798385"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="230dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_card">
+
+        <TextView
+            android:id="@+id/membersEmptyText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="아직 추가된 구성원이 없습니다."
+            android:textColor="#798385"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false">
+
+            <LinearLayout
+                android:id="@+id/membersList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+    </FrameLayout>
+</FrameLayout>

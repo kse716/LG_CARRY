@@ -1,186 +1,601 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/homeScroll"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:background="#F7F9F9"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:paddingBottom="96dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:letterSpacing="0.06"
-                android:text="CARRY"
-                android:textColor="#C30B45"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" Home"
-                android:textColor="#111111"
-                android:textSize="28sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="38dp"
-            android:background="@drawable/bg_pill"
-            android:gravity="center"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="• 86%"
-            android:textColor="#74787F"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-    <LinearLayout
+        android:id="@+id/homeCanvas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_home_stage"
+        android:background="#F7F9F9"
         android:orientation="vertical"
-        android:paddingStart="14dp"
-        android:paddingTop="14dp"
-        android:paddingEnd="14dp"
-        android:paddingBottom="18dp">
+        android:paddingStart="24dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="24dp">
 
         <LinearLayout
-            android:id="@+id/homeTray1Button"
             android:layout_width="match_parent"
-            android:layout_height="104dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_home_tray_card"
-            android:clickable="true"
-            android:focusable="true"
+            android:layout_height="40dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="18dp"
-            android:paddingEnd="16dp">
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/homeBackIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"/>
 
             <TextView
-                android:id="@+id/tray_name1"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:text="1번 트레이"
-                android:textColor="#111111"
-                android:textSize="19sp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="LG Carry"
+                android:textColor="#14191B"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
-            <ImageButton
-                android:id="@+id/btn_tray1"
-                android:layout_width="94dp"
-                android:layout_height="68dp"
-                android:background="@android:color/transparent"
-                android:clickable="false"
-                android:contentDescription="1번 트레이"
-                android:focusable="false"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_tray" />
+            <FrameLayout
+                android:id="@+id/homeBellIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_bell" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/homeSettingsIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="4dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_settings" />
+            </FrameLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/homeTray2Button"
-            android:layout_width="match_parent"
-            android:layout_height="104dp"
-            android:layout_marginTop="14dp"
-            android:background="@drawable/bg_home_tray_card"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="18dp"
-            android:paddingEnd="16dp">
-
-            <TextView
-                android:id="@+id/tray_name2"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:text="2번 트레이"
-                android:textColor="#111111"
-                android:textSize="19sp"
-                android:textStyle="bold" />
-
-            <ImageButton
-                android:id="@+id/btn_tray2"
-                android:layout_width="94dp"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:clickable="false"
-                android:contentDescription="2번 트레이"
-                android:focusable="false"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_tray" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/homeTray3Button"
-            android:layout_width="match_parent"
-            android:layout_height="104dp"
-            android:layout_marginTop="14dp"
-            android:background="@drawable/bg_home_tray_card"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="18dp"
-            android:paddingEnd="16dp">
-
-            <TextView
-                android:id="@+id/tray_name3"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:text="3번 트레이"
-                android:textColor="#111111"
-                android:textSize="19sp"
-                android:textStyle="bold" />
-
-            <ImageButton
-                android:id="@+id/btn_tray3"
-                android:layout_width="94dp"
-                android:layout_height="68dp"
-                android:background="@android:color/transparent"
-                android:clickable="false"
-                android:contentDescription="3번 트레이"
-                android:focusable="false"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_tray" />
-        </LinearLayout>
+        <ImageView
+            android:layout_width="170dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="28dp"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/carry_product" />
 
         <TextView
-            android:id="@+id/homeTrayItemsText"
+            android:id="@+id/homeRobotStateBadge"
+            android:layout_width="88dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_voice_circle_teal"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="대기 중"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/homeRobotPhaseLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:includeFontPadding="false"
+            android:text="충전 중 · 명령 대기"
+            android:textColor="#798385"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="74dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_card"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_state" />
+
+                <TextView
+                    android:id="@+id/homeRobotPhaseDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:includeFontPadding="false"
+                    android:text="상태"
+                    android:textColor="#798385"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:includeFontPadding="false"
+                    android:text="충전 스테이션 대기 중"
+                    android:textColor="#14191B"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="42dp"
+                android:background="#E2E7E7" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_battery" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:includeFontPadding="false"
+                    android:text="배터리"
+                    android:textColor="#798385"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/homeBatteryValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:includeFontPadding="false"
+                    android:text="--"
+                    android:textColor="#14191B"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="180dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="19dp"
+                        android:layout_height="19dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_clock" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:includeFontPadding="false"
+                        android:text="최근 호출"
+                        android:textColor="#14191B"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/homeAllLogsButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="전체"
+                        android:textColor="#008E84"
+                        android:textSize="11sp" />
+
+                    <FrameLayout
+                        android:id="@+id/homeLogsChevron"
+                        android:layout_width="1dp"
+                        android:layout_height="1dp"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="18dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/homeRecentFirstTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="사용 기록 없음"
+                        android:textColor="#14191B"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/homeRecentFirstSub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:includeFontPadding="false"
+                        android:text="호출 후 표시"
+                        android:textColor="#798385"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/homeRecentFirstTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:includeFontPadding="false"
+                        android:text="-"
+                        android:textColor="#C1CACA"
+                        android:textSize="10sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="#E2E7E7" />
+
+                    <TextView
+                        android:id="@+id/homeRecentSecondTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="사용 기록 없음"
+                        android:textColor="#14191B"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/homeRecentSecondSub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:includeFontPadding="false"
+                        android:text="호출 후 표시"
+                        android:textColor="#798385"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/homeRecentSecondTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:includeFontPadding="false"
+                        android:text="-"
+                        android:textColor="#C1CACA"
+                        android:textSize="10sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="180dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_voice_card_teal"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <FrameLayout
+                    android:id="@+id/homeMicIcon"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_voice_circle_teal_dark">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_mic_white" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:includeFontPadding="false"
+                    android:text="음성 호출"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:includeFontPadding="false"
+                    android:text="말해서 CARRY 부르기"
+                    android:textColor="#D9F2F0"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/homeVoiceButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_voice_outline_button"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="지금 말하기"
+                    android:textColor="#008E84"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="180dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/homeRoutineManageButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:includeFontPadding="false"
+                    android:text="빠른 루틴"
+                    android:textColor="#14191B"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/homeQuickRoutineFirstTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:includeFontPadding="false"
+                            android:text="루틴 없음"
+                            android:textColor="#14191B"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/homeRoutineFirstSub"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:includeFontPadding="false"
+                            android:textColor="#798385"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:id="@+id/homeQuickRoutineFirstToggleTrack"
+                        android:layout_width="42dp"
+                        android:layout_height="26dp"
+                        android:background="@drawable/bg_toggle_off">
+
+                        <View
+                            android:id="@+id/homeQuickRoutineFirstToggleKnob"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="start|center_vertical"
+                            android:layout_marginStart="2dp"
+                            android:background="@drawable/bg_toggle_knob" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/homeQuickRoutineSecondTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:includeFontPadding="false"
+                            android:text="루틴 없음"
+                            android:textColor="#14191B"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/homeRoutineSecondSub"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:includeFontPadding="false"
+                            android:textColor="#798385"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:id="@+id/homeQuickRoutineSecondToggleTrack"
+                        android:layout_width="42dp"
+                        android:layout_height="26dp"
+                        android:background="@drawable/bg_toggle_off">
+
+                        <View
+                            android:id="@+id/homeQuickRoutineSecondToggleKnob"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="start|center_vertical"
+                            android:layout_marginStart="2dp"
+                            android:background="@drawable/bg_toggle_knob" />
+                    </FrameLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/homeModuleCard"
+                android:layout_width="0dp"
+                android:layout_height="180dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/homeModuleName"
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:includeFontPadding="false"
+                    android:text="모듈 A"
+                    android:textColor="#14191B"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/homeModuleLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:includeFontPadding="false"
+                    android:text="현재 거실"
+                    android:textColor="#798385"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/homeModuleItemCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:includeFontPadding="false"
+                    android:text="보관 물품 0개"
+                    android:textColor="#798385"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/homeModuleItemFirst"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:includeFontPadding="false"
+                    android:text="•  -"
+                    android:textColor="#14191B"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/homeModuleItemSecond"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:includeFontPadding="false"
+                    android:text="•  -"
+                    android:textColor="#14191B"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/homeModuleItemThird"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:includeFontPadding="false"
+                    android:text="•  -"
+                    android:textColor="#14191B"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/homeEmergencyStopButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
             android:layout_marginTop="14dp"
+            android:background="@drawable/bg_emergency_stop_button"
             android:gravity="center"
-            android:text="트레이를 누르면 보관된 물품이 아래에서 열려요."
-            android:textColor="#8A8D94"
-            android:textSize="12sp"
+            android:includeFontPadding="false"
+            android:text="긴급 정지"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
-</LinearLayout>
+</ScrollView>
